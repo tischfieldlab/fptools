@@ -1,0 +1,7 @@
+name: fptools
+
+dependencies:
+  - python=3.9
+  - pip
+  - pip:
+    - "--editable=.[dev]"
