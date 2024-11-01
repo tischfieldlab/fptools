@@ -1,4 +1,5 @@
 from collections import Counter
+import copy
 import datetime
 from typing import Any, Callable, List, Literal, Optional, Union
 
@@ -246,10 +247,20 @@ class Session(object):
 class SessionCollection(list[Session]):
     """Collection of session data"""
 
+    def __init__(self, *args):
+        super().__init__(*args)
+        self.__meta_meta: dict[str, dict[Literal['order'], Any]] = {}
+
     @property
     def metadata(self) -> pd.DataFrame:
         """Get a dataframe containing metadata across all sessions in this collection."""
-        return pd.DataFrame([item.metadata for item in self])
+        df = pd.DataFrame([item.metadata for item in self])
+
+        for k, v in self.__meta_meta.items():
+            if 'order' in v:
+                df[k] = pd.Categorical(df[k], categories=v['order'], ordered=True)
+
+        return df
 
     @property
     def metadata_keys(self) -> List[str]:
@@ -274,6 +285,21 @@ class SessionCollection(list[Session]):
         """
         for item in self:
             item.metadata.update(meta)
+
+    def set_metadata_props(self, key: str, order: Optional[list[Any]] = None):
+        """Set properties of a metadata column
+
+        Paramters:
+        key: name of the metadata item, always required
+        order: optional, if specified will set the metadata column to be ordered categorical, according to `order`
+        """
+        assert key in self.metadata_keys
+
+        if key not in self.__meta_meta:
+            self.__meta_meta[key] = {}
+
+        if order is not None:
+            self.__meta_meta[key]['order'] = order
 
     def rename_signal(self, old_name: str, new_name: str) -> None:
         """Rename a signal on each session in this collection
@@ -302,9 +328,24 @@ class SessionCollection(list[Session]):
         predicate: a callable accepting a single session and returning bool.
 
         Returns:
-        a new `SessionCollection` containing only itemss which pass `predicate`.
+        a new `SessionCollection` containing only items which pass `predicate`.
         """
-        return type(self)(item for item in self if predicate(item))
+        sc = type(self)(item for item in self if predicate(item))
+        sc.__meta_meta.update(**copy.deepcopy(self.__meta_meta))
+        return sc
+
+    def select(self, *bool_masks: np.ndarray) -> "SessionCollection":
+        """Select sessions in this collection, returning a new `SessionCollection` containing sessions which all bool masks are true.
+
+        Parameters:
+        bool_masks: one or more boolean arrays, the reduced logical_and indicating which sessions to select
+
+        Returns:
+        a new `SessionCollection` containing only items which pass bool_masks.
+        """
+        sc = type(self)(item for item, include in zip(self, np.logical_and.reduce(bool_masks)) if include)
+        sc.__meta_meta.update(**copy.deepcopy(self.__meta_meta))
+        return sc
 
     def map(self, action: Callable[[Session], Session]) -> "SessionCollection":
         """Apply a function to each session in this collection, returning a new collection with the results
@@ -315,7 +356,9 @@ class SessionCollection(list[Session]):
         Returns:
         a new `SessionCollection` containing the results of `action`
         """
-        return type(self)(action(item) for item in self)
+        sc = type(self)(action(item) for item in self)
+        sc.__meta_meta.update(**copy.deepcopy(self.__meta_meta))
+        return sc
 
     def apply(self, func: Callable[[Session], None]) -> None:
         """Apply a function to each session in this collection
