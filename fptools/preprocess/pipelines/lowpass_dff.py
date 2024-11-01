@@ -1,61 +1,93 @@
 import os
+from typing import Any, Optional
 
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 from fptools.preprocess.lib import lowpass_filter, trim_signals, fs2t, downsample as downsample_fn
-from fptools.io import Session, Signal
+from fptools.io import Session, Signal, SignalMapping
 
 
-def lowpass_dff(session: Session, block, show_steps=True, plot_dir='', downsample=None):
+def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], show_steps: bool = True,
+                plot_dir: str = '', downsample: Optional[int] = None) -> Session:
+    '''A "simple" preprocess pipeline based on ultra-lowpass filtering.
+
+    Implemented as described in:
+    Cai, Kaeser, et al. Dopamine dynamics are dispensable for movement but promote reward responses.
+    Nature, 2024. https://doi.org/10.1038/s41586-024-08038-z
+
+    Pipeline steps:
+    1) Signals are trimmed to the optical system start.
+    2) Signals are lowpass filterd at 0.01 Hz (~100 second timescale)
+    3) Signals are converted to dF/F using lowpass filtered signals as F0
+    4) Signals are optionally downsampled factor `downsample`
+
+    Parameters:
+    session: the session to populate.
+    block: block data struct from `tdt.read_block()`.
+    signal_map: mapping of signals to perform
+    show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
+    plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
+    downsample: if not `None`, downsample signal by `downsample` factor.
+    '''
     try:
         if show_steps:
             fig, axs = plt.subplots(4, 1, figsize=(24, 6*4))
+            palette = sns.color_palette('colorblind', n_colors=len(signal_map))
 
-        sampling_rate = block.streams['_465A'].fs
-        dopa = block.streams['_465A'].data
-        isob = block.streams['_415A'].data
-        time = fs2t(sampling_rate, len(dopa))
+        signals: list[Signal] = []
+        for sm in signal_map:
+            stream = block.streams[sm['tdt_name']]
+            signals.append(Signal(sm['dest_name'], stream.data, fs=stream.fs))
 
         if show_steps:
-            axs[0].plot(time, dopa, label='Dopamine', c='g')
-            axs[0].plot(time, isob, label='Isosbestic', c='r')
+            for i, sig in enumerate(signals):
+                axs[0].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[0].set_title('Raw signal')
             axs[0].legend()
 
         # trim raw signal start to when the optical system came online
-        dopa_trimmed, isob_trimmed, time_trimmed = trim_signals(dopa, isob, time, begin=int(block.scalars.Fi1i.ts[0] * sampling_rate))
+        for sig in signals:
+            sig.signal, sig.time = trim_signals(sig.signal, sig.time, begin=int(block.scalars.Fi1i.ts[0] * sig.fs))
 
         if show_steps:
-            axs[1].plot(time_trimmed, dopa_trimmed, label='Dopamine', c='g')
-            axs[1].plot(time_trimmed, isob_trimmed, label='Isosbestic', c='r')
+            for i, sig in enumerate(signals):
+                axs[0].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[1].set_title('Trimmed Raw signal')
             axs[1].legend()
 
-
-        dopa_lowpass = lowpass_filter(dopa_trimmed, sampling_rate, 0.01)
-        isob_lowpass = lowpass_filter(isob_trimmed, sampling_rate, 0.01)
+        # lowpass filter at 0.01 Hz
+        lowpass_signals = []
+        for sig in signals:
+            s = sig.copy()
+            s.signal = lowpass_filter(sig.signal, sig.fs, 0.01)
+            lowpass_signals.append(s)
 
         if show_steps:
-            axs[2].plot(time_trimmed, dopa_lowpass, label='Dopamine', c='g')
-            axs[2].plot(time_trimmed, isob_lowpass, label='Isosbestic', c='r')
+            for i, sig in enumerate(lowpass_signals):
+                axs[0].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[2].set_title('Lowpasss filtered (0.01 Hz)')
             axs[2].legend()
 
-        dopa_dff = ((dopa_trimmed - dopa_lowpass) / dopa_lowpass) * 100
-        isob_dff = ((isob_trimmed - isob_lowpass) / isob_lowpass) * 100
+        # calculate dF/F
+        for sig, lowpass_sig in zip(signals, lowpass_signals):
+            sig.signal = ((sig.signal - lowpass_sig.signal) / lowpass_sig.signal) * 100
+            sig.units = 'ΔF/F'
 
         if show_steps:
-            axs[3].plot(time_trimmed, dopa_dff, label='Dopamine', c='g')
-            axs[3].plot(time_trimmed, isob_dff, label='Isosbestic', c='r')
+            for i, sig in enumerate(signals):
+                axs[0].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[3].set_title('Normalized (dff)')
             axs[3].legend()
 
+        # possibly downsample
         if downsample is not None:
-            time_trimmed, dopa_dff, isob_dff = downsample_fn(time_trimmed, dopa_dff, isob_dff, factor=downsample)
+            for sig in signals:
+                sig.signal, sig.time = downsample_fn(sig.signal, sig.time, window=downsample, factor=downsample)
 
-
-        session.signals['Dopamine'] = Signal('Dopamine', dopa_dff, time=time_trimmed, units='ΔF/F')
-        session.signals['Isosbestic'] = Signal('Isosbestic', isob_dff, time=time_trimmed, units='ΔF/F')
+        # construct Signals and add to the Session
+        for sig in signals:
+            session.add_signal(sig)
 
         return session
     except:
