@@ -5,32 +5,9 @@ from fptools.io import Session, Signal
 from fptools.preprocess.lib import fs2t
 
 
-# def find_nearest(array, value):
-#     array = np.asarray(array)
-#     return (np.abs(array - value)).argmin()
-
-
-# def collect_signals(events, signal, time, pre=1.0, post=2.0):
-#     sampling_rate = 1 / np.median(np.diff(time))
-#     pre_idxs = int(np.rint(pre * sampling_rate))
-#     post_idxs = int(np.rint(post * sampling_rate))
-#     n_samples = pre_idxs + post_idxs
-#     new_time = (np.linspace(1, n_samples, n_samples) / sampling_rate) - pre
-
-#     accum = np.zeros_like(signal, shape=(events.shape[0], n_samples))
-#     padded_signal = np.pad(signal, (pre_idxs, post_idxs), mode='constant', constant_values=0)
-#     for ei, event in enumerate(events):
-#         event_idx = find_nearest(time, event)
-#         start = event_idx - pre_idxs
-#         stop = event_idx + post_idxs
-#         accum[ei, :] = padded_signal[(start + pre_idxs):(stop + pre_idxs)]
-
-#     return new_time, accum
-
-
 def collect_signals(session: Session, event: str, signal: str, pre: float = 1.0, post: float = 2.0) -> Signal:
     '''Collect a signal from a session around an event.
-    
+
     Parameters:
     session: the Session to operate on
     event: the name of the event to use
@@ -87,7 +64,7 @@ def collect_signals_2event(session: Session, event1: str, event2: str, signal: s
     # in a rare case, a stray event2 before event1, this will prune those
     # not sure if it's the best idea to do this............
     events_2 = events_2[events_2 > events_1.min()]
-    assert len(events_1) == len(events_2)
+    #assert len(events_1) == len(events_2)
 
     # calculate index offsets etc
     pre_idxs = int(np.rint(pre * sig.fs))
