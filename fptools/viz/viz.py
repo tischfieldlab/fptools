@@ -8,17 +8,10 @@ import pandas as pd
 import scipy
 import scipy.interpolate
 import seaborn as sns
+from typing import Union
+from matplotlib.lines import Line2D
 
 from fptools.io import Session, Signal
-from fptools.preprocess.lib import are_arrays_same_length, fs2t
-
-
-
-
-
-
-
-
 
 
 def aggregate_signals(signals: list[Signal], method='mean') -> Signal:
@@ -38,7 +31,7 @@ def aggregate_signals(signals: list[Signal], method='mean') -> Signal:
     return s
 
 
-def plot_signal(signal: Signal, ax: Axes = None, indv: bool = True, color: ColorType = 'k', indv_c: ColorType = 'b') -> mpl.axes.Axes:
+def plot_signal(signal: Signal, ax: Axes = None, show_indv: bool = True, color: ColorType = 'k', indv_c: ColorType = 'b', indv_alpha: float = 0.1) -> mpl.axes.Axes:
     if ax is None:
         fig, ax = plt.subplots()
 
@@ -46,9 +39,9 @@ def plot_signal(signal: Signal, ax: Axes = None, indv: bool = True, color: Color
     df.index = signal.time
     df = df.melt(ignore_index=False)
 
-    if indv and signal.nobs:
+    if show_indv and signal.nobs:
         for i in range(signal.signal.shape[0]):
-            sns.lineplot(data=None, x=signal.time, y=signal.signal[i, :], alpha=0.1, ax=ax, color=indv_c)
+            sns.lineplot(data=None, x=signal.time, y=signal.signal[i, :], alpha=indv_alpha, ax=ax, color=indv_c)
 
     sns.lineplot(data=df, x=df.index, y='value', ax=ax, color=color)
 
@@ -57,6 +50,8 @@ def plot_signal(signal: Signal, ax: Axes = None, indv: bool = True, color: Color
 
     xticks = ax.get_xticks()
     xticklabels = ax.get_xticklabels()
+    if len(xticklabels) == 0:
+        xticklabels = [f'{xt}' for xt in xticks]
     for k, v in signal.marks.items():
         ax.axvline(v, c='gray', ls='--')
         try:
@@ -72,6 +67,91 @@ def plot_signal(signal: Signal, ax: Axes = None, indv: bool = True, color: Color
     ax.set_xticks(xticks, xticklabels)
 
     return ax
+
+
+def sig_catplot(sessions: list[Session],
+                signal: str,
+                col: Union[str, None] = None,
+                col_order: Union[list[str], None] = None,
+                row: Union[str, None] = None,
+                row_order: Union[list[str], None] = None,
+                palette = None,
+                hue: Union[str, None] = None,
+                hue_order: Union[list[str], None] = None,
+                show_indv: bool = False,
+                indv_alpha: float = 0.1):
+
+    metadata = sessions.metadata
+
+    if col is not None:
+        if col_order is None:
+            plot_cols = sorted(metadata[col].unique())
+        else:
+            avail_cols = list(metadata[col].unique())
+            plot_cols = [c for c in col_order if c in avail_cols]
+    else:
+        plot_cols = [None]
+
+    if row is not None:
+        if row_order is None:
+            plot_rows = sorted(metadata[row].unique())
+        else:
+            avail_rows = list(metadata[row].unique())
+            plot_rows = [r for r in row_order if r in avail_rows]
+    else:
+        plot_rows = [None]
+
+    if hue is not None and hue_order is None:
+        hue_order = sorted(metadata[hue].unique())
+
+    if hue_order is not None and palette is None:
+        palette = sns.color_palette("colorblind", n_colors=len(hue_order))
+
+    fig, axs = plt.subplots(
+        len(plot_rows), len(plot_cols), figsize=(len(plot_cols) * 6, len(plot_rows) * 6), sharey=True, sharex=True, squeeze=False
+    )
+
+
+    for row_i, cur_row in enumerate(plot_rows):
+        if cur_row is not None:
+            row_criteria = (metadata[row] == cur_row)
+        else:
+            row_criteria = np.ones(len(metadata.index), dtype=bool)
+
+        for col_i, cur_col in enumerate(plot_cols):
+            if cur_col is not None:
+                col_criteria = (metadata[col] == cur_col)
+            else:
+                col_criteria = np.ones(len(metadata.index), dtype=bool)
+
+            ax = axs[row_i, col_i]
+
+            ax.set_title(f'{signal} at {col} = {cur_col} & {row} = {cur_row}')
+
+            if hue is None:
+                try:
+                    sig = sessions.select(row_criteria, col_criteria).aggregate_signals(signal)
+                    plot_signal(sig, ax=ax, indv=show_indv, color=palette[0], indv_c=palette[0], indv_alpha=indv_alpha)
+                except:
+                    pass
+
+            else:
+                legend_items = []
+                legend_labels = []
+                for hi, curr_hue in enumerate(hue_order):
+                    try:
+                        sess_subset = sessions.select(row_criteria, col_criteria, metadata[hue] == curr_hue)
+                        sig = sess_subset.aggregate_signals(signal)
+
+                        plot_signal(sig, ax=ax, show_indv=show_indv, color=palette[hi], indv_c=palette[hi])
+                        legend_items.append(Line2D([0], [0], color=palette[hi]))
+                        legend_labels.append(f'{curr_hue}, n={len(sess_subset)}')
+
+                    except:
+                        pass
+
+                ax.legend(legend_items, legend_labels, loc='upper right')
+                #sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
 
 
 
@@ -106,28 +186,3 @@ def plot_heatmap(signal: Signal, ax=None, cmap="viridis", vmin=None, vmax=None):
     ax.set_xlabel('Time, Reletive to Event (sec)')
 
     return ax
-
-
-
-# def plot_signal_at_events(events, signal, time, ax=None, pre=1.0, post=2.0, indv=True, color='k', indv_c='b'):
-#     new_time, accum = collect_signals(events, signal, time, pre=pre, post=post)
-
-#     df = pd.DataFrame(accum.T)
-#     df.index = new_time
-#     df = df.melt(ignore_index=False)
-
-#     if ax is None:
-#         fig, ax = plt.subplots()
-
-#     if indv:
-#         for i in range(accum.shape[0]):
-#             sns.lineplot(data=None, x=new_time, y=accum[i, :], alpha=0.1, ax=ax, color=indv_c)
-
-#     sns.lineplot(data=df, x=df.index, y='value', ax=ax, color=color)
-#     ax.axvline(0, c='k', ls='--')
-#     ax.set_xlabel('Time, Reletive to Event (s)')
-
-#     return accum, new_time
-
-
-
