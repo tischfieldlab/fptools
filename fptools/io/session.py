@@ -76,6 +76,12 @@ class Signal(object):
         '''
         return (np.abs(self.time - t)).argmin()
 
+    def copy(self) -> 'Signal':
+        '''Return a deep copy of this signal
+        '''
+        s = type(self)(self.name, self.signal.copy(), time=self.time.copy(), fs=self.fs, units=self.units)
+        s.marks.update(**self.marks)
+        return s
 
     def aggregate(self, func: Union[str, Callable[[np.ndarray], np.ndarray]]) -> "Signal":
         '''Aggregate this signal.
