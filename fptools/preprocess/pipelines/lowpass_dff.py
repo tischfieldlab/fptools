@@ -4,7 +4,7 @@ from typing import Any, Optional
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from fptools.preprocess.lib import lowpass_filter, trim_signals, fs2t, downsample as downsample_fn
+from fptools.preprocess.lib import lowpass_filter, t2fs, trim_signals, fs2t, downsample as downsample_fn
 from fptools.io import Session, Signal, SignalMapping
 
 
@@ -84,6 +84,7 @@ def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], s
         if downsample is not None:
             for sig in signals:
                 sig.signal, sig.time = downsample_fn(sig.signal, sig.time, window=downsample, factor=downsample)
+                sig.fs = t2fs(sig.time)
 
         # construct Signals and add to the Session
         for sig in signals:
