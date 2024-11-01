@@ -65,7 +65,7 @@ class Signal(object):
         """
         return self.signal.shape[-1]
 
-    @ property
+    @property
     def duration(self) -> datetime.timedelta:
         '''Get the duration of this Signal
         '''
