@@ -72,17 +72,41 @@ def fit_double_exponential(time: np.ndarray, signal: np.ndarray) -> np.ndarray:
 
 
 def detrend_double_exponential(time: np.ndarray, signal: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
+    '''Detrend a signal by fitting and subtracting a double exponential curve to the data.
+
+    See `double_exponential` for the underlying curve design, and `fit_double_exponential` for the curve fitting procedure.
+
+    Parameters:
+    time: array of sample/observation times
+    signal: array of samples
+
+    Returns:
+    Tuple of (detrended_signal, signal_fit)
+    '''
     signal_fit = fit_double_exponential(time, signal)
     return signal - signal_fit, signal_fit
 
 
-def estimate_motion(signal: np.ndarray, isosbestic: np.ndarray) -> np.ndarray:
-    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x=isosbestic, y=signal)
-    est_motion = intercept + slope * (isosbestic)
+def estimate_motion(signal: np.ndarray, control: np.ndarray) -> np.ndarray:
+    '''Estimate the contribution of motion artifacts in `signal`.
+
+    Performs linear regression of control (x, independent) vs signal (y, dependent)
+
+    Parameters:
+    signal: the signal to correct for motion artifacts
+    control: signal to use for background signal
+
+    Returns:
+    tuple of (corrected_signal, estimated_motion)
+    '''
+    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x=control, y=signal)
+    est_motion = intercept + slope * (control)
     return signal - est_motion, est_motion
 
 
-def are_arrays_same_length(*arrays):
+def are_arrays_same_length(*arrays: np.ndarray) -> bool:
+    '''Check if all arrays are the same shape in the first axis
+    '''
     lengths = [arr.shape[0] for arr in arrays]
     return np.all(np.array(lengths) == lengths[0])
 
@@ -100,13 +124,36 @@ def are_arrays_same_length(*arrays):
 #     return downsampled
 
 
-def downsample(*signals, window: int = 10, factor: int = 10):
+def downsample(*signals, window: int = 10, factor: int = 10) -> np.ndarray:
+    '''Downsample one or more signals by factor across windows of size `window`
+
+    performs a moving window average using windows of size `window`, then takes every
+    n-th observation as given by `factor`.
+
+    Parameters:
+    signals: one or more signals to downsample
+    window: size of the window used for averaging
+    factor: step size for taking the final downsampled signal
+
+    Returns:
+    downsampled signal
+    '''
     #assert are_arrays_same_length(*signals)
     return [np.convolve(sig, np.ones(window) / window, mode='valid')[::factor] for sig in signals]
 
 
 
 def trim_signals(*signals, begin=None, end=None):
+    '''Trim samples from the beginning or end of a signal
+
+    Parameters:
+    signals: one or more signals to be trimmed
+    begin: number of samples to trim from the beginning
+    end: number of samples to trim from the end
+
+    Returns:
+    tuple of trimmed signals
+    '''
     assert are_arrays_same_length(*signals)
     if begin is None:
         begin = 0
