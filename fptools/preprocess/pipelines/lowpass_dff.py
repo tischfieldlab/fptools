@@ -4,7 +4,7 @@ from typing import Any, Optional
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-from fptools.preprocess.lib import lowpass_filter, t2fs, trim_signals, fs2t, downsample as downsample_fn
+from fptools.preprocess.lib import lowpass_filter, t2fs, trim, fs2t, downsample as downsample_fn
 from fptools.io import Session, Signal, SignalMapping
 
 
@@ -52,7 +52,7 @@ def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], s
 
         if show_steps:
             for i, sig in enumerate(signals):
-                axs[0].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
+                axs[1].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[1].set_title('Trimmed Raw signal')
             axs[1].legend()
 
@@ -65,7 +65,7 @@ def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], s
 
         if show_steps:
             for i, sig in enumerate(lowpass_signals):
-                axs[0].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
+                axs[2].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[2].set_title('Lowpasss filtered (0.01 Hz)')
             axs[2].legend()
 
@@ -76,7 +76,7 @@ def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], s
 
         if show_steps:
             for i, sig in enumerate(signals):
-                axs[0].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
+                axs[3].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[3].set_title('Normalized (dff)')
             axs[3].legend()
 
