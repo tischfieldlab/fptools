@@ -48,7 +48,7 @@ def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], s
 
         # trim raw signal start to when the optical system came online
         for sig in signals:
-            sig.signal, sig.time = trim_signals(sig.signal, sig.time, begin=int(block.scalars.Fi1i.ts[0] * sig.fs))
+            sig.signal, sig.time = trim(sig.signal, sig.time, begin=int(block.scalars.Fi1i.ts[0] * sig.fs))
 
         if show_steps:
             for i, sig in enumerate(signals):

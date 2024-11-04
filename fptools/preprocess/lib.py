@@ -143,7 +143,7 @@ def downsample(*signals, window: int = 10, factor: int = 10) -> np.ndarray:
 
 
 
-def trim_signals(*signals, begin=None, end=None):
+def trim(*signals, begin=None, end=None) -> tuple[np.ndarray, ...]:
     '''Trim samples from the beginning or end of a signal
 
     Parameters:
