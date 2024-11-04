@@ -1,75 +1,92 @@
 import os
+from typing import Any
 
 import matplotlib.pyplot as plt
 import numpy as np
+import seaborn as sns
 
-from fptools.io import Session, Signal
-from fptools.preprocess.lib import detrend_double_exponential, estimate_motion, trim_signals
+from fptools.io import Session, Signal, SignalMapping
+from fptools.preprocess.lib import detrend_double_exponential, estimate_motion, trim
 
 
-def dxp_motion_dff(session: Session, block, show_steps=True, plot_dir=''):
+def dxp_motion_dff(session: Session, block: Any, signal_map: list[SignalMapping], show_steps=True, plot_dir=''):
     try:
         if show_steps:
             fig, axs = plt.subplots(6, 1, figsize=(24, 6*6))
+            palette = sns.color_palette('colorblind', n_colors=len(signal_map))
 
-        sampling_rate = block.streams['_465A'].fs
-        dopa = block.streams['_465A'].data
-        isob = block.streams['_415A'].data
-        time = np.linspace(1,len(dopa), len(dopa)) / sampling_rate
+
+        signals: list[Signal] = []
+        for sm in signal_map:
+            stream = block.streams[sm['tdt_name']]
+            signals.append(Signal(sm['dest_name'], stream.data, fs=stream.fs))
 
         if show_steps:
-            axs[0].plot(time, dopa, label='Dopamine', c='g')
-            axs[0].plot(time, isob, label='Isosbestic', c='r')
+            for i, sig in enumerate(signals):
+                axs[0].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[0].set_title('Raw signal')
             axs[0].legend()
 
         # trim raw signal start to when the optical system came online
-        dopa_trimmed, isob_trimmed, time_trimmed = trim_signals(dopa, isob, time, begin=int(block.scalars.Fi1i.ts[0] * sampling_rate))
+        for sig in signals:
+            sig.signal, sig.time = trim(sig.signal, sig.time, begin=int(block.scalars.Fi1i.ts[0] * sig.fs))
 
         if show_steps:
-            axs[1].plot(time_trimmed, dopa_trimmed, label='Dopamine', c='g')
-            axs[1].plot(time_trimmed, isob_trimmed, label='Isosbestic', c='r')
+            for i, sig in enumerate(signals):
+                axs[1].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[1].set_title('Trimmed Raw signal')
             axs[1].legend()
 
         # detrend using a double exponential fit
-        dopa_detrend, dopa_fit = detrend_double_exponential(time_trimmed, dopa_trimmed)
-        isob_detrend, isob_fit = detrend_double_exponential(time_trimmed, isob_trimmed)
+        fits = []
+        for sig in signals:
+            detrended_sig, fit = detrend_double_exponential(sig.time, sig.signal)
+
+            if show_steps:
+                axs[2].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
+                axs[2].plot(sig.time, fit, label=f'{sig.name} dExp Fit', c=sns.desaturate(palette[i], 0.3))
+
+            sig.signal = detrended_sig
 
         if show_steps:
-            axs[2].plot(time_trimmed, dopa_trimmed, label='Dopamine', c='g')
-            axs[2].plot(time_trimmed, dopa_fit, label='Dbl Exp Fit', c='k')
-            axs[2].plot(time_trimmed, isob_trimmed, label='Isosbestic', c='r')
-            axs[2].plot(time_trimmed, isob_fit, label='Dbl Exp Fit', c='k')
             axs[2].set_title('Double Exponential Fit')
             axs[2].legend()
 
-            axs[3].plot(time_trimmed, dopa_detrend, label='Dopamine', c='g')
-            axs[3].plot(time_trimmed, isob_detrend, label='Isosbestic', c='r')
+            for i, sig in enumerate(signals):
+                axs[3].plot(sig.time, detrended_sig, label=sig.name, c=palette[i])
             axs[3].set_title('De-trended signals')
             axs[3].legend()
 
         # correct for motion artifacts
-        dopa_motion_corrected, est_motion = estimate_motion(dopa_detrend, isob_detrend)
+        ctrl_idx = next((i for i, sm in enumerate(signal_map) if signal_map['role'] == "control"), None)
+        if ctrl_idx is None:
+            raise ValueError('To use motion correction, at least one signal must be marked with `role`="Control" in the `signal_map`!')
+        for sm, sig in zip(signal_map, signals):
+            if sm['role'] == 'experimental':
+                motion_corrected, est_motion = estimate_motion(sig.signal, signals[ctrl_idx].signal)
+
+                if show_steps:
+                    axs[4].plot(sig.time, motion_corrected, label=sig.name, c=palette[i])
+                    axs[4].plot(sig.time, est_motion, label=f'{sig.name} Est. Motion', c=sns.desaturate(palette[i], 0.3))
 
         if show_steps:
-            axs[4].plot(time_trimmed, dopa_motion_corrected, label='Dopamine', c='g')
-            axs[4].plot(time_trimmed, est_motion, label='Estimated Motion', c='b')
             axs[4].set_title('Motion Correction')
             axs[4].legend()
 
-        #dopa, isob = zscore_signals(dopa, isob)
-        # computed deltaF / F
-        dopa_norm = 100 * dopa_motion_corrected / dopa_fit
+        # calculate dF/F
+        for sig, fit in zip(signals, fits):
+            sig.signal = (sig.signal / fit) * 100
+            sig.units = 'ΔF/F'
 
         if show_steps:
-            axs[5].plot(time_trimmed, dopa_norm, label='Dopamine', c='g')
+            for i, sig in enumerate(signals):
+                axs[5].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
             axs[5].set_title('Normalized')
             axs[5].legend()
 
-        session.signals['Dopamine'] = Signal('Dopamine', dopa_norm, time=time_trimmed, units='ΔF/F')
-        session.signals['Isosbestic'] = Signal('Isosbestic', isob_detrend, time=time_trimmed, units='detrended mV')
-
+        # construct Signals and add to the Session
+        for sig in signals:
+            session.add_signal(sig)
 
         return session
     except:
