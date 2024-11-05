@@ -33,3 +33,6 @@ https://pubmed.ncbi.nlm.nih.gov/38016471/
 
 Dopamine dynamics are dispensable for movement but promote reward responses
 https://www.nature.com/articles/s41586-024-08038-z.pdf
+
+Eshel, Malenka, et al. Striatal dopamine integrates cost, benefit, and motivation,
+Neuron, 2024, https://doi.org/10.1016/j.neuron.2023.10.038.
