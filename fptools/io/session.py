@@ -10,9 +10,12 @@ import pandas as pd
 
 FieldList = Union[Literal["all"], list[str]]
 
+
 class Signal(object):
-    def __init__(self, name: str, signal: np.ndarray, time: Optional[np.ndarray] = None, fs: Optional[float] = None, units: str = 'AU') -> None:
-        '''Initialize a this Signal Object.
+    def __init__(
+        self, name: str, signal: np.ndarray, time: Optional[np.ndarray] = None, fs: Optional[float] = None, units: str = "AU"
+    ) -> None:
+        """Initialize a this Signal Object.
 
         At least one of `time` or `fs` must be provided. If `time` is provided, the sampling frequency (`fs`) will be estimated
         from `time`. If `fs` is provided, the sampled timepoints (`time`) will be estimated. If both are provided, the values
@@ -24,7 +27,7 @@ class Signal(object):
         time: Array of sampled timepoints
         fs: Sampling frequency, in Hz
         units: units of this signal
-        '''
+        """
         self.name = name
         self.signal = signal
         self.units = units
@@ -38,7 +41,9 @@ class Signal(object):
             self.fs = fs
             # just do a sanity check that the two pieces of information make sense
             if not np.isclose(self.fs, 1 / np.median(np.diff(time))):
-                raise ValueError(f'Both `time` and `fs` were provided, but they do not match!\n  fs={fs}\ntime={1 / np.median(np.diff(time))}')
+                raise ValueError(
+                    f"Both `time` and `fs` were provided, but they do not match!\n  fs={fs}\ntime={1 / np.median(np.diff(time))}"
+                )
 
         elif time is None and fs is not None:
             # sampleing frequency is provided, infer time from fs
@@ -52,43 +57,38 @@ class Signal(object):
 
         else:
             # neither time or sampling frequency provided, we need at least one!
-            raise ValueError('Both `time` and `fs` cannot be `None`, one must be supplied!')
+            raise ValueError("Both `time` and `fs` cannot be `None`, one must be supplied!")
 
         if not self.signal.shape[-1] == self.time.shape[0]:
-            raise ValueError(f'Signal and time must have the same length! signal.shape={self.signal.shape}; time.shape={self.time.shape}')
+            raise ValueError(f"Signal and time must have the same length! signal.shape={self.signal.shape}; time.shape={self.time.shape}")
 
     @property
     def nobs(self) -> int:
-        """Get the number of observations for this Signal (i.e. number of trials)
-        """
+        """Get the number of observations for this Signal (i.e. number of trials)"""
         return self.signal.shape[0] if len(self.signal.shape) > 1 else 1
 
     @property
     def nsamples(self) -> int:
-        """Get the number of samples for this Signal (i.e. length of signal)
-        """
+        """Get the number of samples for this Signal (i.e. length of signal)"""
         return self.signal.shape[-1]
 
     @property
     def duration(self) -> datetime.timedelta:
-        '''Get the duration of this Signal
-        '''
+        """Get the duration of this Signal"""
         return datetime.timedelta(seconds=self.time[-1] - self.time[0])
 
     def tindex(self, t: float) -> int:
-        '''Get the time index closest to time `t`
-        '''
+        """Get the time index closest to time `t`"""
         return (np.abs(self.time - t)).argmin()
 
-    def copy(self) -> 'Signal':
-        '''Return a deep copy of this signal
-        '''
+    def copy(self) -> "Signal":
+        """Return a deep copy of this signal"""
         s = type(self)(self.name, self.signal.copy(), time=self.time.copy(), fs=self.fs, units=self.units)
         s.marks.update(**self.marks)
         return s
 
     def aggregate(self, func: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]]) -> "Signal":
-        '''Aggregate this signal.
+        """Aggregate this signal.
 
         If there is only a single observation, that observation is returned unchanged, otherwise  observations will
         be aggregated by `func` along axis=0.
@@ -101,9 +101,9 @@ class Signal(object):
 
         Returns:
         aggregated signal
-        '''
+        """
         if self.nobs == 1:
-            return self #maybe we should raise??
+            return self  # maybe we should raise??
         else:
             f: Callable[[np.ndarray], np.ndarray]
             if isinstance(func, str):
@@ -115,7 +115,7 @@ class Signal(object):
             else:
                 f = func
 
-            s = Signal(f'{self.name}#{f.__name__}', f(self.signal), time=self.time, units=self.units)
+            s = Signal(f"{self.name}#{f.__name__}", f(self.signal), time=self.time, units=self.units)
             s.marks.update(self.marks)
             return s
 
@@ -129,24 +129,22 @@ class Signal(object):
         Returns:
         `None` if `as_str` is `False`; if `as_str` is `True`, returns the description as a `str`
         """
-        buffer  = f'{prefix}{self.name}:\n'
-        buffer += f'{prefix}    units = {self.units}\n'
-        buffer += f'{prefix}    n_observations = {self.nobs}\n'
-        buffer += f'{prefix}    n_samples = {self.nsamples}\n'
-        buffer += f'{prefix}    duration = {self.duration}\n'
-        buffer += f'{prefix}    sample_rate = {self.fs}\n'
+        buffer = f"{prefix}{self.name}:\n"
+        buffer += f"{prefix}    units = {self.units}\n"
+        buffer += f"{prefix}    n_observations = {self.nobs}\n"
+        buffer += f"{prefix}    n_samples = {self.nsamples}\n"
+        buffer += f"{prefix}    duration = {self.duration}\n"
+        buffer += f"{prefix}    sample_rate = {self.fs}\n"
         if len(self.marks) > 0:
-            buffer += f'{prefix}    marks ({len(self.marks)}):\n'
+            buffer += f"{prefix}    marks ({len(self.marks)}):\n"
             for k, v in self.marks.items():
-                buffer += f'{prefix}        {datetime.timedelta(seconds=v)} {k}\n'
+                buffer += f"{prefix}        {datetime.timedelta(seconds=v)} {k}\n"
 
         if as_str:
             return buffer
         else:
             print(buffer)
             return None
-
-
 
 
 class Session(object):
@@ -175,20 +173,20 @@ class Session(object):
             for k, v in self.metadata.items():
                 buffer += f"    {k}: {v}\n"
         else:
-            buffer += '    < No Metadata Available >\n'
+            buffer += "    < No Metadata Available >\n"
         buffer += "\n"
 
         buffer += "Epocs:\n"
         if len(self.epocs) > 0:
             for k, v in self.epocs.items():
-                #buffer += f'    "{k}" with shape {v.shape}:\n    {np.array2string(v, prefix="    ")}\n\n'
-                buffer += f'    {k}:\n'
-                buffer += f'        num_events = {v.shape}\n'
-                buffer += f'        avg_rate = {datetime.timedelta(seconds=np.diff(v)[0])}\n'
-                buffer += f'        earliest = {datetime.timedelta(seconds=v[0])}\n'
-                buffer += f'        latest = {datetime.timedelta(seconds=v[-1])}\n'
+                # buffer += f'    "{k}" with shape {v.shape}:\n    {np.array2string(v, prefix="    ")}\n\n'
+                buffer += f"    {k}:\n"
+                buffer += f"        num_events = {v.shape}\n"
+                buffer += f"        avg_rate = {datetime.timedelta(seconds=np.diff(v)[0])}\n"
+                buffer += f"        earliest = {datetime.timedelta(seconds=v[0])}\n"
+                buffer += f"        latest = {datetime.timedelta(seconds=v[-1])}\n"
         else:
-            buffer += '    < No Epocs Available >\n'
+            buffer += "    < No Epocs Available >\n"
         buffer += "\n"
 
         buffer += "Signals:\n"
@@ -196,7 +194,7 @@ class Session(object):
             for k, v in self.signals.items():
                 buffer += v.describe(as_str=True, prefix="    ")
         else:
-            buffer += '    < No Signals Available >\n'
+            buffer += "    < No Signals Available >\n"
         buffer += "\n"
 
         if as_str:
@@ -249,14 +247,12 @@ class Session(object):
         self.epocs.pop(old_name)
 
 
-
-
 class SessionCollection(list[Session]):
     """Collection of session data"""
 
     def __init__(self, *args) -> None:
         super().__init__(*args)
-        self.__meta_meta: dict[str, dict[Literal['order'], Any]] = {}
+        self.__meta_meta: dict[str, dict[Literal["order"], Any]] = {}
 
     @property
     def metadata(self) -> pd.DataFrame:
@@ -264,8 +260,8 @@ class SessionCollection(list[Session]):
         df = pd.DataFrame([item.metadata for item in self])
 
         for k, v in self.__meta_meta.items():
-            if 'order' in v:
-                df[k] = pd.Categorical(df[k], categories=v['order'], ordered=True)
+            if "order" in v:
+                df[k] = pd.Categorical(df[k], categories=v["order"], ordered=True)
 
         return df
 
@@ -306,7 +302,7 @@ class SessionCollection(list[Session]):
             self.__meta_meta[key] = {}
 
         if order is not None:
-            self.__meta_meta[key]['order'] = order
+            self.__meta_meta[key]["order"] = order
 
     def rename_signal(self, old_name: str, new_name: str) -> None:
         """Rename a signal on each session in this collection
@@ -387,12 +383,11 @@ class SessionCollection(list[Session]):
         """
         return [item.signals[name] for item in self]
 
-    def aggregate_signals(self, name: str, method='mean') -> Signal:
-        """Aggregate signals across sessions in this collection for the signal name `name`
-        """
+    def aggregate_signals(self, name: str, method="mean") -> Signal:
+        """Aggregate signals across sessions in this collection for the signal name `name`"""
         signals = self.get_signal(name)
         if len(signals) <= 0:
-            raise ValueError('No signals were passed!')
+            raise ValueError("No signals were passed!")
 
         # check all signals have the same number of samples
         assert np.all(np.equal([s.nsamples for s in signals], signals[0].nsamples))

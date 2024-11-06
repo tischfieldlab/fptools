@@ -8,9 +8,15 @@ from fptools.preprocess.lib import lowpass_filter, t2fs, trim, fs2t, downsample 
 from fptools.io import Session, Signal, SignalMapping
 
 
-def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], show_steps: bool = True,
-                plot_dir: str = '', downsample: Optional[int] = None) -> Session:
-    '''A "simple" preprocess pipeline based on ultra-lowpass filtering.
+def lowpass_dff(
+    session: Session,
+    block: Any,
+    signal_map: list[SignalMapping],
+    show_steps: bool = True,
+    plot_dir: str = "",
+    downsample: Optional[int] = None,
+) -> Session:
+    """A "simple" preprocess pipeline based on ultra-lowpass filtering.
 
     Implemented as described in:
     Cai, Kaeser, et al. Dopamine dynamics are dispensable for movement but promote reward responses.
@@ -29,21 +35,21 @@ def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], s
     show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
     plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
     downsample: if not `None`, downsample signal by `downsample` factor.
-    '''
+    """
     try:
         if show_steps:
-            fig, axs = plt.subplots(4, 1, figsize=(24, 6*4))
-            palette = sns.color_palette('colorblind', n_colors=len(signal_map))
+            fig, axs = plt.subplots(4, 1, figsize=(24, 6 * 4))
+            palette = sns.color_palette("colorblind", n_colors=len(signal_map))
 
         signals: list[Signal] = []
         for sm in signal_map:
-            stream = block.streams[sm['tdt_name']]
-            signals.append(Signal(sm['dest_name'], stream.data, fs=stream.fs))
+            stream = block.streams[sm["tdt_name"]]
+            signals.append(Signal(sm["dest_name"], stream.data, fs=stream.fs))
 
         if show_steps:
             for i, sig in enumerate(signals):
                 axs[0].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
-            axs[0].set_title('Raw signal')
+            axs[0].set_title("Raw signal")
             axs[0].legend()
 
         # trim raw signal start to when the optical system came online
@@ -53,7 +59,7 @@ def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], s
         if show_steps:
             for i, sig in enumerate(signals):
                 axs[1].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
-            axs[1].set_title('Trimmed Raw signal')
+            axs[1].set_title("Trimmed Raw signal")
             axs[1].legend()
 
         # lowpass filter at 0.01 Hz
@@ -66,18 +72,18 @@ def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], s
         if show_steps:
             for i, sig in enumerate(lowpass_signals):
                 axs[2].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
-            axs[2].set_title('Lowpasss filtered (0.01 Hz)')
+            axs[2].set_title("Lowpasss filtered (0.01 Hz)")
             axs[2].legend()
 
         # calculate dF/F
         for sig, lowpass_sig in zip(signals, lowpass_signals):
             sig.signal = ((sig.signal - lowpass_sig.signal) / lowpass_sig.signal) * 100
-            sig.units = 'ΔF/F'
+            sig.units = "ΔF/F"
 
         if show_steps:
             for i, sig in enumerate(signals):
                 axs[3].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
-            axs[3].set_title('Normalized (dff)')
+            axs[3].set_title("Normalized (dff)")
             axs[3].legend()
 
         # possibly downsample
@@ -95,6 +101,6 @@ def lowpass_dff(session: Session, block: Any, signal_map: list[SignalMapping], s
         raise
     finally:
         if show_steps:
-            fig.savefig(os.path.join(plot_dir, f'{block.info.blockname}.png'), dpi=600)
-            fig.savefig(os.path.join(plot_dir, f'{block.info.blockname}.pdf'))
+            fig.savefig(os.path.join(plot_dir, f"{block.info.blockname}.png"), dpi=600)
+            fig.savefig(os.path.join(plot_dir, f"{block.info.blockname}.pdf"))
             plt.close(fig)

@@ -15,41 +15,47 @@ from .session import Session, SessionCollection, Signal
 class SignalMapping(TypedDict):
     tdt_name: str
     dest_name: str
-    role: Literal['experimental', 'control']
+    role: Literal["experimental", "control"]
 
 
 class Preprocessor(Protocol):
-    def __call__(self, session: Session, block: Any, signal_map: list[SignalMapping], **kwargs) -> Session:
-        ...
+    def __call__(self, session: Session, block: Any, signal_map: list[SignalMapping], **kwargs) -> Session: ...
 
 
 def load_manifest(path: str) -> pd.DataFrame:
-    '''Load a manifest file, accepting most common tabular formats.
+    """Load a manifest file, accepting most common tabular formats.
 
     Expects to find a column named `blockname`.
-    '''
+    """
     ext = os.path.splitext(path)[1]
 
     df: pd.DataFrame
-    if ext == '.tsv':
-        df = pd.read_csv(path, sep='\t')
-    elif ext == '.csv':
+    if ext == ".tsv":
+        df = pd.read_csv(path, sep="\t")
+    elif ext == ".csv":
         df = pd.read_csv(path)
-    elif ext == '.xlsx':
+    elif ext == ".xlsx":
         df = pd.read_excel(path)
     else:
-        raise ValueError('did not understand format')
+        raise ValueError("did not understand format")
 
-    if 'blockname' in df.columns:
-        df.set_index('blockname', inplace=True)
+    if "blockname" in df.columns:
+        df.set_index("blockname", inplace=True)
 
     return df
 
 
-def load_data(tank_path: str, signal_map: list[SignalMapping], manifest_path: Optional[str] = None, max_workers: Optional[int] = None,
-              preprocess: Optional[Preprocessor] = None, cache: bool = True, 
-              cache_dir: str = 'cache', **kwargs) -> SessionCollection:
-    '''Load blocks from `tank_path` and return a `SessionCollection`
+def load_data(
+    tank_path: str,
+    signal_map: list[SignalMapping],
+    manifest_path: Optional[str] = None,
+    max_workers: Optional[int] = None,
+    preprocess: Optional[Preprocessor] = None,
+    cache: bool = True,
+    cache_dir: str = "cache",
+    **kwargs,
+) -> SessionCollection:
+    """Load blocks from `tank_path` and return a `SessionCollection`
 
     Loading will happen in parallel, split across `max_workers` worker processes.
 
@@ -57,7 +63,7 @@ def load_data(tank_path: str, signal_map: list[SignalMapping], manifest_path: Op
     files is controlled by the `cache_dir` parameter.
 
     You can specify a manifest (in TSV, CSV or XLSX formats) containing additional metadata to be injected into the loaded data.
-    This manifest should have at minimum one column with header `blockname` containing each block's name. You may include any other arbitrary 
+    This manifest should have at minimum one column with header `blockname` containing each block's name. You may include any other arbitrary
     data columns you may wish. One special column name is `exclude` which should contain boolean `True` or `False`. If a block
     is marked with `True` in this column, then the block will not be loaded or returned in the resulting `SessionCollection`.
 
@@ -78,7 +84,7 @@ def load_data(tank_path: str, signal_map: list[SignalMapping], manifest_path: Op
 
     Returns:
     `SessionCollection` containing loaded data
-    '''
+    """
     has_manifest = False
     if manifest_path is not None:
         manifest = load_manifest(manifest_path)
@@ -91,21 +97,16 @@ def load_data(tank_path: str, signal_map: list[SignalMapping], manifest_path: Op
     sessions = SessionCollection()
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         # collect common worker args in one place
-        worker_args = {
-            'preprocess': preprocess,
-            'cache': cache,
-            'cache_dir': cache_dir,
-            **kwargs
-        }
-        for p in glob.glob(os.path.join(tank_path, '**/*.tbk'), recursive=True):
+        worker_args = {"preprocess": preprocess, "cache": cache, "cache_dir": cache_dir, **kwargs}
+        for p in glob.glob(os.path.join(tank_path, "**/*.tbk"), recursive=True):
             block_dir = os.path.dirname(p)
             block_name = os.path.basename(block_dir)
 
             if has_manifest:
                 block_meta = manifest.loc[block_name]
                 # possibly exclude the block, if flagged in the manifest
-                if 'exclude' in block_meta and block_meta['exclude']:
-                    tqdm.write(f'Excluding block {block_name} due to manifest exclude flag')
+                if "exclude" in block_meta and block_meta["exclude"]:
+                    tqdm.write(f"Excluding block {block_name} due to manifest exclude flag")
                     continue
 
             # submit the task to the pool
@@ -120,16 +121,24 @@ def load_data(tank_path: str, signal_map: list[SignalMapping], manifest_path: Op
                     s.metadata.update(manifest.loc[futures[f]].to_dict())
                 sessions.append(s)
             except Exception as e:
-                tqdm.write(f'Encountered problem loading data at "{futures[f]}":\n{traceback.format_exc()}\nData will be omitted from the final collection!\n')
+                tqdm.write(
+                    f'Encountered problem loading data at "{futures[f]}":\n{traceback.format_exc()}\nData will be omitted from the final collection!\n'
+                )
                 pass
 
     return sessions
 
 
-
-def __load_block(block_path: str, signal_map: list[SignalMapping], preprocess: Optional[Preprocessor] = None, cache: bool = True, cache_dir: str = 'cache', **kwargs) -> Session:
+def __load_block(
+    block_path: str,
+    signal_map: list[SignalMapping],
+    preprocess: Optional[Preprocessor] = None,
+    cache: bool = True,
+    cache_dir: str = "cache",
+    **kwargs,
+) -> Session:
     blockname = os.path.basename(block_path)
-    cache_path = os.path.join(cache_dir, f'{blockname}.pkl')
+    cache_path = os.path.join(cache_dir, f"{blockname}.pkl")
 
     if cache and os.path.exists(cache_path):
         print(f'loading cache: "{cache_path}"')
@@ -159,12 +168,12 @@ def __load_block(block_path: str, signal_map: list[SignalMapping], preprocess: O
 
 
 def __default_preprocess(session: Session, block: Any, signal_map: list[SignalMapping]) -> Session:
-    '''A default preprocessing pipeline that doesnt do much of anything.
+    """A default preprocessing pipeline that doesnt do much of anything.
 
     Only adds each stream to the session as  a `Signal`
-    '''
+    """
     for sm in signal_map:
-        stream = block.streams[sm['tdt_name']]
-        session.add_signal(Signal(sm['dest_name'], stream.data, fs=stream.fs, units='mV'))
+        stream = block.streams[sm["tdt_name"]]
+        session.add_signal(Signal(sm["dest_name"], stream.data, fs=stream.fs, units="mV"))
 
     return session

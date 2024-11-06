@@ -15,11 +15,10 @@ from matplotlib.lines import Line2D
 from fptools.io import Session, Signal, SessionCollection
 
 
-def aggregate_signals(signals: list[Signal], method='mean') -> Signal:
-    """Aggregate the signals
-    """
+def aggregate_signals(signals: list[Signal], method="mean") -> Signal:
+    """Aggregate the signals"""
     if len(signals) <= 0:
-        raise ValueError('No signals were passed!')
+        raise ValueError("No signals were passed!")
 
     # check all signals have the same number of samples
     assert np.all(np.equal([s.nsamples for s in signals], signals[0].nsamples))
@@ -32,7 +31,14 @@ def aggregate_signals(signals: list[Signal], method='mean') -> Signal:
     return s
 
 
-def plot_signal(signal: Signal, ax: Optional[Axes] = None, show_indv: bool = True, color: ColorType = 'k', indv_c: ColorType = 'b', indv_alpha: float = 0.1) -> Axes:
+def plot_signal(
+    signal: Signal,
+    ax: Optional[Axes] = None,
+    show_indv: bool = True,
+    color: ColorType = "k",
+    indv_c: ColorType = "b",
+    indv_alpha: float = 0.1,
+) -> Axes:
     if ax is None:
         fig, ax = plt.subplots()
 
@@ -44,17 +50,17 @@ def plot_signal(signal: Signal, ax: Optional[Axes] = None, show_indv: bool = Tru
         for i in range(signal.signal.shape[0]):
             sns.lineplot(data=None, x=signal.time, y=signal.signal[i, :], alpha=indv_alpha, ax=ax, color=indv_c)
 
-    sns.lineplot(data=df, x=df.index, y='value', ax=ax, color=color)
+    sns.lineplot(data=df, x=df.index, y="value", ax=ax, color=color)
 
-    ax.set_xlabel('Time, Reletive to Event (s)')
-    ax.set_ylabel(f'{signal.name} ({signal.units})')
+    ax.set_xlabel("Time, Reletive to Event (s)")
+    ax.set_ylabel(f"{signal.name} ({signal.units})")
 
     xticks = ax.get_xticks()
     xticklabels = ax.get_xticklabels()
     if len(xticklabels) == 0:
-        xticklabels = [Text(text=f'{xt}') for xt in xticks]
+        xticklabels = [Text(text=f"{xt}") for xt in xticks]
     for k, v in signal.marks.items():
-        ax.axvline(v, c='gray', ls='--')
+        ax.axvline(v, c="gray", ls="--")
         try:
             xt = np.where(xticks == float(v))[0][0]
             xticklabels[xt] = Text(text=k)
@@ -70,17 +76,19 @@ def plot_signal(signal: Signal, ax: Optional[Axes] = None, show_indv: bool = Tru
     return ax
 
 
-def sig_catplot(sessions: SessionCollection,
-                signal: str,
-                col: Union[str, None] = None,
-                col_order: Union[list[str], None] = None,
-                row: Union[str, None] = None,
-                row_order: Union[list[str], None] = None,
-                palette = None,
-                hue: Union[str, None] = None,
-                hue_order: Union[list[str], None] = None,
-                show_indv: bool = False,
-                indv_alpha: float = 0.1):
+def sig_catplot(
+    sessions: SessionCollection,
+    signal: str,
+    col: Union[str, None] = None,
+    col_order: Union[list[str], None] = None,
+    row: Union[str, None] = None,
+    row_order: Union[list[str], None] = None,
+    palette=None,
+    hue: Union[str, None] = None,
+    hue_order: Union[list[str], None] = None,
+    show_indv: bool = False,
+    indv_alpha: float = 0.1,
+):
 
     metadata = sessions.metadata
 
@@ -112,22 +120,21 @@ def sig_catplot(sessions: SessionCollection,
         len(plot_rows), len(plot_cols), figsize=(len(plot_cols) * 6, len(plot_rows) * 6), sharey=True, sharex=True, squeeze=False
     )
 
-
     for row_i, cur_row in enumerate(plot_rows):
         if cur_row is not None:
-            row_criteria = (metadata[row] == cur_row)
+            row_criteria = metadata[row] == cur_row
         else:
             row_criteria = np.ones(len(metadata.index), dtype=bool)
 
         for col_i, cur_col in enumerate(plot_cols):
             if cur_col is not None:
-                col_criteria = (metadata[col] == cur_col)
+                col_criteria = metadata[col] == cur_col
             else:
                 col_criteria = np.ones(len(metadata.index), dtype=bool)
 
             ax = axs[row_i, col_i]
 
-            ax.set_title(f'{signal} at {col} = {cur_col} & {row} = {cur_row}')
+            ax.set_title(f"{signal} at {col} = {cur_col} & {row} = {cur_row}")
 
             if hue is None:
                 try:
@@ -146,14 +153,13 @@ def sig_catplot(sessions: SessionCollection,
 
                         plot_signal(sig, ax=ax, show_indv=show_indv, color=palette[hi], indv_c=palette[hi])
                         legend_items.append(Line2D([0], [0], color=palette[hi]))
-                        legend_labels.append(f'{curr_hue}, n={len(sess_subset)}')
+                        legend_labels.append(f"{curr_hue}, n={len(sess_subset)}")
 
                     except:
                         pass
 
-                ax.legend(legend_items, legend_labels, loc='upper right')
-                #sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
-
+                ax.legend(legend_items, legend_labels, loc="upper right")
+                # sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
 
 
 def plot_heatmap(signal: Signal, ax=None, cmap="viridis", vmin=None, vmax=None):
@@ -161,29 +167,22 @@ def plot_heatmap(signal: Signal, ax=None, cmap="viridis", vmin=None, vmax=None):
     if ax is None:
         fig, ax = plt.subplots()
 
-    cbar_kwargs = {
-        'label': f'{signal.name} ({signal.units})'
-    }
+    cbar_kwargs = {"label": f"{signal.name} ({signal.units})"}
 
-    sns.heatmap(data=np.atleast_2d(signal.signal),
-                ax=ax,
-                cmap=cmap,
-                vmin=vmin,
-                vmax=vmax,
-                cbar_kws=cbar_kwargs)
+    sns.heatmap(data=np.atleast_2d(signal.signal), ax=ax, cmap=cmap, vmin=vmin, vmax=vmax, cbar_kws=cbar_kwargs)
 
     xticks = [0, signal.nsamples]
-    xticklabels = [f'{signal.time[0]:0.0f}', f'{signal.time[-1]:0.0f}']
+    xticklabels = [f"{signal.time[0]:0.0f}", f"{signal.time[-1]:0.0f}"]
     for m, t in signal.marks.items():
         i = signal.tindex(t)
-        ax.axvline(i, c='w', ls='--')
+        ax.axvline(i, c="w", ls="--")
         xticks.append(i)
-        xticklabels.append(f'{m}')
+        xticklabels.append(f"{m}")
     order = np.argsort(xticks)
     xticks = [xticks[i] for i in order]
     xticklabels = [xticklabels[i] for i in order]
     ax.set_xticks(xticks, labels=xticklabels, rotation=0)
 
-    ax.set_xlabel('Time, Reletive to Event (sec)')
+    ax.set_xlabel("Time, Reletive to Event (sec)")
 
     return ax
