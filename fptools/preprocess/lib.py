@@ -27,7 +27,7 @@ def t2fs(time: np.ndarray) -> float:
     '''
     return 1 / np.median(np.diff(time))
 
-def lowpass_filter(signal: np.ndarray, fs: float, Wn: int = 10) -> np.ndarray:
+def lowpass_filter(signal: np.ndarray, fs: float, Wn: float = 10) -> np.ndarray:
     '''zero-phase lowpass filter a signal.
 
     Parameters:
@@ -87,7 +87,7 @@ def detrend_double_exponential(time: np.ndarray, signal: np.ndarray) -> tuple[np
     return signal - signal_fit, signal_fit
 
 
-def estimate_motion(signal: np.ndarray, control: np.ndarray) -> np.ndarray:
+def estimate_motion(signal: np.ndarray, control: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
     '''Estimate the contribution of motion artifacts in `signal`.
 
     Performs linear regression of control (x, independent) vs signal (y, dependent)
@@ -108,7 +108,7 @@ def are_arrays_same_length(*arrays: np.ndarray) -> bool:
     '''Check if all arrays are the same shape in the first axis
     '''
     lengths = [arr.shape[0] for arr in arrays]
-    return np.all(np.array(lengths) == lengths[0])
+    return bool(np.all(np.array(lengths) == lengths[0]))
 
 
 # def downsample(*signals, factor: int = 10):
@@ -124,7 +124,7 @@ def are_arrays_same_length(*arrays: np.ndarray) -> bool:
 #     return downsampled
 
 
-def downsample(*signals, window: int = 10, factor: int = 10) -> np.ndarray:
+def downsample(*signals, window: int = 10, factor: int = 10) -> tuple[np.ndarray, ...]:
     '''Downsample one or more signals by factor across windows of size `window`
 
     performs a moving window average using windows of size `window`, then takes every
@@ -139,7 +139,7 @@ def downsample(*signals, window: int = 10, factor: int = 10) -> np.ndarray:
     downsampled signal
     '''
     #assert are_arrays_same_length(*signals)
-    return [np.convolve(sig, np.ones(window) / window, mode='valid')[::factor] for sig in signals]
+    return tuple(np.convolve(sig, np.ones(window) / window, mode='valid')[::factor] for sig in signals)
 
 
 
@@ -159,7 +159,7 @@ def trim(*signals, begin=None, end=None) -> tuple[np.ndarray, ...]:
         begin = 0
     if end is None:
         end = signals[0].shape[0]
-    return (sig[begin:end] for sig in signals)
+    return tuple(sig[begin:end] for sig in signals)
 
 
 def df_f(signal: np.ndarray, isosbestic: np.ndarray):

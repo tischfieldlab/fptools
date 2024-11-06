@@ -4,14 +4,15 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.typing import ColorType
 from matplotlib.axes import Axes
+from matplotlib.text import Text
 import pandas as pd
 import scipy
 import scipy.interpolate
 import seaborn as sns
-from typing import Union
+from typing import Optional, Union
 from matplotlib.lines import Line2D
 
-from fptools.io import Session, Signal
+from fptools.io import Session, Signal, SessionCollection
 
 
 def aggregate_signals(signals: list[Signal], method='mean') -> Signal:
@@ -31,7 +32,7 @@ def aggregate_signals(signals: list[Signal], method='mean') -> Signal:
     return s
 
 
-def plot_signal(signal: Signal, ax: Axes = None, show_indv: bool = True, color: ColorType = 'k', indv_c: ColorType = 'b', indv_alpha: float = 0.1) -> mpl.axes.Axes:
+def plot_signal(signal: Signal, ax: Optional[Axes] = None, show_indv: bool = True, color: ColorType = 'k', indv_c: ColorType = 'b', indv_alpha: float = 0.1) -> Axes:
     if ax is None:
         fig, ax = plt.subplots()
 
@@ -51,25 +52,25 @@ def plot_signal(signal: Signal, ax: Axes = None, show_indv: bool = True, color: 
     xticks = ax.get_xticks()
     xticklabels = ax.get_xticklabels()
     if len(xticklabels) == 0:
-        xticklabels = [f'{xt}' for xt in xticks]
+        xticklabels = [Text(text=f'{xt}') for xt in xticks]
     for k, v in signal.marks.items():
         ax.axvline(v, c='gray', ls='--')
         try:
             xt = np.where(xticks == float(v))[0][0]
-            xticklabels[xt] = k
+            xticklabels[xt] = Text(text=k)
         except:
             xticks = np.append(xticks, float(v))
-            xticklabels.append(k)
+            xticklabels.append(Text(text=k))
             order = np.argsort(xticks)
             xticks = xticks[order]
             xticklabels = [xticklabels[i] for i in order]
             pass
-    ax.set_xticks(xticks, xticklabels)
+    ax.set_xticks(xticks, [t.get_text() for t in xticklabels])
 
     return ax
 
 
-def sig_catplot(sessions: list[Session],
+def sig_catplot(sessions: SessionCollection,
                 signal: str,
                 col: Union[str, None] = None,
                 col_order: Union[list[str], None] = None,
@@ -131,11 +132,11 @@ def sig_catplot(sessions: list[Session],
             if hue is None:
                 try:
                     sig = sessions.select(row_criteria, col_criteria).aggregate_signals(signal)
-                    plot_signal(sig, ax=ax, indv=show_indv, color=palette[0], indv_c=palette[0], indv_alpha=indv_alpha)
+                    plot_signal(sig, ax=ax, show_indv=show_indv, color=palette[0], indv_c=palette[0], indv_alpha=indv_alpha)
                 except:
                     pass
 
-            else:
+            elif hue_order is not None:
                 legend_items = []
                 legend_labels = []
                 for hi, curr_hue in enumerate(hue_order):

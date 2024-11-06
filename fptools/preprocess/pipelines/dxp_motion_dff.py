@@ -38,9 +38,10 @@ def dxp_motion_dff(session: Session, block: Any, signal_map: list[SignalMapping]
             axs[1].legend()
 
         # detrend using a double exponential fit
-        fits = []
+        fits: list[np.ndarray] = []
         for sig in signals:
             detrended_sig, fit = detrend_double_exponential(sig.time, sig.signal)
+            fits.append(fit)
 
             if show_steps:
                 axs[2].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
@@ -58,7 +59,7 @@ def dxp_motion_dff(session: Session, block: Any, signal_map: list[SignalMapping]
             axs[3].legend()
 
         # correct for motion artifacts
-        ctrl_idx = next((i for i, sm in enumerate(signal_map) if signal_map['role'] == "control"), None)
+        ctrl_idx = next((i for i, sm in enumerate(signal_map) if sm['role'] == "control"), None)
         if ctrl_idx is None:
             raise ValueError('To use motion correction, at least one signal must be marked with `role`="Control" in the `signal_map`!')
         for sm, sig in zip(signal_map, signals):

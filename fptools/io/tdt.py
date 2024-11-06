@@ -2,7 +2,7 @@ import concurrent.futures
 import glob
 import os
 import traceback
-from typing import Any, Callable, Literal, Optional, TypedDict
+from typing import Any, Callable, Literal, Optional, Protocol, TypedDict, cast
 
 import joblib
 import pandas as pd
@@ -16,6 +16,11 @@ class SignalMapping(TypedDict):
     tdt_name: str
     dest_name: str
     role: Literal['experimental', 'control']
+
+
+class Preprocessor(Protocol):
+    def __call__(self, session: Session, block: Any, signal_map: list[SignalMapping], **kwargs) -> Session:
+        ...
 
 
 def load_manifest(path: str) -> pd.DataFrame:
@@ -42,7 +47,7 @@ def load_manifest(path: str) -> pd.DataFrame:
 
 
 def load_data(tank_path: str, signal_map: list[SignalMapping], manifest_path: Optional[str] = None, max_workers: Optional[int] = None,
-              preprocess: Optional[Callable[[Session, Any], Session]] = None, cache: bool = True, 
+              preprocess: Optional[Preprocessor] = None, cache: bool = True, 
               cache_dir: str = 'cache', **kwargs) -> SessionCollection:
     '''Load blocks from `tank_path` and return a `SessionCollection`
 
@@ -122,7 +127,7 @@ def load_data(tank_path: str, signal_map: list[SignalMapping], manifest_path: Op
 
 
 
-def __load_block(block_path: str, signal_map: list[SignalMapping], preprocess: Optional[Callable[[Session, Any], Session]] = None, cache: bool = True, cache_dir: str = 'cache', **kwargs) -> Session:
+def __load_block(block_path: str, signal_map: list[SignalMapping], preprocess: Optional[Preprocessor] = None, cache: bool = True, cache_dir: str = 'cache', **kwargs) -> Session:
     blockname = os.path.basename(block_path)
     cache_path = os.path.join(cache_dir, f'{blockname}.pkl')
 
@@ -139,10 +144,13 @@ def __load_block(block_path: str, signal_map: list[SignalMapping], preprocess: O
         for k in block.epocs.keys():
             session.epocs[k] = block.epocs[k].onset
 
+        preprocess_impl: Preprocessor
         if preprocess is None:
-            preprocess = __default_preprocess
+            preprocess_impl = cast(Preprocessor, __default_preprocess)
+        else:
+            preprocess_impl = preprocess
 
-        session = preprocess(session, block, signal_map, **kwargs)
+        session = preprocess_impl(session, block, signal_map, **kwargs)
 
         if cache:
             joblib.dump(session, cache_path, compress=True)
@@ -157,6 +165,6 @@ def __default_preprocess(session: Session, block: Any, signal_map: list[SignalMa
     '''
     for sm in signal_map:
         stream = block.streams[sm['tdt_name']]
-        session.add_signal(Signal(sm.dest_name, stream.data, fs=stream.fs, units='mV'))
+        session.add_signal(Signal(sm['dest_name'], stream.data, fs=stream.fs, units='mV'))
 
     return session

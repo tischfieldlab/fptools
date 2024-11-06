@@ -1,7 +1,8 @@
 from collections import Counter
 import copy
 import datetime
-from typing import Any, Callable, List, Literal, Optional, Union
+from functools import partial
+from typing import Any, Callable, List, Literal, Optional, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -27,11 +28,17 @@ class Signal(object):
         self.name = name
         self.signal = signal
         self.units = units
-        self.marks = {}
+        self.marks: dict[str, float] = {}
+        self.time: np.ndarray
+        self.fs: float
 
-        if time is None and fs is None:
-            # neither time or sampling frequency provided, we need at least one!
-            raise ValueError('Both `time` and `fs` cannot be `None`, one must be supplied!')
+        if time is not None and fs is not None:
+            # both time and sampling frequency provided
+            self.time = time
+            self.fs = fs
+            # just do a sanity check that the two pieces of information make sense
+            if not np.isclose(self.fs, 1 / np.median(np.diff(time))):
+                raise ValueError(f'Both `time` and `fs` were provided, but they do not match!\n  fs={fs}\ntime={1 / np.median(np.diff(time))}')
 
         elif time is None and fs is not None:
             # sampleing frequency is provided, infer time from fs
@@ -44,12 +51,8 @@ class Signal(object):
             self.fs = 1 / np.median(np.diff(time))
 
         else:
-            # both time and sampling frequency provided
-            self.time = time
-            self.fs = fs
-            # just do a sanity check that the two pieces of information make sense
-            if not np.isclose(self.fs, 1 / np.median(np.diff(time))):
-                raise ValueError(f'Both `time` and `fs` were provided, but they do not match!\n  fs={fs}\ntime={1 / np.median(np.diff(time))}')
+            # neither time or sampling frequency provided, we need at least one!
+            raise ValueError('Both `time` and `fs` cannot be `None`, one must be supplied!')
 
         if not self.signal.shape[-1] == self.time.shape[0]:
             raise ValueError(f'Signal and time must have the same length! signal.shape={self.signal.shape}; time.shape={self.time.shape}')
@@ -84,7 +87,7 @@ class Signal(object):
         s.marks.update(**self.marks)
         return s
 
-    def aggregate(self, func: Union[str, Callable[[np.ndarray], np.ndarray]]) -> "Signal":
+    def aggregate(self, func: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]]) -> "Signal":
         '''Aggregate this signal.
 
         If there is only a single observation, that observation is returned unchanged, otherwise  observations will
@@ -104,11 +107,15 @@ class Signal(object):
         else:
             f: Callable[[np.ndarray], np.ndarray]
             if isinstance(func, str):
-                f = getattr(np, func)
+                f = partial(cast(np.ufunc, getattr(np, func)), axis=0)
+
+            elif isinstance(func, np.ufunc):
+                f = partial(func, axis=0)
+
             else:
                 f = func
 
-            s = Signal(f'{self.name}#{f.__name__}', f(self.signal, axis=0), time=self.time, units=self.units)
+            s = Signal(f'{self.name}#{f.__name__}', f(self.signal), time=self.time, units=self.units)
             s.marks.update(self.marks)
             return s
 
@@ -247,7 +254,7 @@ class Session(object):
 class SessionCollection(list[Session]):
     """Collection of session data"""
 
-    def __init__(self, *args):
+    def __init__(self, *args) -> None:
         super().__init__(*args)
         self.__meta_meta: dict[str, dict[Literal['order'], Any]] = {}
 
