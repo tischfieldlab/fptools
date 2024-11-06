@@ -10,14 +10,14 @@ This package allows you to load data produced by TDT Synapse software, and eases
 ## Install
 We recommend you use anaconda virtual environments. Two main ways to install. The first, create the virtual environment, and install this package directly (more useful on "production" systems). The second, clone the repository, and then pass to anaconda the `environment.yaml` file during environment creation (more useful for development).
 ```
-conda create -n fptools python=3.9
+conda create -n fptools python=3.12
 pip install git+https://github.com/tischfieldlab/fptools.git
 ```
 OR
 ```
 git clone https://github.com/tischfieldlab/fptools.git
 cd fptools
-conda create --file environment.yml
+conda env create -f environment.yml
 ```
 
 ## Usage
