@@ -5,3 +5,8 @@ build-backend = "setuptools.build_meta"
 [tool.black]
 line-length = 140
 color = true
+
+[tool.pydocstyle]
+convention = "google"
+match-dir = "^((?!notebooks|\\.).)*$"
+add-ignore = "D100,D101,D104"
