@@ -12,6 +12,8 @@ FieldList = Union[Literal["all"], list[str]]
 
 
 class Signal(object):
+    """Represents a real valued signal with fixed interval sampling."""
+
     def __init__(
         self, name: str, signal: np.ndarray, time: Optional[np.ndarray] = None, fs: Optional[float] = None, units: str = "AU"
     ) -> None:
@@ -21,12 +23,12 @@ class Signal(object):
         from `time`. If `fs` is provided, the sampled timepoints (`time`) will be estimated. If both are provided, the values
         will be checked against one another, and if they do not match, a ValueError will be raised.
 
-        Parameters:
-        name: Name of this signal
-        signal: Array of signal values
-        time: Array of sampled timepoints
-        fs: Sampling frequency, in Hz
-        units: units of this signal
+        Args:
+            name: Name of this signal
+            signal: Array of signal values
+            time: Array of sampled timepoints
+            fs: Sampling frequency, in Hz
+            units: units of this signal
         """
         self.name = name
         self.signal = signal
@@ -64,25 +66,25 @@ class Signal(object):
 
     @property
     def nobs(self) -> int:
-        """Get the number of observations for this Signal (i.e. number of trials)"""
+        """Get the number of observations for this Signal (i.e. number of trials)."""
         return self.signal.shape[0] if len(self.signal.shape) > 1 else 1
 
     @property
     def nsamples(self) -> int:
-        """Get the number of samples for this Signal (i.e. length of signal)"""
+        """Get the number of samples for this Signal (i.e. length of signal)."""
         return self.signal.shape[-1]
 
     @property
     def duration(self) -> datetime.timedelta:
-        """Get the duration of this Signal"""
+        """Get the duration of this Signal."""
         return datetime.timedelta(seconds=self.time[-1] - self.time[0])
 
     def tindex(self, t: float) -> int:
-        """Get the time index closest to time `t`"""
+        """Get the time index closest to time `t`."""
         return (np.abs(self.time - t)).argmin()
 
     def copy(self) -> "Signal":
-        """Return a deep copy of this signal"""
+        """Return a deep copy of this signal."""
         s = type(self)(self.name, self.signal.copy(), time=self.time.copy(), fs=self.fs, units=self.units)
         s.marks.update(**self.marks)
         return s
@@ -95,12 +97,12 @@ class Signal(object):
 
         Marks, units, and time will be propegated. The new signal will be named according to this signal, with `#{func_name}` appended.
 
-        Parameters:
-        func: string or callable that take a (nobs x nsample) array and returns a (nsample,) shaped array. If a string
-              will be interpreted as the name of a numpy function (e.x. mean, median, etc)
+        Args:
+            func: string or callable that take a (nobs x nsample) array and returns a (nsample,) shaped array. If a string
+                will be interpreted as the name of a numpy function (e.x. mean, median, etc)
 
         Returns:
-        aggregated signal
+            aggregated `Signal`
         """
         if self.nobs == 1:
             return self  # maybe we should raise??
@@ -120,14 +122,14 @@ class Signal(object):
             return s
 
     def describe(self, as_str: bool = False, prefix: str = "") -> Union[str, None]:
-        """Describe this Signal
+        """Describe this Signal.
 
-        Parameters:
-        as_str: if True, return description as a string, otherwise print the description and return None
-        prefix: a string to prepend to each line of output
+        Args:
+            as_str: if True, return description as a string, otherwise print the description and return None
+            prefix: a string to prepend to each line of output
 
         Returns:
-        `None` if `as_str` is `False`; if `as_str` is `True`, returns the description as a `str`
+            `None` if `as_str` is `False`; if `as_str` is `True`, returns the description as a `str`
         """
         buffer = f"{prefix}{self.name}:\n"
         buffer += f"{prefix}    units = {self.units}\n"
@@ -151,20 +153,21 @@ class Session(object):
     """Holds data and metadata for a single session."""
 
     def __init__(self) -> None:
+        """Initialize this Session object."""
         self.metadata: dict[str, Any] = {}
         self.signals: dict[str, Signal] = {}
         self.epocs: dict[str, np.ndarray] = {}
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
-        """Describe this session
+        """Describe this session.
 
         describes the metadata, scalars, and arrays contained in this session.
 
-        Parameters:
-        as_str: if True, return description as a string, otherwise print the description and return None
+        Args:
+            as_str: if True, return description as a string, otherwise print the description and return None
 
         Returns:
-        `None` if `as_str` is `False`; if `as_str` is `True`, returns the description as a `str`
+            `None` if `as_str` is `False`; if `as_str` is `True`, returns the description as a `str`
         """
         buffer = ""
 
@@ -203,27 +206,28 @@ class Session(object):
             print(buffer)
             return None
 
-    def add_signal(self, signal: Signal, overwrite: bool = False):
-        """Add a signal to this Session
+    def add_signal(self, signal: Signal, overwrite: bool = False) -> None:
+        """Add a signal to this Session.
 
         Raises an error if the new signal name already exists and `overwrite` is not True.
 
-        Parameters:
-        signal: the signal to add to this Session
+        Args:
+            signal: the signal to add to this Session
+            overwrite: if True, allow overwriting a pre-existing signal with the same name, if False, will raise instead.
         """
         if signal.name in self.signals and not overwrite:
             raise KeyError(f"Key `{signal.name}` already exists in data!")
 
         self.signals[signal.name] = signal
 
-    def rename_signal(self, old_name: str, new_name: str):
+    def rename_signal(self, old_name: str, new_name: str) -> None:
         """Rename a signal, from `old_name` to `new_name`.
 
         Raises an error if the new signal name already exists.
 
-        Parameters:
-        old_name: the current name for the signal
-        new_name: the new name for the signal
+        Args:
+            old_name: the current name for the signal
+            new_name: the new name for the signal
         """
         if new_name in self.signals:
             raise KeyError(f"Key `{new_name}` already exists in data!")
@@ -231,14 +235,14 @@ class Session(object):
         self.signals[new_name] = self.signals[old_name]
         self.signals.pop(old_name)
 
-    def rename_epoc(self, old_name: str, new_name: str):
+    def rename_epoc(self, old_name: str, new_name: str) -> None:
         """Rename a epoc, from `old_name` to `new_name`.
 
         Raises an error if the new epoc name already exists.
 
-        Parameters:
-        old_name: the current name for the epoc
-        new_name: the new name for the epoc
+        Args:
+            old_name: the current name for the epoc
+            new_name: the new name for the epoc
         """
         if new_name in self.epocs:
             raise KeyError(f"Key `{new_name}` already exists in data!")
@@ -248,9 +252,10 @@ class Session(object):
 
 
 class SessionCollection(list[Session]):
-    """Collection of session data"""
+    """Collection of session data."""
 
     def __init__(self, *args) -> None:
+        """Initialize this `SessionCollection`."""
         super().__init__(*args)
         self.__meta_meta: dict[str, dict[Literal["order"], Any]] = {}
 
@@ -267,34 +272,34 @@ class SessionCollection(list[Session]):
 
     @property
     def metadata_keys(self) -> List[str]:
-        """Get a list of the keys present in metadata across all sessions in this collection"""
+        """Get a list of the keys present in metadata across all sessions in this collection."""
         return list(set([key for item in self for key in item.metadata.keys()]))
 
     def add_metadata(self, key: str, value: Any) -> None:
-        """Set a metadata field on each session in this collection
+        """Set a metadata field on each session in this collection.
 
-        Parameters:
-        key: name of the metadata field
-        value: value for the metadata field
+        Args:
+            key: name of the metadata field
+            value: value for the metadata field
         """
         for item in self:
             item.metadata[key] = value
 
     def update_metadata(self, meta: dict[str, Any]) -> None:
-        """Set multiple metadata fields on each session in this collection
+        """Set multiple metadata fields on each session in this collection.
 
-        Parameters:
-        meta: metadata information to set on each session
+        Args:
+            meta: metadata information to set on each session
         """
         for item in self:
             item.metadata.update(meta)
 
     def set_metadata_props(self, key: str, order: Optional[list[Any]] = None):
-        """Set properties of a metadata column
+        """Set properties of a metadata column.
 
-        Paramters:
-        key: name of the metadata item, always required
-        order: optional, if specified will set the metadata column to be ordered categorical, according to `order`
+        Args:
+            key: name of the metadata item, always required
+            order: optional, if specified will set the metadata column to be ordered categorical, according to `order`
         """
         assert key in self.metadata_keys
 
@@ -305,21 +310,21 @@ class SessionCollection(list[Session]):
             self.__meta_meta[key]["order"] = order
 
     def rename_signal(self, old_name: str, new_name: str) -> None:
-        """Rename a signal on each session in this collection
+        """Rename a signal on each session in this collection.
 
-        Parameters:
-        old_name: current name of the signal
-        new_name: the new name for the signal
+        Args:
+            old_name: current name of the signal
+            new_name: the new name for the signal
         """
         for item in self:
             item.rename_signal(old_name, new_name)
 
     def rename_epoc(self, old_name: str, new_name: str) -> None:
-        """Rename an epoc on each session in this collection
+        """Rename an epoc on each session in this collection.
 
-        Parameters:
-        old_name: current name of the epoc
-        new_name: the new name for the epoc
+        Args:
+            old_name: current name of the epoc
+            new_name: the new name for the epoc
         """
         for item in self:
             item.rename_epoc(old_name, new_name)
@@ -327,11 +332,11 @@ class SessionCollection(list[Session]):
     def filter(self, predicate: Callable[[Session], bool]) -> "SessionCollection":
         """Filter the items in this collection, returning a new `SessionCollection` containing sessions which pass `predicate`.
 
-        Parameters:
-        predicate: a callable accepting a single session and returning bool.
+        Args:
+            predicate: a callable accepting a single session and returning bool.
 
         Returns:
-        a new `SessionCollection` containing only items which pass `predicate`.
+            a new `SessionCollection` containing only items which pass `predicate`.
         """
         sc = type(self)(item for item in self if predicate(item))
         sc.__meta_meta.update(**copy.deepcopy(self.__meta_meta))
@@ -340,51 +345,59 @@ class SessionCollection(list[Session]):
     def select(self, *bool_masks: np.ndarray) -> "SessionCollection":
         """Select sessions in this collection, returning a new `SessionCollection` containing sessions which all bool masks are true.
 
-        Parameters:
-        bool_masks: one or more boolean arrays, the reduced logical_and indicating which sessions to select
+        Args:
+            bool_masks: one or more boolean arrays, the reduced logical_and indicating which sessions to select
 
         Returns:
-        a new `SessionCollection` containing only items which pass bool_masks.
+            a new `SessionCollection` containing only items which pass bool_masks.
         """
         sc = type(self)(item for item, include in zip(self, np.logical_and.reduce(bool_masks)) if include)
         sc.__meta_meta.update(**copy.deepcopy(self.__meta_meta))
         return sc
 
     def map(self, action: Callable[[Session], Session]) -> "SessionCollection":
-        """Apply a function to each session in this collection, returning a new collection with the results
+        """Apply a function to each session in this collection, returning a new collection with the results.
 
-        Parameters:
-        action: callable accepting a single session and returning a new session
+        Args:
+            action: callable accepting a single session and returning a new session
 
         Returns:
-        a new `SessionCollection` containing the results of `action`
+            a new `SessionCollection` containing the results of `action`
         """
         sc = type(self)(action(item) for item in self)
         sc.__meta_meta.update(**copy.deepcopy(self.__meta_meta))
         return sc
 
     def apply(self, func: Callable[[Session], None]) -> None:
-        """Apply a function to each session in this collection
+        """Apply a function to each session in this collection.
 
-        Parameters:
-        func: callable accepting a single session and returning None
+        Args:
+            func: callable accepting a single session and returning None
         """
         for item in self:
             func(item)
 
     def get_signal(self, name: str) -> list[Signal]:
-        """Get data across sessions in this collection for the signal named `name`
+        """Get data across sessions in this collection for the signal named `name`.
 
-        Parameters:
-        name: Name of the signals to collect
+        Args:
+            name: Name of the signals to collect
 
-        Returns
-        List of Signals, each corresponding to a single session
+        Returns:
+            List of Signals, each corresponding to a single session
         """
         return [item.signals[name] for item in self]
 
-    def aggregate_signals(self, name: str, method="mean") -> Signal:
-        """Aggregate signals across sessions in this collection for the signal name `name`"""
+    def aggregate_signals(self, name: str, method: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]] = "mean") -> Signal:
+        """Aggregate signals across sessions in this collection for the signal name `name`.
+
+        Args:
+            name: name of the signal to aggregate
+            method: the method used for aggregation
+
+        Returns:
+            Aggregated `Signal`
+        """
         signals = self.get_signal(name)
         if len(signals) <= 0:
             raise ValueError("No signals were passed!")
@@ -400,13 +413,13 @@ class SessionCollection(list[Session]):
         return s
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
-        """Describe this collection of sessions
+        """Describe this collection of sessions.
 
-        Parameters:
-        as_str: if True, return description as a string, otherwise print the description and return None
+        Args:
+            as_str: if True, return description as a string, otherwise print the description and return None
 
         Returns:
-        `None` if `as_str` is `False`; if `as_str` is `True`, returns the description as a `str`
+            `None` if `as_str` is `False`; if `as_str` is `True`, returns the description as a `str`
         """
         buffer = ""
 

@@ -55,7 +55,7 @@ def load_data(
     cache_dir: str = "cache",
     **kwargs,
 ) -> SessionCollection:
-    """Load blocks from `tank_path` and return a `SessionCollection`
+    """Load blocks from `tank_path` and return a `SessionCollection`.
 
     Loading will happen in parallel, split across `max_workers` worker processes.
 
@@ -73,17 +73,17 @@ def load_data(
     Your callable preprocess routine should attach any data to the passed `Session` object and return this `Session` object as it's sole return value.
     For example preprocessing routines, please see the implementations in the `tdt.preprocess.pipelines` module.
 
-    Parameters:
-    tank_path: path that will be recursively searched for blocks
-    manifest_path: if provided, path to metadata in a tabular format, indexed with `blockname`. See above for more details
-    max_workers: number of workers in the process pool for loading blocks. If None, defaults to the number of CPUs on the machine.
-    preprocess: preprocess routine to run on the data. See above for more details.
-    cache: If `True`, results will be cached for future use, or results will be loaded from the cache.
-    cache_dir: path to the cache
-    **kwargs: additional keyword arguments to pass to the `preprocess` callable.
+    Args:
+        tank_path: path that will be recursively searched for blocks
+        manifest_path: if provided, path to metadata in a tabular format, indexed with `blockname`. See above for more details
+        max_workers: number of workers in the process pool for loading blocks. If None, defaults to the number of CPUs on the machine.
+        preprocess: preprocess routine to run on the data. See above for more details.
+        cache: If `True`, results will be cached for future use, or results will be loaded from the cache.
+        cache_dir: path to the cache
+        **kwargs: additional keyword arguments to pass to the `preprocess` callable.
 
     Returns:
-    `SessionCollection` containing loaded data
+        `SessionCollection` containing loaded data
     """
     has_manifest = False
     if manifest_path is not None:

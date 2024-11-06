@@ -8,15 +8,15 @@ from fptools.preprocess.lib import fs2t
 def collect_signals(session: Session, event: str, signal: str, pre: float = 1.0, post: float = 2.0) -> Signal:
     """Collect a signal from a session around an event.
 
-    Parameters:
-    session: the Session to operate on
-    event: the name of the event to use
-    signal: the name of the signal to collect
-    pre: amount of time in seconds to collect prior to each event
-    post: amount of time in seconds to collect after each event
+    Args:
+        session: the Session to operate on
+        event: the name of the event to use
+        signal: the name of the signal to collect
+        pre: amount of time in seconds to collect prior to each event
+        post: amount of time in seconds to collect after each event
 
     Returns:
-    the collected Signal
+        the collected Signal
     """
     sig = session.signals[signal]
     events = session.epocs[event]
@@ -47,17 +47,17 @@ def collect_signals_2event(
     is scaled to a "meta" time specified by `inter`. This is done by resampling the inter-event time using
     linear interpolation.
 
-    Parameters:
-    session: the Session to operate on
-    event1: the name of the first event to use
-    event2': the name of the second event to use
-    signal: the name of the signal to collect
-    pre: amount of time, in seconds, to collect prior to each event
-    inter: amouont of "meta" time, in seconds, to collect between events
-    post: amount of time, in seconds, to collect after each event
+    Args:
+        session: the Session to operate on
+        event1: the name of the first event to use
+        event2': the name of the second event to use
+        signal: the name of the signal to collect
+        pre: amount of time, in seconds, to collect prior to each event
+        inter: amouont of "meta" time, in seconds, to collect between events
+        post: amount of time, in seconds, to collect after each event
 
     Returns:
-    the collected Signal
+        the collected Signal
     """
     # unpack arguments
     sig = session.signals[signal]

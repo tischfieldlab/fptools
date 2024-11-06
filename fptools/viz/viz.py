@@ -15,22 +15,6 @@ from matplotlib.lines import Line2D
 from fptools.io import Session, Signal, SessionCollection
 
 
-def aggregate_signals(signals: list[Signal], method="mean") -> Signal:
-    """Aggregate the signals"""
-    if len(signals) <= 0:
-        raise ValueError("No signals were passed!")
-
-    # check all signals have the same number of samples
-    assert np.all(np.equal([s.nsamples for s in signals], signals[0].nsamples))
-
-    if method is not None:
-        signals = [s.aggregate(method) for s in signals]
-
-    s = Signal(signals[0].name, np.vstack([s.signal for s in signals]), time=signals[0].time, units=signals[0].units)
-    s.marks.update(signals[0].marks)
-    return s
-
-
 def plot_signal(
     signal: Signal,
     ax: Optional[Axes] = None,

@@ -4,26 +4,26 @@ import scipy.stats
 
 
 def fs2t(fs: float, length: int) -> np.ndarray:
-    """Generate a time array given a sample frequency and number of samples
+    """Generate a time array given a sample frequency and number of samples.
 
-    Parameters:
-    fs: sampling rate, in Hz
-    length: number of samples to generate
+    Args:
+        fs: sampling rate, in Hz
+        length: number of samples to generate
 
     Returns
-    array of time values, in seconds
+        array of time values, in seconds
     """
     return np.linspace(1, length, length) / fs
 
 
 def t2fs(time: np.ndarray) -> float:
-    """Estimate the sample frequency given a time array
+    """Estimate the sample frequency given a time array.
 
-    Parameters:
-    time: array of time values, in seconds, from which to estimate the sample frequency
+    Args:
+        time: array of time values, in seconds, from which to estimate the sample frequency
 
     Returns
-    The estimated sample frequency, in Hz
+        The estimated sample frequency, in Hz
     """
     return 1 / np.median(np.diff(time))
 
@@ -31,13 +31,13 @@ def t2fs(time: np.ndarray) -> float:
 def lowpass_filter(signal: np.ndarray, fs: float, Wn: float = 10) -> np.ndarray:
     """zero-phase lowpass filter a signal.
 
-    Parameters:
-    signal: array to be filtered
-    fs: sampling frequency of the signal, in Hz
-    Wn: critical frequency, see `scipy.signal.butter()`
+    Args:
+        signal: array to be filtered
+        fs: sampling frequency of the signal, in Hz
+        Wn: critical frequency, see `scipy.signal.butter()`
 
     Returns:
-    lowpass filtered signal
+        lowpass filtered signal
     """
     b, a = scipy.signal.butter(2, Wn, btype="lowpass", fs=fs)
     return scipy.signal.filtfilt(b, a, signal)
@@ -46,13 +46,16 @@ def lowpass_filter(signal: np.ndarray, fs: float, Wn: float = 10) -> np.ndarray:
 def double_exponential(t: np.ndarray, const: float, amp_fast: float, amp_slow: float, tau_slow: float, tau_multiplier: float) -> np.ndarray:
     """Compute a double exponential function with constant offset.
 
-    Parameters:
-    t       : Time vector in seconds.
-    const   : Amplitude of the constant offset.
-    amp_fast: Amplitude of the fast component.
-    amp_slow: Amplitude of the slow component.
-    tau_slow: Time constant of slow component in seconds.
-    tau_multiplier: Time constant of fast component relative to slow.
+    Args:
+        t: Time vector in seconds.
+        const: Amplitude of the constant offset.
+        amp_fast: Amplitude of the fast component.
+        amp_slow: Amplitude of the slow component.
+        tau_slow: Time constant of slow component in seconds.
+        tau_multiplier: Time constant of fast component relative to slow.
+
+    Returns:
+        dependent values evaluated over `t` given the remaining parameters.
     """
     tau_fast = tau_slow * tau_multiplier
     return const + amp_slow * np.exp(-t / tau_slow) + amp_fast * np.exp(-t / tau_fast)
@@ -71,12 +74,12 @@ def detrend_double_exponential(time: np.ndarray, signal: np.ndarray) -> tuple[np
 
     See `double_exponential` for the underlying curve design, and `fit_double_exponential` for the curve fitting procedure.
 
-    Parameters:
-    time: array of sample/observation times
-    signal: array of samples
+    Args:
+        time: array of sample/observation times
+        signal: array of samples
 
     Returns:
-    Tuple of (detrended_signal, signal_fit)
+        Tuple of (detrended_signal, signal_fit)
     """
     signal_fit = fit_double_exponential(time, signal)
     return signal - signal_fit, signal_fit
@@ -87,12 +90,12 @@ def estimate_motion(signal: np.ndarray, control: np.ndarray) -> tuple[np.ndarray
 
     Performs linear regression of control (x, independent) vs signal (y, dependent)
 
-    Parameters:
-    signal: the signal to correct for motion artifacts
-    control: signal to use for background signal
+    Args:
+        signal: the signal to correct for motion artifacts
+        control: signal to use for background signal
 
     Returns:
-    tuple of (corrected_signal, estimated_motion)
+        tuple of (corrected_signal, estimated_motion)
     """
     slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x=control, y=signal)
     est_motion = intercept + slope * (control)
@@ -100,7 +103,7 @@ def estimate_motion(signal: np.ndarray, control: np.ndarray) -> tuple[np.ndarray
 
 
 def are_arrays_same_length(*arrays: np.ndarray) -> bool:
-    """Check if all arrays are the same shape in the first axis"""
+    """Check if all arrays are the same shape in the first axis."""
     lengths = [arr.shape[0] for arr in arrays]
     return bool(np.all(np.array(lengths) == lengths[0]))
 
@@ -119,33 +122,33 @@ def are_arrays_same_length(*arrays: np.ndarray) -> bool:
 
 
 def downsample(*signals, window: int = 10, factor: int = 10) -> tuple[np.ndarray, ...]:
-    """Downsample one or more signals by factor across windows of size `window`
+    """Downsample one or more signals by factor across windows of size `window`.
 
     performs a moving window average using windows of size `window`, then takes every
     n-th observation as given by `factor`.
 
-    Parameters:
-    signals: one or more signals to downsample
-    window: size of the window used for averaging
-    factor: step size for taking the final downsampled signal
+    Args:
+        signals: one or more signals to downsample
+        window: size of the window used for averaging
+        factor: step size for taking the final downsampled signal
 
     Returns:
-    downsampled signal
+        downsampled signal
     """
     # assert are_arrays_same_length(*signals)
     return tuple(np.convolve(sig, np.ones(window) / window, mode="valid")[::factor] for sig in signals)
 
 
 def trim(*signals, begin=None, end=None) -> tuple[np.ndarray, ...]:
-    """Trim samples from the beginning or end of a signal
+    """Trim samples from the beginning or end of a signal.
 
-    Parameters:
-    signals: one or more signals to be trimmed
-    begin: number of samples to trim from the beginning
-    end: number of samples to trim from the end
+    Args:
+        signals: one or more signals to be trimmed
+        begin: number of samples to trim from the beginning
+        end: number of samples to trim from the end
 
     Returns:
-    tuple of trimmed signals
+        tuple of trimmed signals
     """
     assert are_arrays_same_length(*signals)
     if begin is None:
@@ -153,10 +156,6 @@ def trim(*signals, begin=None, end=None) -> tuple[np.ndarray, ...]:
     if end is None:
         end = signals[0].shape[0]
     return tuple(sig[begin:end] for sig in signals)
-
-
-def df_f(signal: np.ndarray, isosbestic: np.ndarray):
-    pass
 
 
 def zscore_signals(*signals):

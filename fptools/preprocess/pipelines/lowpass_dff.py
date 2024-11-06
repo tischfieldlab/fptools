@@ -28,13 +28,13 @@ def lowpass_dff(
     3) Signals are converted to dF/F using lowpass filtered signals as F0
     4) Signals are optionally downsampled factor `downsample`
 
-    Parameters:
-    session: the session to populate.
-    block: block data struct from `tdt.read_block()`.
-    signal_map: mapping of signals to perform
-    show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
-    plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
-    downsample: if not `None`, downsample signal by `downsample` factor.
+    Args:
+        session: the session to populate.
+        block: block data struct from `tdt.read_block()`.
+        signal_map: mapping of signals to perform
+        show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
+        plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
+        downsample: if not `None`, downsample signal by `downsample` factor.
     """
     try:
         if show_steps:
