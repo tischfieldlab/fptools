@@ -149,14 +149,15 @@ def sig_catplot(
                 for hi, curr_hue in enumerate(hue_order):
                     try:
                         sess_subset = sessions.select(row_criteria, col_criteria, metadata[hue] == curr_hue)
-                        sig = sess_subset.aggregate_signals(signal)
+                        if len(sess_subset) > 0:
+                            sig = sess_subset.aggregate_signals(signal)
+                            plot_signal(sig, ax=ax, show_indv=show_indv, color=palette[hi], indv_c=palette[hi])
 
-                        plot_signal(sig, ax=ax, show_indv=show_indv, color=palette[hi], indv_c=palette[hi])
                         legend_items.append(Line2D([0], [0], color=palette[hi]))
                         legend_labels.append(f"{curr_hue}, n={len(sess_subset)}")
 
                     except:
-                        pass
+                        raise
 
                 ax.legend(legend_items, legend_labels, loc="upper right")
                 # sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
