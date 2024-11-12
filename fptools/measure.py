@@ -5,9 +5,63 @@ import numpy as np
 from sklearn import metrics
 import pandas as pd
 
+from fptools.viz.signal_collector import collect_signals
+
 
 FieldList = Union[Literal["all"], list[str]]
 
+
+def measure_snr_overall(sessions: SessionCollection, signals: Union[str, list[str]], include_meta: FieldList = "all") -> pd.DataFrame:
+
+    sigs_to_measure = []
+    if isinstance(signals, str):
+        sigs_to_measure.append(signals)
+    else:
+        sigs_to_measure.extend(signals)
+
+    data = []
+    for session in sessions:
+        # determine metadata fileds to include
+        if include_meta == "all":
+            meta = session.metadata
+        else:
+            meta = {k: v for k, v in session.metadata.items() if k in include_meta}
+
+        for sig_name in sigs_to_measure:
+            sig = session.signals[sig_name]
+            data.append({
+                **meta,
+                'signal': sig_name,
+                'snr': np.mean(sig.signal)**2 / np.std(sig.signal)**2,
+            })
+    return pd.DataFrame(data)
+
+
+def measure_snr_event(sessions: SessionCollection, signals: Union[str, list[str]], noise_range: tuple[float, float], signal_range: tuple[float, float], event: str, include_meta: FieldList = "all") -> pd.DataFrame:
+    
+    sigs_to_measure = []
+    if isinstance(signals, str):
+        sigs_to_measure.append(signals)
+    else:
+        sigs_to_measure.extend(signals)
+
+    data = []
+    for session in sessions:
+        # determine metadata fileds to include
+        if include_meta == "all":
+            meta = session.metadata
+        else:
+            meta = {k: v for k, v in session.metadata.items() if k in include_meta}
+
+        for sig_name in ['Dopamine', 'Isosbestic']:
+            n = collect_signals(session, event, sig_name, pre=noise_range[0], post=noise_range[1])
+            s = collect_signals(session, event, sig_name, pre=signal_range[0], post=signal_range[1])
+            data.append({
+                **meta,
+                'signal': sig_name,
+                'snr': np.median((s.signal.max(axis=1) - s.signal.min(axis=1))**2 / n.signal.std(axis=1)**2)
+            })
+    return pd.DataFrame(data)
 
 
 def measure_peaks(sessions: SessionCollection, signal: str, include_meta: FieldList = "all", **kwargs) -> pd.DataFrame:
