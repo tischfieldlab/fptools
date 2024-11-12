@@ -30,9 +30,9 @@ class Signal(object):
             fs: Sampling frequency, in Hz
             units: units of this signal
         """
-        self.name = name
-        self.signal = signal
-        self.units = units
+        self.name: str = name
+        self.signal: np.ndarray = signal
+        self.units: str = units
         self.marks: dict[str, float] = {}
         self.time: np.ndarray
         self.fs: float
