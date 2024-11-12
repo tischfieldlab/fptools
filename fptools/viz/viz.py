@@ -116,18 +116,25 @@ def sig_catplot(
     for row_i, cur_row in enumerate(plot_rows):
         if cur_row is not None:
             row_criteria = metadata[row] == cur_row
+            row_title = f"{row} = {cur_row}"
         else:
             row_criteria = np.ones(len(metadata.index), dtype=bool)
+            row_title = None
 
         for col_i, cur_col in enumerate(plot_cols):
             if cur_col is not None:
                 col_criteria = metadata[col] == cur_col
+                col_title = f"{col} = {cur_col}"
             else:
                 col_criteria = np.ones(len(metadata.index), dtype=bool)
+                col_title = None
 
             ax = axs[row_i, col_i]
 
-            ax.set_title(f"{signal} at {col} = {cur_col} & {row} = {cur_row}")
+            title = f"{signal}"
+            if col_title is not None or row_title is not None:
+                title += " at " + " & ".join([t for t in [col_title, row_title] if t is not None])
+            ax.set_title(title)
 
             if hue is None:
                 try:
