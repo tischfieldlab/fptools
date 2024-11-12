@@ -1,3 +1,4 @@
+from typing import Optional
 import numpy as np
 import scipy
 
@@ -5,7 +6,7 @@ from fptools.io import Session, Signal
 from fptools.preprocess.lib import fs2t
 
 
-def collect_signals(session: Session, event: str, signal: str, pre: float = 1.0, post: float = 2.0) -> Signal:
+def collect_signals(session: Session, event: str, signal: str, pre: float = 1.0, post: float = 2.0, out_name: Optional[str] = None) -> Signal:
     """Collect a signal from a session around an event.
 
     Args:
@@ -33,13 +34,16 @@ def collect_signals(session: Session, event: str, signal: str, pre: float = 1.0,
         stop = event_idx + post_idxs
         accum[ei, :] = padded_signal[(start + pre_idxs) : (stop + pre_idxs)]
 
-    s = Signal(f"{signal}@{event}", accum, time=new_time, units=sig.units)
+    if out_name is None:
+        out_name = f"{signal}@{event}"
+
+    s = Signal(out_name, accum, time=new_time, units=sig.units)
     s.marks[event] = 0
     return s
 
 
 def collect_signals_2event(
-    session: Session, event1: str, event2: str, signal: str, pre: float = 2.0, inter: float = 2.0, post: float = 2.0
+    session: Session, event1: str, event2: str, signal: str, pre: float = 2.0, inter: float = 2.0, post: float = 2.0, out_name: Optional[str] = None
 ):
     """Collect a signal from a session around two events.
 
@@ -102,7 +106,10 @@ def collect_signals_2event(
         accum[ei, slice3] = padded_signal[(event2_idx + pre_idxs) : (event2_idx + pre_idxs + post_idxs)]
 
     # construct the new signal object, and copy over proper metadata and add marks
-    s = Signal(f"{signal}@{event1}>{event2}", accum, time=new_time, units=sig.units)
+    if out_name is None:
+        out_name = f"{signal}@{event1}>{event2}"
+
+    s = Signal(out_name, accum, time=new_time, units=sig.units)
     s.marks[event1] = 0
     s.marks[event2] = inter
 
