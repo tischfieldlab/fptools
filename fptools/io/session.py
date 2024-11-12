@@ -106,18 +106,23 @@ class Signal(object):
         """
         if self.nobs == 1:
             return self  # maybe we should raise??
+
         else:
             f: Callable[[np.ndarray], np.ndarray]
             if isinstance(func, str):
                 f = partial(cast(np.ufunc, getattr(np, func)), axis=0)
+                f_name = func
+
 
             elif isinstance(func, np.ufunc):
                 f = partial(func, axis=0)
+                f_name = func.__name__
 
             else:
                 f = func
+                f_name = func.__name__
 
-            s = Signal(f"{self.name}#{f.__name__}", f(self.signal), time=self.time, units=self.units)
+            s = Signal(f"{self.name}#{f_name}", f(self.signal), time=self.time, units=self.units)
             s.marks.update(self.marks)
             return s
 
