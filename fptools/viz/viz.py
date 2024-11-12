@@ -78,7 +78,10 @@ def sig_catplot(
 
     if col is not None:
         if col_order is None:
-            plot_cols = sorted(metadata[col].unique())
+            if pd.api.types.is_categorical_dtype(metadata[col]):
+                plot_cols = metadata[col].cat.categories.values
+            else:
+                plot_cols = sorted(metadata[col].unique())
         else:
             avail_cols = list(metadata[col].unique())
             plot_cols = [c for c in col_order if c in avail_cols]
@@ -87,7 +90,10 @@ def sig_catplot(
 
     if row is not None:
         if row_order is None:
-            plot_rows = sorted(metadata[row].unique())
+            if pd.api.types.is_categorical_dtype(metadata[row]):
+                plot_rows = metadata[row].cat.categories.values
+            else:
+                plot_rows = sorted(metadata[row].unique())
         else:
             avail_rows = list(metadata[row].unique())
             plot_rows = [r for r in row_order if r in avail_rows]
@@ -95,7 +101,10 @@ def sig_catplot(
         plot_rows = [None]
 
     if hue is not None and hue_order is None:
-        hue_order = sorted(metadata[hue].unique())
+        if pd.api.types.is_categorical_dtype(metadata[hue]):
+            hue_order = metadata[hue].cat.categories.values
+        else:
+            hue_order = sorted(metadata[hue].unique())
 
     if hue_order is not None and palette is None:
         palette = sns.color_palette("colorblind", n_colors=len(hue_order))
