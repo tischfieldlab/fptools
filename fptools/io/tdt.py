@@ -103,7 +103,13 @@ def load_data(
             block_name = os.path.basename(block_dir)
 
             if has_manifest:
-                block_meta = manifest.loc[block_name]
+                try:
+                    block_meta = manifest.loc[block_name]
+                except KeyError:
+                    # this block is not listed in the manifest! Err on the side of caution and exclude the block
+                    tqdm.write(f"WARNING: Excluding block {block_name} because it is not listed in the manifest!!")
+                    continue
+
                 # possibly exclude the block, if flagged in the manifest
                 if "exclude" in block_meta and block_meta["exclude"]:
                     tqdm.write(f"Excluding block {block_name} due to manifest exclude flag")
