@@ -142,6 +142,7 @@ class Signal(object):
         buffer += f"{prefix}    n_samples = {self.nsamples}\n"
         buffer += f"{prefix}    duration = {self.duration}\n"
         buffer += f"{prefix}    sample_rate = {self.fs}\n"
+        buffer += f"{prefix}    min|mean|max = {self.signal.min():.2f}|{self.signal.mean():.2f}|{self.signal.max():.2f}\n"
         if len(self.marks) > 0:
             buffer += f"{prefix}    marks ({len(self.marks)}):\n"
             for k, v in self.marks.items():
