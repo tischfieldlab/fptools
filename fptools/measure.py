@@ -9,18 +9,21 @@ import pandas as pd
 FieldList = Union[Literal["all"], list[str]]
 
 
-def measure_peaks(sessions: SessionCollection, signal: str, include_meta: FieldList = "all") -> pd.DataFrame:
+
+def measure_peaks(sessions: SessionCollection, signal: str, include_meta: FieldList = "all", **kwargs) -> pd.DataFrame:
     """Measure peaks within a signal.
 
     Args:
         sessions: collection of sessions to work on
         signal: name of the signal to measure
         include_meta: metadata fields to include in the final output. Special string "all" will include all metadata fields
+        **kwargs: additional kwargs to pass to `scipy.signal.find_peaks()`
 
     Returns:
-    pandas `DataFrame` with peak measurements.
+        pandas `DataFrame` with peak measurements.
     """
     detection_params = {"prominence": (None, None), "distance": 10000, "height": (None, None)}
+    detection_params.update(**kwargs)
     peak_data = []
     for session in sessions:
         # determine metadata fileds to include
