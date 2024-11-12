@@ -36,3 +36,30 @@ This will return to you a `SessionCollection` object, which in many ways behaves
 
 We can ask the `SessionCollection` to describe itself, which will tell us the number of sessions, as well their contents.
 ```
+> sessions.describe()
+Number of sessions: 36
+
+Signals present in data with counts:
+(36) "Dopamine"
+(36) "Isosbestic"
+
+Epocs present in data with counts:
+(36) "Cam1"
+(36) "P1SC"
+(36) "UnNP"
+(36) "URM_"
+(36) "Nose"
+(36) "Tick"
+(36) "RNP"
+(36) "RMG"
+```
+
+### Working with `SessionCollection`
+
+#### Filter Sessions
+Assuming we added a genotype to each session metadata, we could filter to only WT sessions via the following code:
+```
+wt_sessions = sessions.filter(lambda s: s.metadata['genotype'] == 'WT')
+```
+
+#### 
