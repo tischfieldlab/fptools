@@ -392,6 +392,50 @@ class SessionCollection(list[Session]):
         for item in self:
             func(item)
 
+    WHAT_LIST = Literal["all", "signal", "epocs", "metadata"]
+    @staticmethod
+    def merge(*session_collections: "SessionCollection", primary_key: str, what: Union[WHAT_LIST, list[WHAT_LIST]], prefixes:list[str]) -> "SessionCollection":
+        """Merge session collections while preserving data
+
+        Args:
+            session_collections: SessionCollections to merge
+            primary_key: metadata key used to join sessions
+            what: the data within each session to merge
+            prefixes: list of prefixes, of the same length as the number of passed SessionCollections. each prefix will be preprended to signals to avoid overwriting
+        """
+        available_whats = ["signal", "epocs", "metadata"]
+        use_what: list[str] = []
+        if isinstance(what, str):
+            if what == "all":
+                use_what.extend(available_whats)
+            else:
+                use_what.append(what)
+        else:
+            use_what.extend(what)
+        
+        sorter: dict[str, list[Session]] = defaultdict(list[Session])
+        for collection in session_collections:
+            for session in collection:
+                sorter[session.metadata[primary_key]].append(session)
+
+        final = SessionCollection()
+        for k, v in sorter.items():
+            new_session = Session()
+            for i, old_session in enumerate(v):
+                if "signal" in use_what:
+                    for _, sig in old_session.signals.items():
+                        new_session.add_signal(sig.copy(f'{prefixes[i]}{sig.name}'))
+
+                if "epocs" in use_what:
+                    for name, epocs in old_session.epocs.items():
+                        new_session.epocs[name] = epocs
+
+                if "metadata" in use_what:
+                    new_session.metadata.update(old_session.metadata)
+            final.append(new_session)
+        return final
+
+
     def get_signal(self, name: str) -> list[Signal]:
         """Get data across sessions in this collection for the signal named `name`.
 
