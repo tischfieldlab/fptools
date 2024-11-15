@@ -83,9 +83,18 @@ class Signal(object):
         """Get the time index closest to time `t`."""
         return (np.abs(self.time - t)).argmin()
 
-    def copy(self) -> "Signal":
-        """Return a deep copy of this signal."""
-        s = type(self)(self.name, self.signal.copy(), time=self.time.copy(), fs=self.fs, units=self.units)
+    def copy(self, new_name: Optional[str] = None) -> "Signal":
+        """Return a deep copy of this signal.
+
+        Args:
+            new_name: if not None, assign the copy this new name
+
+        Returns:
+            A copy of this Signal
+        """
+        if new_name is None:
+            new_name = self.name
+        s = type(self)(new_name, self.signal.copy(), time=self.time.copy(), fs=self.fs, units=self.units)
         s.marks.update(**self.marks)
         return s
 
