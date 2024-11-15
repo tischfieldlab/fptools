@@ -67,7 +67,7 @@ def sig_catplot(
     col_order: Union[list[str], None] = None,
     row: Union[str, None] = None,
     row_order: Union[list[str], None] = None,
-    palette=None,
+    palette: Optional[Union[str, list, dict[Any, str]]] = None,
     hue: Union[str, None] = None,
     hue_order: Union[list[str], None] = None,
     show_indv: bool = False,
@@ -106,8 +106,20 @@ def sig_catplot(
         else:
             hue_order = sorted(metadata[hue].unique())
 
-    if hue_order is not None and palette is None:
-        palette = sns.color_palette("colorblind", n_colors=len(hue_order))
+    use_palette: list[str] = []
+    if hue_order is not None:
+        if palette is None:
+            # default palette
+            _palette = sns.color_palette("colorblind", n_colors=len(hue_order))
+            use_palette = [_palette[i] for i in range(len(hue_order))]
+        elif isinstance(palette, Mapping):
+            # we got a dict-like of categories -> colors
+            use_palette = [palette[item] for item in hue_order]
+        else:
+            # list or string, it's seaborn's problem now
+            _palette = sns.color_palette(palette, n_colors=len(hue_order))
+            use_palette = [_palette[i] for i in range(len(hue_order))]
+
 
     fig, axs = plt.subplots(
         len(plot_rows), len(plot_cols), figsize=(len(plot_cols) * 6, len(plot_rows) * 6), sharey=True, sharex=True, squeeze=False
@@ -139,7 +151,7 @@ def sig_catplot(
             if hue is None:
                 try:
                     sig = sessions.select(row_criteria, col_criteria).aggregate_signals(signal)
-                    plot_signal(sig, ax=ax, show_indv=show_indv, color=palette[0], indv_c=palette[0], indv_alpha=indv_alpha)
+                    plot_signal(sig, ax=ax, show_indv=show_indv, color=use_palette[0], indv_c=use_palette[0], indv_alpha=indv_alpha)
                 except:
                     pass
 
@@ -151,9 +163,9 @@ def sig_catplot(
                         sess_subset = sessions.select(row_criteria, col_criteria, metadata[hue] == curr_hue)
                         if len(sess_subset) > 0:
                             sig = sess_subset.aggregate_signals(signal)
-                            plot_signal(sig, ax=ax, show_indv=show_indv, color=palette[hi], indv_c=palette[hi])
+                            plot_signal(sig, ax=ax, show_indv=show_indv, color=use_palette[hi], indv_c=use_palette[hi])
 
-                        legend_items.append(Line2D([0], [0], color=palette[hi]))
+                        legend_items.append(Line2D([0], [0], color=use_palette[hi]))
                         legend_labels.append(f"{curr_hue}, n={len(sess_subset)}")
 
                     except:
