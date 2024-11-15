@@ -1,4 +1,4 @@
-from collections import Counter
+from collections import Counter, defaultdict
 import copy
 import datetime
 from functools import partial
@@ -171,7 +171,7 @@ class Session(object):
         """Initialize this Session object."""
         self.metadata: dict[str, Any] = {}
         self.signals: dict[str, Signal] = {}
-        self.epocs: dict[str, np.ndarray] = {}
+        self.epocs: dict[str, np.ndarray] = defaultdict(partial(np.ndarray, 0))
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
         """Describe this session.
