@@ -1,15 +1,17 @@
+from collections.abc import Mapping
 from matplotlib.ticker import Locator
 import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.typing import ColorType
 from matplotlib.axes import Axes
+from matplotlib.figure import Figure
 from matplotlib.text import Text
 import pandas as pd
 import scipy
 import scipy.interpolate
 import seaborn as sns
-from typing import Optional, Union
+from typing import Any, Optional, Union
 from matplotlib.lines import Line2D
 
 from fptools.io import Session, Signal, SessionCollection
@@ -76,6 +78,29 @@ def sig_catplot(
     aspect: float = 1,
     sharex: bool = True,
     sharey: bool = True,
+) -> tuple[Figure, np.ndarray]:
+    """Plot signals, similar to `seaborn.catplot()`.
+
+    Args:
+        sessions: sessions to plot data from
+        signal: name of the signal to be plotted
+        col: metadata column on which to form plot columns
+        col_order: explicit ordering for columns
+        row: metadata column on which to form plot rows
+        row_order: explicit ordering for rows
+        palette: palette to use for hue mapping. A dict[value, color], or something that sns.color_palette() understands
+        hue: metadata column on which to group and color
+        hue_order: explicit ordering for hues
+        show_indv: if True, show individual session traces
+        indv_alpha: alpha transparency level for individual session traces, in range (0, 1)
+        height: height of each facet
+        aspect: Aspect ratio of each facet, so that aspect * height gives the width of each facet
+        sharex: If true, the facets will share x axes.
+        sharey: If true, the facets will share y axes.
+
+    Returns:
+        Figure and array of axes
+    """
     metadata = sessions.metadata
 
     if col is not None:
@@ -175,6 +200,7 @@ def sig_catplot(
 
                 ax.legend(legend_items, legend_labels, loc="upper right")
                 # sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
+    return fig, axs
 
 
 def plot_heatmap(signal: Signal, ax=None, cmap="viridis", vmin=None, vmax=None):
