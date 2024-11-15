@@ -72,8 +72,10 @@ def sig_catplot(
     hue_order: Union[list[str], None] = None,
     show_indv: bool = False,
     indv_alpha: float = 0.1,
-):
-
+    height: float = 6,
+    aspect: float = 1,
+    sharex: bool = True,
+    sharey: bool = True,
     metadata = sessions.metadata
 
     if col is not None:
@@ -122,7 +124,7 @@ def sig_catplot(
 
 
     fig, axs = plt.subplots(
-        len(plot_rows), len(plot_cols), figsize=(len(plot_cols) * 6, len(plot_rows) * 6), sharey=True, sharex=True, squeeze=False
+        len(plot_rows), len(plot_cols), figsize=(len(plot_cols) * (height * aspect), len(plot_rows) * height), sharey=sharey, sharex=sharex, squeeze=False
     )
 
     for row_i, cur_row in enumerate(plot_rows):
