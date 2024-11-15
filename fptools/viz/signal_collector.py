@@ -6,33 +6,35 @@ from fptools.io import Session, Signal
 from fptools.preprocess.lib import fs2t
 
 
-def collect_signals(session: Session, event: str, signal: str, pre: float = 1.0, post: float = 2.0, out_name: Optional[str] = None) -> Signal:
+def collect_signals(session: Session, event: str, signal: str, start: float = 1.0, stop: float = 2.0, out_name: Optional[str] = None) -> Signal:
     """Collect a signal from a session around an event.
+
 
     Args:
         session: the Session to operate on
         event: the name of the event to use
         signal: the name of the signal to collect
-        pre: amount of time in seconds to collect prior to each event
-        post: amount of time in seconds to collect after each event
+        start: start of the collection interval, in seconds, relative to each event. Negative values imply prior to event, positive values imply after the event
+        stop: end of the collection interval, in seconds, relative to each event. Negative values imply prior to event, positive values imply after the event
 
     Returns:
         the collected Signal
     """
+    assert start < stop
+
     sig = session.signals[signal]
     events = session.epocs[event]
-    pre_idxs = int(np.rint(pre * sig.fs))
-    post_idxs = int(np.rint(post * sig.fs))
-    n_samples = pre_idxs + post_idxs
-    new_time = fs2t(sig.fs, n_samples) - pre
+
+    n_samples = int(np.rint((stop - start) * sig.fs))
+    offest = int(np.rint(start * sig.fs))
+    new_time = fs2t(sig.fs, n_samples) + start
 
     accum = np.zeros_like(sig.signal, shape=(events.shape[0], n_samples))
-    padded_signal = np.pad(sig.signal, (pre_idxs, post_idxs), mode="constant", constant_values=0)
+    padding = abs(offest) + n_samples
+    padded_signal = np.pad(sig.signal, (padding, padding), mode="constant", constant_values=0)
     for ei, evt in enumerate(events):
-        event_idx = sig.tindex(evt)
-        start = event_idx - pre_idxs
-        stop = event_idx + post_idxs
-        accum[ei, :] = padded_signal[(start + pre_idxs) : (stop + pre_idxs)]
+        event_idx = sig.tindex(evt) + padding # add padding
+        accum[ei, :] = padded_signal[(event_idx + offest) : (event_idx + offest + n_samples)]
 
     if out_name is None:
         out_name = f"{signal}@{event}"
