@@ -41,7 +41,7 @@ def plot_signal(
     if indv_kwargs is not None:
         _indv_kwargs.update(indv_kwargs)
 
-    if show_indv and signal.nobs:
+    if show_indv and signal.nobs > 1:
         for i in range(signal.signal.shape[0]):
             sns.lineplot(data=None, x=signal.time, y=signal.signal[i, :], ax=ax, **_indv_kwargs)
 
