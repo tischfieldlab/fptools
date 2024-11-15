@@ -103,8 +103,8 @@ def measure_snr_event(
 
         for sig_name in sigs_to_measure:
             for ei, event_name in enumerate(events_to_measure):
-                n = collect_signals(session, event_name, sig_name, pre=nrs[ei][0], post=nrs[ei][1])
-                s = collect_signals(session, event_name, sig_name, pre=srs[ei][0], post=srs[ei][1])
+                n = collect_signals(session, event_name, sig_name, start=nrs[ei][0], stop=nrs[ei][1])
+                s = collect_signals(session, event_name, sig_name, start=srs[ei][0], stop=srs[ei][1])
                 data.append({
                     **meta,
                     'signal': sig_name,
