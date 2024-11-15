@@ -447,7 +447,7 @@ class SessionCollection(list[Session]):
         """
         return [item.signals[name] for item in self]
 
-    def aggregate_signals(self, name: str, method: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]] = "mean") -> Signal:
+    def aggregate_signals(self, name: str, method: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]] = "median") -> Signal:
         """Aggregate signals across sessions in this collection for the signal name `name`.
 
         Args:
