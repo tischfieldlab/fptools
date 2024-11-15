@@ -59,17 +59,19 @@ def plot_signal(
     if len(xticklabels) == 0:
         xticklabels = [Text(text=f"{xt}") for xt in xticks]
     for k, v in signal.marks.items():
-        ax.axvline(v, c="gray", ls="--")
-        try:
-            xt = np.where(xticks == float(v))[0][0]
-            xticklabels[xt] = Text(text=k)
-        except:
-            xticks = np.append(xticks, float(v))
-            xticklabels.append(Text(text=k))
-            order = np.argsort(xticks)
-            xticks = xticks[order]
-            xticklabels = [xticklabels[i] for i in order]
-            pass
+        # only annotate marks if they are within the time domain
+        if v >= signal.time.min() and v <= signal.time.max():
+            ax.axvline(v, c="gray", ls="--")
+            try:
+                xt = np.where(xticks == float(v))[0][0]
+                xticklabels[xt] = Text(text=k)
+            except:
+                xticks = np.append(xticks, float(v))
+                xticklabels.append(Text(text=k))
+                order = np.argsort(xticks)
+                xticks = xticks[order]
+                xticklabels = [xticklabels[i] for i in order]
+                pass
     ax.set_xticks(xticks, [t.get_text() for t in xticklabels])
 
     return ax
