@@ -93,6 +93,7 @@ def sig_catplot(
     aspect: float = 1.5,
     sharex: bool = True,
     sharey: bool = True,
+    agg_method: str = 'mean',
     indv_kwargs: Optional[dict] = None,
     agg_kwargs: Optional[dict] = None
 ) -> tuple[Figure, np.ndarray]:
@@ -114,6 +115,7 @@ def sig_catplot(
         aspect: Aspect ratio of each facet, so that aspect * height gives the width of each facet
         sharex: If true, the facets will share x axes.
         sharey: If true, the facets will share y axes.
+        agg_method:
 
     Returns:
         Figure and array of axes
@@ -194,7 +196,7 @@ def sig_catplot(
 
             if hue is None:
                 try:
-                    sig = sessions.select(row_criteria, col_criteria).aggregate_signals(signal)
+                    sig = sessions.select(row_criteria, col_criteria).aggregate_signals(signal, method=agg_method)
                     plot_signal(sig, ax=ax, show_indv=show_indv, color=use_palette[0], indv_c=use_palette[0], indv_alpha=indv_alpha, indv_kwargs=indv_kwargs, agg_kwargs=agg_kwargs)
                 except:
                     pass
@@ -206,7 +208,7 @@ def sig_catplot(
                     try:
                         sess_subset = sessions.select(row_criteria, col_criteria, metadata[hue] == curr_hue)
                         if len(sess_subset) > 0:
-                            sig = sess_subset.aggregate_signals(signal)
+                            sig = sess_subset.aggregate_signals(signal, method=agg_method)
                             plot_signal(sig, ax=ax, show_indv=show_indv, color=use_palette[hi], indv_c=use_palette[hi], indv_kwargs=indv_kwargs, agg_kwargs=agg_kwargs)
 
                         legend_items.append(Line2D([0], [0], color=use_palette[hi]))
