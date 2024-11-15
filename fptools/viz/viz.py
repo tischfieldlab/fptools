@@ -90,7 +90,7 @@ def sig_catplot(
     show_indv: bool = False,
     indv_alpha: float = 0.1,
     height: float = 6,
-    aspect: float = 1,
+    aspect: float = 1.5,
     sharex: bool = True,
     sharey: bool = True,
     indv_kwargs: Optional[dict] = None,
