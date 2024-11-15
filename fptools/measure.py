@@ -40,11 +40,13 @@ def measure_snr_overall(sessions: SessionCollection, signals: Union[str, list[st
 
         for sig_name in sigs_to_measure:
             sig = session.signals[sig_name]
-            data.append({
-                **meta,
-                'signal': sig_name,
-                'snr': np.log10(np.power(np.mean(sig.signal), 2) / np.power(np.std(sig.signal), 2)),
-            })
+            data.append(
+                {
+                    **meta,
+                    "signal": sig_name,
+                    "snr": np.log10(np.power(np.mean(sig.signal), 2) / np.power(np.std(sig.signal), 2)),
+                }
+            )
     return pd.DataFrame(data)
 
 
@@ -54,7 +56,7 @@ def measure_snr_event(
     events: Union[str, list[str]],
     noise_range: Union[tuple[float, float], list[tuple[float, float]]],
     signal_range: Union[tuple[float, float], list[tuple[float, float]]],
-    include_meta: FieldList = "all"
+    include_meta: FieldList = "all",
 ) -> pd.DataFrame:
     """Measure Signal to Noise ratio (SNR) in signals surrounding events.
 
@@ -92,7 +94,6 @@ def measure_snr_event(
     else:
         srs.extend(cast(list, signal_range))
 
-
     data = []
     for session in sessions:
         # determine metadata fileds to include
@@ -105,11 +106,13 @@ def measure_snr_event(
             for ei, event_name in enumerate(events_to_measure):
                 n = collect_signals(session, event_name, sig_name, start=nrs[ei][0], stop=nrs[ei][1])
                 s = collect_signals(session, event_name, sig_name, start=srs[ei][0], stop=srs[ei][1])
-                data.append({
-                    **meta,
-                    'signal': sig_name,
-                    'snr': np.median((s.signal.max(axis=1) - s.signal.min(axis=1))**2 / n.signal.std(axis=1)**2)
-                })
+                data.append(
+                    {
+                        **meta,
+                        "signal": sig_name,
+                        "snr": np.median((s.signal.max(axis=1) - s.signal.min(axis=1)) ** 2 / n.signal.std(axis=1) ** 2),
+                    }
+                )
     return pd.DataFrame(data)
 
 

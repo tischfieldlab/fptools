@@ -25,7 +25,7 @@ def plot_signal(
     indv_c: ColorType = "b",
     indv_alpha: float = 0.1,
     indv_kwargs: Optional[dict] = None,
-    agg_kwargs: Optional[dict] = None
+    agg_kwargs: Optional[dict] = None,
 ) -> Axes:
     if ax is None:
         fig, ax = plt.subplots()
@@ -35,8 +35,8 @@ def plot_signal(
     df = df.melt(ignore_index=False)
 
     _indv_kwargs = {
-        'alpha': indv_alpha,
-        'color': indv_c,
+        "alpha": indv_alpha,
+        "color": indv_c,
     }
     if indv_kwargs is not None:
         _indv_kwargs.update(indv_kwargs)
@@ -45,7 +45,7 @@ def plot_signal(
         for i in range(signal.signal.shape[0]):
             sns.lineplot(data=None, x=signal.time, y=signal.signal[i, :], ax=ax, **_indv_kwargs)
 
-    _agg_kwargs = {'color': color}
+    _agg_kwargs = {"color": color}
     if agg_kwargs is not None:
         _agg_kwargs.update(agg_kwargs)
 
@@ -93,9 +93,9 @@ def sig_catplot(
     aspect: float = 1.5,
     sharex: bool = True,
     sharey: bool = True,
-    agg_method: str = 'mean',
+    agg_method: str = "mean",
     indv_kwargs: Optional[dict] = None,
-    agg_kwargs: Optional[dict] = None
+    agg_kwargs: Optional[dict] = None,
 ) -> tuple[Figure, np.ndarray]:
     """Plot signals, similar to `seaborn.catplot()`.
 
@@ -166,9 +166,13 @@ def sig_catplot(
             _palette = sns.color_palette(palette, n_colors=len(hue_order))
             use_palette = [_palette[i] for i in range(len(hue_order))]
 
-
     fig, axs = plt.subplots(
-        len(plot_rows), len(plot_cols), figsize=(len(plot_cols) * (height * aspect), len(plot_rows) * height), sharey=sharey, sharex=sharex, squeeze=False
+        len(plot_rows),
+        len(plot_cols),
+        figsize=(len(plot_cols) * (height * aspect), len(plot_rows) * height),
+        sharey=sharey,
+        sharex=sharex,
+        squeeze=False,
     )
 
     for row_i, cur_row in enumerate(plot_rows):
@@ -197,7 +201,16 @@ def sig_catplot(
             if hue is None:
                 try:
                     sig = sessions.select(row_criteria, col_criteria).aggregate_signals(signal, method=agg_method)
-                    plot_signal(sig, ax=ax, show_indv=show_indv, color=use_palette[0], indv_c=use_palette[0], indv_alpha=indv_alpha, indv_kwargs=indv_kwargs, agg_kwargs=agg_kwargs)
+                    plot_signal(
+                        sig,
+                        ax=ax,
+                        show_indv=show_indv,
+                        color=use_palette[0],
+                        indv_c=use_palette[0],
+                        indv_alpha=indv_alpha,
+                        indv_kwargs=indv_kwargs,
+                        agg_kwargs=agg_kwargs,
+                    )
                 except:
                     pass
 
@@ -209,7 +222,15 @@ def sig_catplot(
                         sess_subset = sessions.select(row_criteria, col_criteria, metadata[hue] == curr_hue)
                         if len(sess_subset) > 0:
                             sig = sess_subset.aggregate_signals(signal, method=agg_method)
-                            plot_signal(sig, ax=ax, show_indv=show_indv, color=use_palette[hi], indv_c=use_palette[hi], indv_kwargs=indv_kwargs, agg_kwargs=agg_kwargs)
+                            plot_signal(
+                                sig,
+                                ax=ax,
+                                show_indv=show_indv,
+                                color=use_palette[hi],
+                                indv_c=use_palette[hi],
+                                indv_kwargs=indv_kwargs,
+                                agg_kwargs=agg_kwargs,
+                            )
 
                         legend_items.append(Line2D([0], [0], color=use_palette[hi]))
                         legend_labels.append(f"{curr_hue}, n={len(sess_subset)}")
