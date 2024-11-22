@@ -19,7 +19,19 @@ class SignalMapping(TypedDict):
 
 
 class Preprocessor(Protocol):
-    def __call__(self, session: Session, block: Any, signal_map: list[SignalMapping], **kwargs) -> Session: ...
+    def __call__(self, session: Session, block: Any, signal_map: list[SignalMapping], **kwargs) -> Session:
+        """Preprocessor protocol.
+
+        Args:
+            session: the session to operate upon
+            block: data, result of `tdt.load_block()`
+            signal_map: mapping of signal information
+            kwargs: additional kwargs a preprocessor might need
+
+        Returns:
+            Session object with preprocessed data added.
+        """
+        pass
 
 
 def load_manifest(path: str) -> pd.DataFrame:

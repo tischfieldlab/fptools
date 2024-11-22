@@ -97,24 +97,56 @@ class Signal(object):
         return self.nsamples == other.nsamples and self.nobs == self.nobs and self.fs == other.fs
 
     def __add__(self, other: "Signal") -> "Signal":
+        """Add another signal to this signal, returning a new signal.
+
+        Args:
+            other: the other signal to be added to this signal
+
+        Return:
+            A new Signal with the addition result.
+        """
         assert self.__check_other_compatible(other)
         s = self.copy()
         s.signal += other.signal
         return s
 
     def __sub__(self, other: "Signal") -> "Signal":
+        """Subtract another signal from this signal, returning a new signal.
+
+        Args:
+            other: the other signal to be subtracted from this signal
+
+        Return:
+            A new Signal with the subtraction result.
+        """
         assert self.__check_other_compatible(other)
         s = self.copy()
         s.signal -= other.signal
         return s
 
     def __mul__(self, other: "Signal") -> "Signal":
+        """Multiply another signal against this signal, returning a new signal.
+
+        Args:
+            other: the other signal to be multiplied by this signal
+
+        Return:
+            A new Signal with the multiplication result.
+        """
         assert self.__check_other_compatible(other)
         s = self.copy()
         s.signal *= other.signal
         return s
 
     def __div__(self, other: "Signal") -> "Signal":
+        """Divide this signal by another signal, returning a new signal.
+
+        Args:
+            other: the other signal to divide this signal by
+
+        Return:
+            A new Signal with the division result.
+        """
         assert self.__check_other_compatible(other)
         s = self.copy()
         s.signal /= other.signal

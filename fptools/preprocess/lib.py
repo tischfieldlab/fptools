@@ -1,3 +1,4 @@
+from typing import Optional
 import numpy as np
 import scipy
 import scipy.stats
@@ -62,6 +63,15 @@ def double_exponential(t: np.ndarray, const: float, amp_fast: float, amp_slow: f
 
 
 def fit_double_exponential(time: np.ndarray, signal: np.ndarray) -> np.ndarray:
+    """Run the fitting procedure for a double exponential curve.
+
+    Args:
+        time: array of sample times
+        signal: array of sample values
+
+    Returns:
+        array of values from the fitted double exponential curve, samples at the times in `time`.
+    """
     max_sig = np.max(signal)
     inital_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
     bounds = ([0, 0, 0, 600, 0], [max_sig, max_sig, max_sig, 36000, 1])
@@ -121,7 +131,7 @@ def are_arrays_same_length(*arrays: np.ndarray) -> bool:
 #     return downsampled
 
 
-def downsample(*signals, window: int = 10, factor: int = 10) -> tuple[np.ndarray, ...]:
+def downsample(*signals: np.ndarray, window: int = 10, factor: int = 10) -> tuple[np.ndarray, ...]:
     """Downsample one or more signals by factor across windows of size `window`.
 
     performs a moving window average using windows of size `window`, then takes every
@@ -133,13 +143,13 @@ def downsample(*signals, window: int = 10, factor: int = 10) -> tuple[np.ndarray
         factor: step size for taking the final downsampled signal
 
     Returns:
-        downsampled signal
+        downsampled signal(s)
     """
     # assert are_arrays_same_length(*signals)
     return tuple(np.convolve(sig, np.ones(window) / window, mode="valid")[::factor] for sig in signals)
 
 
-def trim(*signals, begin=None, end=None) -> tuple[np.ndarray, ...]:
+def trim(*signals: np.ndarray, begin: Optional[int] = None, end: Optional[int] = None) -> tuple[np.ndarray, ...]:
     """Trim samples from the beginning or end of a signal.
 
     Args:
@@ -158,5 +168,15 @@ def trim(*signals, begin=None, end=None) -> tuple[np.ndarray, ...]:
     return tuple(sig[begin:end] for sig in signals)
 
 
-def zscore_signals(*signals):
+def zscore_signals(*signals: np.ndarray) -> tuple[np.ndarray, ...]:
+    """Z-score one or more signals.
+
+    see: scipy.stats.zscore()
+
+    Args:
+        signals: one or more signals to be z-scores
+
+    Returns:
+        tuple of z-scored signals
+    """
     return (scipy.stats.zscore(sig) for sig in signals)

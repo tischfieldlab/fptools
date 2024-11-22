@@ -11,7 +11,6 @@ def collect_signals(
 ) -> Signal:
     """Collect a signal from a session around an event.
 
-
     Args:
         session: the Session to operate on
         event: the name of the event to use

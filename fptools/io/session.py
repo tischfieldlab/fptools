@@ -247,7 +247,7 @@ class SessionCollection(list[Session]):
     def merge(
         *session_collections: "SessionCollection", primary_key: str, what: Union[WHAT_LIST, list[WHAT_LIST]], prefixes: list[str]
     ) -> "SessionCollection":
-        """Merge session collections while preserving data
+        """Merge session collections while preserving data.
 
         Args:
             session_collections: SessionCollections to merge
@@ -289,6 +289,7 @@ class SessionCollection(list[Session]):
 
     @property
     def signal_keys(self) -> list[str]:
+        """Get a list of Signal keys in this SessionCollection."""
         return list(set([key for item in self for key in item.signals.keys()]))
 
     def get_signal(self, name: str) -> list[Signal]:

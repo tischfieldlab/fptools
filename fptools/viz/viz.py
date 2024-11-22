@@ -27,6 +27,21 @@ def plot_signal(
     indv_kwargs: Optional[dict] = None,
     agg_kwargs: Optional[dict] = None,
 ) -> Axes:
+    """Plot a signal as a lineplot.
+
+    Args:
+        signal: the signal to be plotted
+        ax: optional axes to plot on. If not provided, a new figure with a single axes will be created
+        show_indv: if True, plot individual traces, otherwise only plot aggregate traces
+        color: color of the aggregated trace
+        indv_c: color of individual traces
+        indv_alpha: alpha transparency for individual traces
+        indv_kwargs: kwargs to pass to `seaborn.lineplot()` for individual traces
+        agg_kwargs: kwarge to pass to `seaborn.lineplot()` for aggregate traces
+
+    Returns:
+        Axes
+    """
     if ax is None:
         fig, ax = plt.subplots()
 
@@ -243,8 +258,19 @@ def sig_catplot(
     return fig, axs
 
 
-def plot_heatmap(signal: Signal, ax=None, cmap="viridis", vmin=None, vmax=None):
+def plot_heatmap(signal: Signal, ax=None, cmap="viridis", vmin=None, vmax=None) -> Axes:
+    """Plot a signal as a heatmap.
 
+    Args:
+        signal: the signal to be plotted
+        ax: optional axes to plot on. If not provided, a new figure with a single axes will be created
+        cmap: colormap to use for plotting
+        vmin: minimum value mapping to colormap start. If None, will use the data minimum value
+        vmax: maximum value mapping to colormap end. If None, will use the data maximum value
+
+    Returns:
+        Axes
+    """
     if ax is None:
         fig, ax = plt.subplots()
 
