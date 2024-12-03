@@ -59,7 +59,6 @@ def tdt_default(
             axs[1].set_title("Trimmed Raw signal")
             axs[1].legend()
 
-
         ctrl_idx = next((i for i, sm in enumerate(signal_map) if sm["role"] == "control"), None)
         if ctrl_idx is None:
             raise ValueError('at least one signal must be marked with `role`="Control" in the `signal_map`!')
