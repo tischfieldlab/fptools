@@ -179,4 +179,4 @@ def zscore_signals(*signals: np.ndarray) -> tuple[np.ndarray, ...]:
     Returns:
         tuple of z-scored signals
     """
-    return (scipy.stats.zscore(sig) for sig in signals)
+    return tuple(scipy.stats.zscore(sig) for sig in signals)
