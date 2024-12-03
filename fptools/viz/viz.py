@@ -1,18 +1,15 @@
 from collections.abc import Mapping
-from matplotlib.ticker import Locator
-import numpy as np
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.typing import ColorType
 from matplotlib.axes import Axes
 from matplotlib.figure import Figure
+from matplotlib.lines import Line2D
 from matplotlib.text import Text
+import numpy as np
 import pandas as pd
-import scipy
-import scipy.interpolate
 import seaborn as sns
 from typing import Any, Optional, Union
-from matplotlib.lines import Line2D
 
 from fptools.io import Session, Signal, SessionCollection
 

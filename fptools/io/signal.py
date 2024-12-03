@@ -1,9 +1,8 @@
 import datetime
 from functools import partial
-from typing import Any, Callable, Optional, Union, cast
+from typing import Callable, Optional, Union, cast
 
 import numpy as np
-from typing import Union
 
 
 class Signal(object):

@@ -2,7 +2,7 @@ import concurrent.futures
 import glob
 import os
 import traceback
-from typing import Any, Callable, Literal, Optional, Protocol, TypedDict, cast
+from typing import Any, Literal, Optional, Protocol, TypedDict, cast
 
 import joblib
 import pandas as pd

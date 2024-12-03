@@ -1,8 +1,6 @@
-from typing import Literal, Union, cast
+from typing import Union, cast
 from fptools.io import SessionCollection
-import scipy
 import numpy as np
-from sklearn import metrics
 import pandas as pd
 
 from .signal_collector import collect_signals
