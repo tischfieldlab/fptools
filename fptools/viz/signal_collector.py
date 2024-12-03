@@ -7,7 +7,7 @@ from fptools.preprocess.lib import fs2t
 
 
 def collect_signals(
-    session: Session, event: str, signal: str, start: float = 1.0, stop: float = 2.0, out_name: Optional[str] = None
+    session: Session, event: str, signal: str, start: float = -1.0, stop: float = 3.0, out_name: Optional[str] = None
 ) -> Signal:
     """Collect a signal from a session around an event.
 
@@ -17,6 +17,7 @@ def collect_signals(
         signal: the name of the signal to collect
         start: start of the collection interval, in seconds, relative to each event. Negative values imply prior to event, positive values imply after the event
         stop: end of the collection interval, in seconds, relative to each event. Negative values imply prior to event, positive values imply after the event
+        out_name: if not None, the name of the returned `Signal` object. Otherwise, the new `Signal` object's name will be generated as `{signal}@{event}`
 
     Returns:
         the collected Signal
