@@ -2,11 +2,87 @@
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "fptools"
+authors = [
+    {name = "Joshua K. Thackray", email = "thackray@rutgers.edu"},
+]
+description="Collection of tools for working with fiber photometry data."
+requires-python = ">=3.12"
+keywords = ["fiber photometry", "behavior"]
+license = {text = "BSD-3-Clause"}
+classifiers = [
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12"
+]
+dependencies = [
+    "ipykernel",
+    "ipywidgets",
+    "matplotlib",
+    "numpy",
+    "openpyxl",
+    "pandas",
+    "scipy",
+    "seaborn",
+    "scikit-learn",
+    "tdt",
+    "tqdm",
+    "typing-extensions"
+]
+dynamic = ["version", "readme"]
+
+[tool.setuptools.dynamic]
+version = {attr = "fptools.__version__"}
+readme = {file = ["README.md"], content-type="text/markdown"}
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-cov",
+    "black",
+    "mypy",
+    "pydocstyle[toml]",
+    "toml",
+    "twine",
+    "build"
+]
+
+[project.urls]
+Homepage = ""
+Repository = "https://github.com/tischfieldlab/fptools"
+
+[tool.setuptools.packages.find]
+exclude = [
+    "tests*",
+    "docs*"
+]
+
+[tool.setuptools.exclude-package-data]
+tests = ["*"]
+docs = ["*"]
+
 [tool.black]
 line-length = 140
 color = true
+extend-exclude = '''
+    (
+        notebooks*
+      | tests*
+    )
+'''
 
 [tool.pydocstyle]
 convention = "google"
 match-dir = "^((?!notebooks|\\.).)*$"
 add-ignore = "D100,D101,D104"
+
+[tool.mypy]
+modules = ["fptools"]
+follow_imports = "normal"
+ignore_missing_imports = "True"
+ignore_missing_imports_per_module = "True"
+warn_unused_configs = "True"
