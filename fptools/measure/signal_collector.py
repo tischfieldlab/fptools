@@ -55,7 +55,7 @@ def collect_signals_2event(
     inter: float = 2.0,
     post: float = 2.0,
     out_name: Optional[str] = None,
-):
+) -> Signal:
     """Collect a signal from a session around two events.
 
     Collects a fixed amount of time before event1 and after event2. The "real" time between event1 and event2
@@ -65,7 +65,7 @@ def collect_signals_2event(
     Args:
         session: the Session to operate on
         event1: the name of the first event to use
-        event2': the name of the second event to use
+        event2: the name of the second event to use
         signal: the name of the signal to collect
         pre: amount of time, in seconds, to collect prior to each event
         inter: amouont of "meta" time, in seconds, to collect between events

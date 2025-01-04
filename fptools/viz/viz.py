@@ -255,7 +255,7 @@ def sig_catplot(
     return fig, axs
 
 
-def plot_heatmap(signal: Signal, ax=None, cmap="viridis", vmin=None, vmax=None) -> Axes:
+def plot_heatmap(signal: Signal, ax: Optional[Axes] = None, cmap="viridis", vmin: Optional[float] = None, vmax: Optional[float] = None) -> Axes:
     """Plot a signal as a heatmap.
 
     Args:

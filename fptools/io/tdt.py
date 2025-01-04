@@ -26,7 +26,7 @@ class Preprocessor(Protocol):
             session: the session to operate upon
             block: data, result of `tdt.load_block()`
             signal_map: mapping of signal information
-            kwargs: additional kwargs a preprocessor might need
+            **kwargs: additional kwargs a preprocessor might need
 
         Returns:
             Session object with preprocessed data added.
