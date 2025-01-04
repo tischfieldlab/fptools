@@ -6,7 +6,16 @@ import numpy as np
 
 
 class Signal(object):
-    """Represents a real valued signal with fixed interval sampling."""
+    """Represents a real valued signal with fixed interval sampling.
+
+    Attributes:
+        name: Name for this Signal
+        signal: Array of signal values
+        units: units of measurement for this signal
+        marks: dictionary of timestamp labels
+        time: Array of relative time values
+        fs: Sampling frequency, in Hz
+    """
 
     def __init__(
         self, name: str, signal: np.ndarray, time: Optional[np.ndarray] = None, fs: Optional[float] = None, units: str = "AU"
@@ -74,7 +83,7 @@ class Signal(object):
         return datetime.timedelta(seconds=self.time[-1] - self.time[0])
 
     def tindex(self, t: float) -> int:
-        """Get the time index closest to time `t`."""
+        """Get the sample index closest to time `t`."""
         return (np.abs(self.time - t)).argmin()
 
     def copy(self, new_name: Optional[str] = None) -> "Signal":
