@@ -57,7 +57,7 @@ dev = [
 ]
 
 [project.urls]
-Homepage = ""
+Homepage = "https://github.com/tischfieldlab/fptools"
 Repository = "https://github.com/tischfieldlab/fptools"
 
 [tool.setuptools.packages.find]
