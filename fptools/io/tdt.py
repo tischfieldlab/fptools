@@ -110,7 +110,7 @@ def load_data(
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         # collect common worker args in one place
         worker_args = {"preprocess": preprocess, "cache": cache, "cache_dir": cache_dir, **kwargs}
-        for p in glob.glob(os.path.join(tank_path, "**/*.tbk"), recursive=True):
+        for p in glob.glob(os.path.join(tank_path, "**/*.Tbk"), recursive=True):
             block_dir = os.path.dirname(p)
             block_name = os.path.basename(block_dir)
 
