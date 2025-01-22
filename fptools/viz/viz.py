@@ -116,7 +116,7 @@ def sig_catplot(
 
     Args:
         sessions: sessions to plot data from
-        signal: name of the signal(s) to be plotted. 
+        signal: name of the signal(s) to be plotted.
         col: metadata column on which to form plot columns, or if multiple signal names are given to `signal`, you may specify "signal" here
         col_order: explicit ordering for columns
         row: metadata column on which to form plot rows, or if multiple signal names are given to `signal`, you may specify "signal" here
@@ -149,9 +149,9 @@ def sig_catplot(
         # 2) at most one facet should be "signal"
         num_sig_facets = [(fname, fval) for fname, fval in [("col", col), ("row", row), ("hue", hue)] if fval == "signal"]
         if len(num_sig_facets) <= 0:
-            raise ValueError("When providing multiple values to parameter `signal`, at least one facet must be set to \"signal\"!")
+            raise ValueError('When providing multiple values to parameter `signal`, at least one facet must be set to "signal"!')
         if len(num_sig_facets) > 1:
-            raise ValueError("When providing multiple values to parameter `signal`, at most one facet may be set to \"signal\"!")
+            raise ValueError('When providing multiple values to parameter `signal`, at most one facet may be set to "signal"!')
 
     plot_cols: list[Any]
     if col is not None:
@@ -245,7 +245,7 @@ def sig_catplot(
             ax.xaxis.set_tick_params(labelbottom=True)
             ax.yaxis.set_tick_params(labelbottom=True)
 
-            if hue == 'signal':
+            if hue == "signal":
                 title = ""
                 if col_title is not None or row_title is not None:
                     title += " & ".join([t for t in [col_title, row_title] if t is not None])
@@ -277,7 +277,7 @@ def sig_catplot(
                 legend_labels = []
                 for hi, curr_hue in enumerate(hue_order):
                     try:
-                        if hue == 'signal':
+                        if hue == "signal":
                             sess_subset = sessions.select(row_criteria, col_criteria)
                             sig_to_plot = curr_hue
                         else:
@@ -306,7 +306,9 @@ def sig_catplot(
     return fig, axs
 
 
-def plot_heatmap(signal: Signal, ax: Optional[Axes] = None, cmap="viridis", vmin: Optional[float] = None, vmax: Optional[float] = None) -> Axes:
+def plot_heatmap(
+    signal: Signal, ax: Optional[Axes] = None, cmap="viridis", vmin: Optional[float] = None, vmax: Optional[float] = None
+) -> Axes:
     """Plot a signal as a heatmap.
 
     Args:
