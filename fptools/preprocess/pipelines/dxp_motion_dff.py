@@ -1,5 +1,5 @@
 import os
-from typing import Any
+from typing import Any, Literal, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -9,7 +9,14 @@ from fptools.io import Session, Signal, SignalMapping
 from fptools.preprocess.lib import detrend_double_exponential, estimate_motion, trim
 
 
-def dxp_motion_dff(session: Session, block: Any, signal_map: list[SignalMapping], show_steps=True, plot_dir=""):
+def dxp_motion_dff(
+    session: Session,
+    block: Any,
+    signal_map: list[SignalMapping],
+    show_steps=True,
+    plot_dir="",
+    trim_extent: Union[None, Literal["auto"], int, tuple[int, int]] = "auto",
+):
     try:
         if show_steps:
             fig, axs = plt.subplots(6, 1, figsize=(24, 6 * 6))
@@ -27,14 +34,24 @@ def dxp_motion_dff(session: Session, block: Any, signal_map: list[SignalMapping]
             axs[0].legend()
 
         # trim raw signal start to when the optical system came online
-        for sig in signals:
-            sig.signal, sig.time = trim(sig.signal, sig.time, begin=int(block.scalars.Fi1i.ts[0] * sig.fs))
+        if trim_extent is not None:
+            if trim_extent == "auto":
+                trim_args = {"begin": int(block.scalars.Fi1i.ts[0] * sig.fs)}
+            elif isinstance(trim_extent, int):
+                trim_args = {"begin": trim_extent}
+            elif len(trim_extent) == 2:
+                trim_args = {"begin": trim_extent[0], "end": trim_extent[1]}
 
-        if show_steps:
-            for i, sig in enumerate(signals):
-                axs[1].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
-            axs[1].set_title("Trimmed Raw signal")
-            axs[1].legend()
+            for sig in signals:
+                sig.signal, sig.time = trim(sig.signal, sig.time, **trim_args)
+
+            if show_steps:
+                for i, sig in enumerate(signals):
+                    axs[1].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
+                axs[1].set_title("Trimmed Raw signal")
+                axs[1].legend()
+        else:
+            axs[1].set_title("Trimming Disabled")
 
         # detrend using a double exponential fit
         fits: list[np.ndarray] = []

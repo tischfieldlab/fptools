@@ -1,5 +1,5 @@
 import os
-from typing import Any, Optional
+from typing import Any, Literal, Optional, Union
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -14,6 +14,7 @@ def lowpass_dff(
     signal_map: list[SignalMapping],
     show_steps: bool = True,
     plot_dir: str = "",
+    trim_extent: Union[None, Literal["auto"], int, tuple[int, int]] = "auto",
     downsample: Optional[int] = None,
 ) -> Session:
     """A "simple" preprocess pipeline based on ultra-lowpass filtering.
@@ -34,6 +35,7 @@ def lowpass_dff(
         signal_map: mapping of signals to perform
         show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
         plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
+        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single int trims that many samples from the beginning, a tuple of two ints specifies the number of samples from the beginning and end to trim, respectively.
         downsample: if not `None`, downsample signal by `downsample` factor.
     """
     try:
@@ -53,14 +55,24 @@ def lowpass_dff(
             axs[0].legend()
 
         # trim raw signal start to when the optical system came online
-        for sig in signals:
-            sig.signal, sig.time = trim(sig.signal, sig.time, begin=int(block.scalars.Fi1i.ts[0] * sig.fs))
+        if trim_extent is not None:
+            if trim_extent == "auto":
+                trim_args = {"begin": int(block.scalars.Fi1i.ts[0] * sig.fs)}
+            elif isinstance(trim_extent, int):
+                trim_args = {"begin": trim_extent}
+            elif len(trim_extent) == 2:
+                trim_args = {"begin": trim_extent[0], "end": trim_extent[1]}
 
-        if show_steps:
-            for i, sig in enumerate(signals):
-                axs[1].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
-            axs[1].set_title("Trimmed Raw signal")
-            axs[1].legend()
+            for sig in signals:
+                sig.signal, sig.time = trim(sig.signal, sig.time, **trim_args)
+
+            if show_steps:
+                for i, sig in enumerate(signals):
+                    axs[1].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
+                axs[1].set_title("Trimmed Raw signal")
+                axs[1].legend()
+        else:
+            axs[1].set_title("Trimming Disabled")
 
         # lowpass filter at 0.01 Hz
         lowpass_signals = []
