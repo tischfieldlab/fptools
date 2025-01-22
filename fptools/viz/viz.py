@@ -9,7 +9,7 @@ from matplotlib.text import Text
 import numpy as np
 import pandas as pd
 import seaborn as sns
-from typing import Any, Optional, Union
+from typing import Any, Literal, Optional, Union
 
 from fptools.io import Session, Signal, SessionCollection
 
@@ -91,10 +91,10 @@ def plot_signal(
 
 def sig_catplot(
     sessions: SessionCollection,
-    signal: str,
-    col: Union[str, None] = None,
+    signal: Union[str, list[str]],
+    col: Union[Literal["signal"], str, None] = None,
     col_order: Union[list[str], None] = None,
-    row: Union[str, None] = None,
+    row: Union[Literal["signal"], str, None] = None,
     row_order: Union[list[str], None] = None,
     palette: Optional[Union[str, list, dict[Any, str]]] = None,
     hue: Union[str, None] = None,
@@ -113,7 +113,7 @@ def sig_catplot(
 
     Args:
         sessions: sessions to plot data from
-        signal: name of the signal to be plotted
+        signal: name of the signal(s) to be plotted
         col: metadata column on which to form plot columns
         col_order: explicit ordering for columns
         row: metadata column on which to form plot rows
@@ -134,10 +134,29 @@ def sig_catplot(
     """
     metadata = sessions.metadata
 
+    _signals: list[str] = []
+    if isinstance(signal, str):
+        _signals = [signal]
+    else:
+        _signals = list(signal)
+
+    if len(_signals) > 1:
+        # multiple signals provided, need to check a few things...
+        # 1) at least one facet should be "signal"
+        # 2) at most one facet should be "signal"
+        num_sig_facets = [(fname, fval) for fname, fval in [("col", col), ("row", row), ("hue", hue)] if fval == "signal"]
+        if len(num_sig_facets) <= 0:
+            raise ValueError("When providing multiple values to parameter `signal`, at least one facet must be set to \"signal\"!")
+        if len(num_sig_facets) > 1:
+            raise ValueError("When providing multiple values to parameter `signal`, at most one facet may be set to \"signal\"!")
+
+    plot_cols: list[Any]
     if col is not None:
-        if col_order is None:
+        if col == "signal":
+            plot_cols = [s for s in _signals]
+        elif col_order is None:
             if pd.api.types.is_categorical_dtype(metadata[col]):
-                plot_cols = metadata[col].cat.categories.values
+                plot_cols = list(metadata[col].cat.categories.values)
             else:
                 plot_cols = sorted(metadata[col].unique())
         else:
@@ -146,10 +165,13 @@ def sig_catplot(
     else:
         plot_cols = [None]
 
+    plot_rows: list[Any]
     if row is not None:
-        if row_order is None:
+        if row == "signal":
+            plot_rows = [s for s in _signals]
+        elif row_order is None:
             if pd.api.types.is_categorical_dtype(metadata[row]):
-                plot_rows = metadata[row].cat.categories.values
+                plot_rows = list(metadata[row].cat.categories.values)
             else:
                 plot_rows = sorted(metadata[row].unique())
         else:
@@ -159,7 +181,9 @@ def sig_catplot(
         plot_rows = [None]
 
     if hue is not None and hue_order is None:
-        if pd.api.types.is_categorical_dtype(metadata[hue]):
+        if hue == "signal":
+            hue_order = [s for s in _signals]
+        elif pd.api.types.is_categorical_dtype(metadata[hue]):
             hue_order = metadata[hue].cat.categories.values
         else:
             hue_order = sorted(metadata[hue].unique())
@@ -187,32 +211,51 @@ def sig_catplot(
         squeeze=False,
     )
 
+    sig_to_plot = _signals[0]
     for row_i, cur_row in enumerate(plot_rows):
         if cur_row is not None:
-            row_criteria = metadata[row] == cur_row
-            row_title = f"{row} = {cur_row}"
+            if row == "signal":
+                row_criteria = np.ones(len(metadata.index), dtype=bool)
+                row_title = None
+                sig_to_plot = cur_row
+            else:
+                row_criteria = metadata[row] == cur_row
+                row_title = f"{row} = {cur_row}"
         else:
             row_criteria = np.ones(len(metadata.index), dtype=bool)
             row_title = None
 
         for col_i, cur_col in enumerate(plot_cols):
             if cur_col is not None:
-                col_criteria = metadata[col] == cur_col
-                col_title = f"{col} = {cur_col}"
+                if col == "signal":
+                    col_criteria = np.ones(len(metadata.index), dtype=bool)
+                    col_title = None
+                    sig_to_plot = cur_col
+                else:
+                    col_criteria = metadata[col] == cur_col
+                    col_title = f"{col} = {cur_col}"
             else:
                 col_criteria = np.ones(len(metadata.index), dtype=bool)
                 col_title = None
 
             ax = axs[row_i, col_i]
+            ax.xaxis.set_tick_params(labelbottom=True)
+            ax.yaxis.set_tick_params(labelbottom=True)
 
-            title = f"{signal}"
-            if col_title is not None or row_title is not None:
-                title += " at " + " & ".join([t for t in [col_title, row_title] if t is not None])
-            ax.set_title(title)
+            if hue == 'signal':
+                title = ""
+                if col_title is not None or row_title is not None:
+                    title += " & ".join([t for t in [col_title, row_title] if t is not None])
+                ax.set_title(title)
+            else:
+                title = f"{sig_to_plot}"
+                if col_title is not None or row_title is not None:
+                    title += " at " + " & ".join([t for t in [col_title, row_title] if t is not None])
+                ax.set_title(title)
 
             if hue is None:
                 try:
-                    sig = sessions.select(row_criteria, col_criteria).aggregate_signals(signal, method=agg_method)
+                    sig = sessions.select(row_criteria, col_criteria).aggregate_signals(sig_to_plot, method=agg_method)
                     plot_signal(
                         sig,
                         ax=ax,
@@ -231,9 +274,14 @@ def sig_catplot(
                 legend_labels = []
                 for hi, curr_hue in enumerate(hue_order):
                     try:
-                        sess_subset = sessions.select(row_criteria, col_criteria, metadata[hue] == curr_hue)
+                        if hue == 'signal':
+                            sess_subset = sessions.select(row_criteria, col_criteria)
+                            sig_to_plot = curr_hue
+                        else:
+                            sess_subset = sessions.select(row_criteria, col_criteria, metadata[hue] == curr_hue)
+
                         if len(sess_subset) > 0:
-                            sig = sess_subset.aggregate_signals(signal, method=agg_method)
+                            sig = sess_subset.aggregate_signals(sig_to_plot, method=agg_method)
                             plot_signal(
                                 sig,
                                 ax=ax,
