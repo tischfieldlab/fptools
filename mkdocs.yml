@@ -120,7 +120,7 @@ nav:
   - Changelog: changelog.md
   - Releases: https://github.com/tischfieldlab/fptools/releases
   - Core API:
-    - Data Loading: 
+    - Data Loading: loading.md
     - Session: session.md
   #  - Formats: formats.md
   - Full API: reference/

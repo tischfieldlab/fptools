@@ -1,9 +1,10 @@
 # Loading Data
+`fptools` offers robust data loading functionality for TDT tank/block files, including metadata injection, parallelism, cacheing, preprocessing and selection/renaming of streams to load.
 
 ## Signal Map
 Signal maps tell the system what data to load, the relationship between different streams, and allows renaming of data streams.
 
-## Metadata
+## Manifest
 Provide a tabular data file (ex: xlsx, csv, tsv) keyed by a column named `blockname`, and the fields in that row will be added to a given sessions metadata
 
 ## Parallelism and Cacheing
@@ -12,4 +13,7 @@ Data loading can occur in parallel. Just specify the number of workers to use vi
 preprocessed data can be cached for quick retrieval later, without needing to re-perform expensive operations. To enable cacheing, set the `cache` parameter to `True`, setting to `False` will disable the cache. Cached data needs to be stored someplace on disk, and can be controlled by providing a filesystem path to the `cache_dir` parameter to a directory to contain the cache.
 
 ## Preprocessors
-We offer several preprocessing routines you may choose from, or you may provide your own implementation; simply pass a function to the `preprocess`  If no prepr
+We offer several preprocessing routines you may choose from, or you may provide your own implementation; simply pass a function to the `preprocess`. If no preprocessor implementation is passed, the signals specified in the `signal_map` are simply added to the `Session` with no further changes.
+
+## Example
+See the notebook `01_Data_Loading.ipnb` for an example of data loading.
