@@ -111,15 +111,18 @@ def sig_catplot(
 ) -> tuple[Figure, np.ndarray]:
     """Plot signals, similar to `seaborn.catplot()`.
 
+    You may provide more than one signal name to the `signal` parameter. In this case, you must also specify one
+    facet (e.x. `col`, `row`, `hue`) as the string "signal".
+
     Args:
         sessions: sessions to plot data from
-        signal: name of the signal(s) to be plotted
-        col: metadata column on which to form plot columns
+        signal: name of the signal(s) to be plotted. 
+        col: metadata column on which to form plot columns, or if multiple signal names are given to `signal`, you may specify "signal" here
         col_order: explicit ordering for columns
-        row: metadata column on which to form plot rows
+        row: metadata column on which to form plot rows, or if multiple signal names are given to `signal`, you may specify "signal" here
         row_order: explicit ordering for rows
         palette: palette to use for hue mapping. A dict[value, color], or something that sns.color_palette() understands
-        hue: metadata column on which to group and color
+        hue: metadata column on which to group and color, or if multiple signal names are given to `signal`, you may specify "signal" here
         hue_order: explicit ordering for hues
         show_indv: if True, show individual session traces
         indv_alpha: alpha transparency level for individual session traces, in range (0, 1)
@@ -127,7 +130,7 @@ def sig_catplot(
         aspect: Aspect ratio of each facet, so that aspect * height gives the width of each facet
         sharex: If true, the facets will share x axes.
         sharey: If true, the facets will share y axes.
-        agg_method:
+        agg_method: method to use for aggregation (see `SessionCollection.aggregate_signals()` for more details)
 
     Returns:
         Figure and array of axes
