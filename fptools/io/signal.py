@@ -3,6 +3,7 @@ from functools import partial
 from typing import Callable, Optional, Union, cast
 
 import numpy as np
+import pandas as pd
 
 
 class Signal(object):
@@ -195,6 +196,14 @@ class Signal(object):
             s = Signal(f"{self.name}#{f_name}", f(self.signal), time=self.time, units=self.units)
             s.marks.update(self.marks)
             return s
+
+    def to_dataframe(self) -> pd.DataFrame:
+        """Get the signal data as a `pandas.DataFrame`.
+
+        Observations are across rows, and samples are across columns. Each sample colum is named with
+        the pattern `Y.{i+1}` where i is the sample index. This also implies 1-based indexing on the output.
+        """
+        return pd.DataFrame(self.signal, columns=[f"Y.{i+1}" for i in range(self.nsamples)])
 
     def describe(self, as_str: bool = False, prefix: str = "") -> Union[str, None]:
         """Describe this Signal.

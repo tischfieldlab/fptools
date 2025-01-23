@@ -303,6 +303,42 @@ class SessionCollection(list[Session]):
         """
         return [item.signals[name] for item in self]
 
+    def get_signal_dataframe(self, signal: str, include_meta: FieldList = "all") -> pd.DataFrame:
+        """Get data for a given signal across sessions, also injecting metadata.
+
+        See also: `Signal.to_dataframe()`
+
+        Args:
+            signal: Name of the signal to collect
+            include_meta: include_meta: metadata fields to include in the final output. Special string "all" will include all metadata fields
+
+        Returns:
+            signal across sessions as a `pandas.DataFrame`
+        """
+        dfs = []
+        for session in self:
+            if include_meta == "all":
+                meta = session.metadata
+            else:
+                meta = {k: v for k, v in session.metadata.items() if k in include_meta}
+
+            sig = session.signals[signal]
+            df = sig.to_dataframe()
+
+            df["obs"] = list(range(sig.nobs))
+
+            for k, v in meta.items():
+                df[k] = v
+
+            # reorder columns
+            df = df[
+                [c for c in df.columns.values if not str(c).startswith("Y.")] + [c for c in df.columns.values if str(c).startswith("Y.")]
+            ]
+
+            dfs.append(df)
+
+        return pd.concat(dfs, ignore_index=True)
+
     def aggregate_signals(self, name: str, method: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]] = "median") -> Signal:
         """Aggregate signals across sessions in this collection for the signal name `name`.
 
