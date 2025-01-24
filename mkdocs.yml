@@ -73,7 +73,6 @@ plugins:
 
 
 markdown_extensions:
-
   # Python Markdown
   - abbr
   - admonition
