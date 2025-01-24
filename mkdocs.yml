@@ -1,5 +1,5 @@
 site_name: fptools documentation
-site_url: 
+site_url: https://tischfieldlab.github.io/fptools/
 repo_url: https://github.com/tischfieldlab/fptools
 
 theme:
@@ -23,6 +23,7 @@ theme:
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
+
 
   features:
     - navigation.tracking
@@ -49,8 +50,8 @@ theme:
 plugins:
   - search
   # - privacy  # Caching dynamic badges
-  # - mkdocs-jupyter
-  # - mike
+  - mkdocs-jupyter
+  - mike
   - autorefs
   - gen-files:
       scripts:
@@ -113,6 +114,11 @@ markdown_extensions:
       custom_checkbox: true
   - pymdownx.tilde
 
+extra:
+  version:
+    provider: mike
+copyright: >
+  Copyright &copy; 2024 - 2025 Tischfield Lab
 
 nav:
   - Overview: index.md
@@ -122,5 +128,4 @@ nav:
   - Core API:
     - Data Loading: loading.md
     - Session: session.md
-  #  - Formats: formats.md
   - Full API: reference/
