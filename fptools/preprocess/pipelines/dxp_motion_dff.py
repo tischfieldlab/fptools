@@ -17,6 +17,17 @@ def dxp_motion_dff(
     plot_dir="",
     trim_extent: Union[None, Literal["auto"], int, tuple[int, int]] = "auto",
 ):
+    """Preprocess using a double exponential fit for detrending, producing df/f values.
+
+    Args:
+        session: the session to populate.
+        block: block data struct from `tdt.read_block()`.
+        signal_map: mapping of signals to perform
+        show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
+        plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
+        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single int trims that many samples from the beginning, a tuple of two ints specifies the number of samples from the beginning and end to trim, respectively.
+        # downsample: if not `None`, downsample signal by `downsample` factor.
+    """
     try:
         if show_steps:
             fig, axs = plt.subplots(6, 1, figsize=(24, 6 * 6))
