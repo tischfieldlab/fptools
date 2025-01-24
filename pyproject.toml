@@ -53,7 +53,8 @@ dev = [
     "mkdocs-material[imaging]",
     "mkdocs-gen-files",
     "mkdocs-literate-nav",
-    "mkdocs-section-index"
+    "mkdocs-section-index",
+    "mike"
 ]
 
 [project.urls]
