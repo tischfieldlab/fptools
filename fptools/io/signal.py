@@ -85,7 +85,7 @@ class Signal(object):
 
     def tindex(self, t: float) -> int:
         """Get the sample index closest to time `t`."""
-        return (np.abs(self.time - t)).argmin()
+        return int((np.abs(self.time - t)).argmin())
 
     def copy(self, new_name: Optional[str] = None) -> "Signal":
         """Return a deep copy of this signal.
