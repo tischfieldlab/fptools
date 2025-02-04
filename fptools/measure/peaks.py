@@ -39,7 +39,13 @@ def measure_peaks(sessions: SessionCollection, signal: str, include_meta: FieldL
     Returns:
         pandas `DataFrame` with peak measurements.
     """
-    detection_params = {"height": (None, None), "threshold": (None, None), "distance": None, "prominence": (None, None), "width": (None, None) }
+    detection_params = {
+        "height": (None, None),
+        "threshold": (None, None),
+        "distance": None,
+        "prominence": (None, None),
+        "width": (None, None),
+    }
     detection_params.update(**kwargs)
     peak_data = []
     for session in sessions:
@@ -63,7 +69,7 @@ def measure_peaks(sessions: SessionCollection, signal: str, include_meta: FieldL
                         "peak_index": peaks[peak_i],
                         "peak_time": t[peaks[peak_i]],
                         **{k: v[peak_i] for k, v in props.items()},
-                        "auc": metrics.auc(t, sig[i, props['left_bases'][peak_i]:props['right_bases'][peak_i]]),
+                        "auc": metrics.auc(t, sig[i, props["left_bases"][peak_i] : props["right_bases"][peak_i]]),
                     }
                 )
 
