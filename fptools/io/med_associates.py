@@ -4,14 +4,68 @@ import os
 import re
 
 import numpy as np
-from tqdm.auto import tqdm
 
 from .common import DataTypeAdaptor
 
-from .session import Session, SessionCollection
+from .session import Session
 
 
-_rx_dict = {
+def find_ma_blocks(path: str, pattern: str = "*.txt") -> list[DataTypeAdaptor]:
+    """Data Loactor for med-associates files.
+
+    Given a path to a directory, will search that path recursively for med-assocaites files.
+
+    Args:
+        path: path to search for med-associates data files
+
+    Returns:
+        list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded
+    """
+    found_files = list(glob.glob(os.path.join(path, "**", pattern), recursive=True))
+    filtered = list(filter(is_file_ma, found_files))
+    items_out = []
+    for tbk in filtered:
+        adapt = DataTypeAdaptor()
+        adapt.path = os.path.dirname(tbk)  # the directory for the block
+        adapt.name = os.path.basename(adapt.path)  # the name of the directory
+        adapt.loaders.append(parse_ma_session)
+        items_out.append(adapt)
+    return items_out
+
+
+def is_file_ma(path: str) -> bool:
+    """Test if a file looks like a med-associates data file.
+
+    Args:
+        path: path to a file to test.
+
+    Returns:
+        True if the file looks like a med-associates file, otherwise False.
+    """
+    with open(path, mode="r") as f:
+        first_line = f.readline()
+        if first_line.startswith("File: "):
+            return True
+    return False
+
+
+# def parse_ma_directory(path: str, pattern: str = "*.txt", quiet: bool = False) -> SessionCollection:
+#     """Parse a directory containing session data files from MedAssociates
+
+#     Parameters:
+#     path: path to directory containing data files
+#     pattern: glob pattern for selecting files in the directory
+#     quiet: if false, show TQDM progress bar, if True, do not show any progress bar
+
+#     Returns:
+#     SessionCollection with parsed files
+#     """
+#     sessions = SessionCollection()
+#     for filepath in tqdm(glob.glob(os.path.join(path, pattern)), disable=quiet, leave=True):
+#         sessions.append(parse_ma_session(filepath))
+#     return sessions
+
+_rx_dict: dict[str, re.Pattern] = {
     "StartDate": re.compile(r"^Start Date: (?P<StartDate>.*)\r\n"),
     "EndDate": re.compile(r"^End Date: (?P<EndDate>.*)\r\n"),
     "StartTime": re.compile(r"^Start Time: (?P<StartTime>.*)\r\n"),
@@ -33,6 +87,12 @@ def _parse_line(line: str):
 
     Do a regex search against all defined regexes and
     return the key and match result of the first matching regex
+
+    Args:
+        line: the line to parse
+
+    Returns:
+        (None, None) if no match was found, otherwise the key and match object
     """
     for key, rx in _rx_dict.items():
         match = rx.search(line)
@@ -42,63 +102,21 @@ def _parse_line(line: str):
     return None, None
 
 
-def find_ma_blocks(path: str, pattern: str = "*.txt") -> list[DataTypeAdaptor]:
-    found_files = list(glob.glob(os.path.join(path, "**", pattern), recursive=True))
-    filtered = list(filter(is_file_ma, found_files))
-    items_out = []
-    for tbk in filtered:
-        adapt = DataTypeAdaptor()
-        adapt.path = os.path.dirname(tbk)  # the directory for the block
-        adapt.name = os.path.basename(adapt.path)  # the name of the directory
-        adapt.loader = parse_ma_session
-        items_out.append(adapt)
-    return items_out
-
-
-def is_file_ma(path: str) -> bool:
-    """Tell if the file specified by `path` is a med-associates file"""
-    with open(path, mode="r") as f:
-        first_line = f.readline()
-        if first_line.startswith("File: "):
-            return True
-    return False
-
-
-def parse_ma_directory(path: str, pattern: str = "*.txt", quiet: bool = False) -> SessionCollection:
-    """Parse a directory containing session data files from MedAssociates
-
-    Parameters:
-    path: path to directory containing data files
-    pattern: glob pattern for selecting files in the directory
-    quiet: if false, show TQDM progress bar, if True, do not show any progress bar
-
-    Returns:
-    SessionCollection with parsed files
-    """
-    sessions = SessionCollection()
-    for filepath in tqdm(glob.glob(os.path.join(path, pattern)), disable=quiet, leave=True):
-        sessions.append(parse_ma_session(filepath))
-    return sessions
-
-
-def parse_ma_session(path: str) -> Session:
-    """Parse a session data file from MedAssociates
+def parse_ma_session(session: Session, path: str) -> Session:
+    """Parse a session data file from MedAssociates.
 
     Adapted from https://github.com/matthewperkins/MPCdata, but fixes some issues.
 
-    Parameters:
-    path: Filepath for file_object to be parsed
+    Args:
+        path: Filepath for file_object to be parsed
 
     Returns:
-    SessionCollection
+        SessionCollection
     """
     # print(path)
-    data: Session
     MPCDateStringRe = re.compile(r"\s*(?P<hour>[0-9]+):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})")
     # open the file and read through it line by line
     with open(path, "r", newline="\n") as file_object:
-        # if the file has multiple boxes in it, return a list of MPC objects
-        MPCDataList = SessionCollection()
         line = file_object.readline()
         while line:
             # at each line check for a match with a regex
@@ -106,58 +124,59 @@ def parse_ma_session(path: str) -> Session:
 
             # start of data is '\r\r\n'
             if key == "STARTOFDATA":
-                data = Session()  # create a new data object
-                MPCDataList.append(data)
+                pass
 
             # extract start date
             if key == "StartDate":
-                data.metadata["StartDate"] = datetime.datetime.strptime(match.group(key), "%m/%d/%y").date()
+                session.metadata["StartDate"] = datetime.datetime.strptime(match.group(key), "%m/%d/%y").date()
 
             # extract end date
             if key == "EndDate":
-                data.metadata["EndDate"] = datetime.datetime.strptime(match.group(key), "%m/%d/%y").date()
+                session.metadata["EndDate"] = datetime.datetime.strptime(match.group(key), "%m/%d/%y").date()
 
             # extract start time
             if key == "StartTime":
                 date_match = MPCDateStringRe.search(match.group(key))
                 if date_match is not None:
                     (hour, min, sec) = [int(date_match.group(g)) for g in ["hour", "minute", "second"]]
-                    data.metadata["StartTime"] = datetime.time(hour, min, sec)
+                    session.metadata["StartTime"] = datetime.time(hour, min, sec)
                     # date should be already read
-                    data.metadata["StartDateTime"] = datetime.datetime.combine(data.metadata["StartDate"], data.metadata["StartTime"])
+                    session.metadata["StartDateTime"] = datetime.datetime.combine(
+                        session.metadata["StartDate"], session.metadata["StartTime"]
+                    )
 
             # extract end time
             if key == "EndTime":
                 date_match = MPCDateStringRe.search(match.group(key))
                 if date_match is not None:
                     (hour, min, sec) = [int(date_match.group(g)) for g in ["hour", "minute", "second"]]
-                    data.metadata["EndTime"] = datetime.time(hour, min, sec)
+                    session.metadata["EndTime"] = datetime.time(hour, min, sec)
                     # date should be already read
-                    data.metadata["EndDateTime"] = datetime.datetime.combine(data.metadata["EndDate"], data.metadata["EndTime"])
+                    session.metadata["EndDateTime"] = datetime.datetime.combine(session.metadata["EndDate"], session.metadata["EndTime"])
 
             # extract Subject
             if key == "Subject":
-                data.metadata["Subject"] = match.group(key)
+                session.metadata["Subject"] = match.group(key)
 
             # extract Experiment
             if key == "Experiment":
-                data.metadata["Experiment"] = match.group(key)
+                session.metadata["Experiment"] = match.group(key)
 
             # extract Group
             if key == "Group":
-                data.metadata["Group"] = match.group(key)
+                session.metadata["Group"] = match.group(key)
 
             # extract Box
             if key == "Box":
-                data.metadata["Box"] = int(match.group(key))
+                session.metadata["Box"] = int(match.group(key))
 
             # extract MSN
             if key == "MSN":
-                data.metadata["MSN"] = match.group(key)
+                session.metadata["MSN"] = match.group(key)
 
             # extract scalars
             if key == "SCALAR":
-                data.scalars[match.group("name")] = float(match.group("value"))
+                session.scalars[match.group("name")] = float(match.group("value"))
 
             # identify an array
             if key == "ARRAY":
@@ -180,6 +199,6 @@ def parse_ma_session(path: str) -> Session:
                     file_tell = file_object.tell()
                     subline = file_object.readline()
                 # print(f'Setting "{match.group("name")}"={items}')
-                data.epocs[match.group("name")] = np.array(items)
+                session.epocs[match.group("name")] = np.array(items)
             line = file_object.readline()
-    return MPCDataList[0]
+    return session

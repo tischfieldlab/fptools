@@ -1,32 +1,15 @@
-import glob
 import os
 import traceback
-from typing import Any, Optional, Protocol, cast
+from typing import Literal, Optional, Union
 import concurrent
 import joblib
 import pandas as pd
 
-from .common import Loader, SignalMapping, DataTypeAdaptor
-from .med_associates import find_ma_blocks, parse_ma_session
-from .tdt import find_tdt_blocks, load_tdt_block
-from .session import Session, SessionCollection, Signal
+from .common import DataLocator, SignalMapping, DataTypeAdaptor, Preprocessor
+from .med_associates import find_ma_blocks
+from .tdt import find_tdt_blocks
+from .session import Session, SessionCollection
 from tqdm.auto import tqdm
-
-
-class Preprocessor(Protocol):
-    def __call__(self, session: "Session", block: Any, signal_map: list[SignalMapping], **kwargs) -> "Session":
-        """Preprocessor protocol.
-
-        Args:
-            session: the session to operate upon
-            block: data, result of `tdt.load_block()`
-            signal_map: mapping of signal information
-            **kwargs: additional kwargs a preprocessor might need
-
-        Returns:
-            Session object with preprocessed data added.
-        """
-        pass
 
 
 def load_manifest(path: str, index: Optional[str] = None) -> pd.DataFrame:
@@ -59,7 +42,9 @@ def load_data(
     tank_path: str,
     signal_map: list[SignalMapping],
     manifest_path: Optional[str] = None,
+    manifest_index: str = "blockname",
     max_workers: Optional[int] = None,
+    locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "auto",
     preprocess: Optional[Preprocessor] = None,
     cache: bool = True,
     cache_dir: str = "cache",
@@ -85,7 +70,9 @@ def load_data(
 
     Args:
         tank_path: path that will be recursively searched for blocks
+        signal_map: used to inform the preprocessor about data relationships
         manifest_path: if provided, path to metadata in a tabular format, indexed with `blockname`. See above for more details
+        manifest_index: the name of the column to be set as the manifest DataFrame index.
         max_workers: number of workers in the process pool for loading blocks. If None, defaults to the number of CPUs on the machine.
         preprocess: preprocess routine to run on the data. See above for more details.
         cache: If `True`, results will be cached for future use, or results will be loaded from the cache.
@@ -97,7 +84,7 @@ def load_data(
     """
     has_manifest = False
     if manifest_path is not None:
-        manifest = load_manifest(manifest_path)
+        manifest = load_manifest(manifest_path, index=manifest_index)
         has_manifest = True
 
     if cache:
@@ -108,19 +95,20 @@ def load_data(
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
         # collect common worker args in one place
         worker_args = {"preprocess": preprocess, "cache": cache, "cache_dir": cache_dir, **kwargs}
-        for dset in _find_data(tank_path):
+
+        for dset in _get_locator(locator)(tank_path):
 
             if has_manifest:
                 try:
                     block_meta = manifest.loc[dset.name]
                 except KeyError:
                     # this block is not listed in the manifest! Err on the side of caution and exclude the block
-                    tqdm.write(f"WARNING: Excluding block {dset.name} because it is not listed in the manifest!!")
+                    tqdm.write(f'WARNING: Excluding block "{dset.name}" because it is not listed in the manifest!!')
                     continue
 
                 # possibly exclude the block, if flagged in the manifest
                 if "exclude" in block_meta and block_meta["exclude"]:
-                    tqdm.write(f"Excluding block {dset.name} due to manifest exclude flag")
+                    tqdm.write(f'Excluding block "{dset.name}" due to manifest exclude flag')
                     continue
 
             # submit the task to the pool
@@ -151,6 +139,18 @@ def _load(
     cache_dir: str = "cache",
     **kwargs,
 ) -> Session:
+    """Load data for the given DataTypeAdaptor.
+
+    Handles session instance creation, loading across possibly multiple loaders, cacheing, preprocessing
+
+    Args:
+        dset: a DataTypeAdaptor instance describing what data and how to load it
+        signal_map: used to inform the preprocessor about data relationships
+        preprocess: preprocess routine to run on the data.
+        cache: If `True`, results will be cached for future use, or results will be loaded from the cache.
+        cache_dir: path to the cache
+        **kwargs: additional keyword arguments to pass to the `preprocess` callable.
+    """
     cache_path = os.path.join(cache_dir, f"{dset.name}.pkl")
 
     if cache and os.path.exists(cache_path):
@@ -162,17 +162,49 @@ def _load(
         # otherwise, we need to load the data from scratch
 
         ## load the data
-        session = dset.loader(dset.path)
+        session = Session()
+        for loader in dset.loaders:
+            session = loader(session, dset.path)
 
+        # preprocess data if preprocessor is specified
         if preprocess is not None:
-            session = preprocess(session, block, signal_map, **kwargs)
+            session = preprocess(session, signal_map, **kwargs)
 
+        # cache the session, if requested
         if cache:
             joblib.dump(session, cache_path, compress=True)
 
         return session
 
 
+def _get_locator(locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "auto") -> DataLocator:
+    """Translate a flexible locator argument to a concrete DataLoader implementation.
+
+    Args:
+        locator: type of locator to return. Several special strings supported or a concrete DataLoader implementation.
+
+    Returns:
+        A concrete DataLoader
+    """
+    if locator == "auto":
+        return _find_data
+    elif locator == "tdt":
+        return find_tdt_blocks
+    elif locator == "ma":
+        return find_ma_blocks
+    else:
+        return locator
+
+
 def _find_data(path: str) -> list[DataTypeAdaptor]:
-    """Given a path to some data, attempt to figure out what type of data it is"""
+    """Data locator for type "auto".
+
+    Tries to find any type of data (TDT and med-assocates currently supported)
+
+    Args:
+        path: path to search for data
+
+    Returns:
+        list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded
+    """
     return [*find_tdt_blocks(path), *find_ma_blocks(path)]
