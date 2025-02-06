@@ -13,7 +13,7 @@ from ..common import Palette
 
 @dataclasses.dataclass(init=False)
 class CumulativeEventsResult:
-    """Object to store results from `plot_cumulative_events()`"""
+    """Object to store results from `plot_cumulative_events()`."""
 
     fig: Figure
     means: pd.DataFrame
@@ -34,7 +34,7 @@ def plot_cumulative_events(
 ) -> CumulativeEventsResult:
     """Plot cumulative number of events over time.
 
-    Parameters:
+    Args:
         event_df: DataFrame of events
         col: column in the dataframe to form plot columns on
         col_order: order for the columns in the plot. If None, use the natural sorted order of unique items

@@ -14,7 +14,7 @@ from ..common import Palette, get_colormap
 
 @dataclasses.dataclass(init=False)
 class RasterPlotResult:
-    """Object to store results from `plot_event_raster()`"""
+    """Object to store results from `plot_event_raster()`."""
 
     fig: Figure
     sort_order: Union[dict[str, np.ndarray], None]
@@ -41,9 +41,9 @@ def plot_event_raster(
     sort_dir: Literal["asc", "dsc"] = "asc",
     rate_max: Union[float, Literal["auto"], str] = "auto",
 ) -> RasterPlotResult:
-    """Generate a raster plot of events over time
+    """Generate a raster plot of events over time.
 
-    Parameters:
+    Args:
         event_df: DataFrame of events
         col: column in the dataframe to form plot columns on
         col_order: order for the columns in the plot. If None, use the natural sorted order of unique items
