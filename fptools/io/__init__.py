@@ -1,3 +1,4 @@
+from .common import SignalMapping
 from .signal import Signal
 from .session import Session, SessionCollection
-from .tdt import load_data, SignalMapping
+from .data_loader import load_data

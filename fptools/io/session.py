@@ -21,6 +21,7 @@ class Session(object):
         self.metadata: dict[str, Any] = {}
         self.signals: dict[str, Signal] = {}
         self.epocs: dict[str, np.ndarray] = defaultdict(partial(np.ndarray, 0))
+        self.scalars: dict[str, float] = defaultdict()
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
         """Describe this session.
