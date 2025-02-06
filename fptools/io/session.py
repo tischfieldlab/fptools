@@ -57,6 +57,17 @@ class Session(object):
             buffer += "    < No Epocs Available >\n"
         buffer += "\n"
 
+        buffer += "Scalars:\n"
+        if len(self.scalars) > 0:
+            for k, v in self.scalars.items():
+                buffer += f"    {k}:\n"
+                buffer += f"        num_events = {v.shape}\n"
+                buffer += f"        earliest = {datetime.timedelta(seconds=v[0])}\n"
+                buffer += f"        latest = {datetime.timedelta(seconds=v[-1])}\n"
+        else:
+            buffer += "    < No Epocs Available >\n"
+        buffer += "\n"
+
         buffer += "Signals:\n"
         if len(self.signals) > 0:
             for k, v in self.signals.items():
@@ -386,6 +397,12 @@ class SessionCollection(list[Session]):
         epocs = Counter([item for session in self for item in session.epocs.keys()])
         buffer += "Epocs present in data with counts:\n"
         for k, v in epocs.items():
+            buffer += f'({v}) "{k}"\n'
+        buffer += "\n"
+
+        scalars = Counter([item for session in self for item in session.scalars.keys()])
+        buffer += "Scalars present in data with counts:\n"
+        for k, v in scalars.items():
             buffer += f'({v}) "{k}"\n'
         buffer += "\n"
 
