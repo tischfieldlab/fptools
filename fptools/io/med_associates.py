@@ -176,7 +176,7 @@ def parse_ma_session(session: Session, path: str) -> Session:
 
             # extract scalars
             if key == "SCALAR":
-                session.scalars[match.group("name")] = float(match.group("value"))
+                session.scalars[match.group("name")] = np.array([float(match.group("value"))])
 
             # identify an array
             if key == "ARRAY":
