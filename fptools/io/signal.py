@@ -54,7 +54,7 @@ class Signal(object):
         elif time is None and fs is not None:
             # sampleing frequency is provided, infer time from fs
             self.fs = fs
-            self.time = np.linspace(1, signal.shape[0], signal.shape[0]) / self.fs
+            self.time = np.linspace(1, signal.shape[-1], signal.shape[-1]) / self.fs
 
         elif fs is None and time is not None:
             # time is provided, so lets estimate the sampling frequency
