@@ -112,6 +112,21 @@ class Session(object):
         self.signals[new_name] = self.signals[old_name]
         self.signals.pop(old_name)
 
+    def rename_scalar(self, old_name: str, new_name: str):
+        """Rename a scalar, from `old_name` to `new_name`.
+
+        Raises an error if the new scalar name already exists.
+
+        Args:
+        old_name: the current name for the scalar
+        new_name: the new name for the scalar
+        """
+        if new_name in self.scalars:
+            raise KeyError(f"Key `{new_name}` already exists in data!")
+
+        self.scalars[new_name] = self.scalars[old_name]
+        self.scalars.pop(old_name)
+
     def rename_epoc(self, old_name: str, new_name: str) -> None:
         """Rename a epoc, from `old_name` to `new_name`.
 
@@ -126,6 +141,72 @@ class Session(object):
 
         self.epocs[new_name] = self.epocs[old_name]
         self.epocs.pop(old_name)
+
+    def epoc_dataframe(self, include_epocs: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
+        """Produce a dataframe with epoc data and metadata.
+
+        Args:
+            include_epocs: list of array names to include in the dataframe. Special str "all" is also accepted.
+            include_meta: list of metadata fields to include in the dataframe. Special str "all" is also accepted.
+
+        Returns:
+            DataFrame with data from this session
+        """
+        # determine metadata fileds to include
+        if include_meta == "all":
+            meta = self.metadata
+        else:
+            meta = {k: v for k, v in self.metadata.items() if k in include_meta}
+
+        # determine arrays to include
+        if include_epocs == "all":
+            epoc_names = list(self.epocs.keys())
+        else:
+            epoc_names = [k for k in self.epocs.keys() if k in include_epocs]
+
+        # iterate arrays and include any the user requested
+        # also add in any requested metadata
+        events = []
+        for k, v in self.epocs.items():
+            if k in epoc_names:
+                for value in v:
+                    events.append({**meta, "event": k, "time": value})
+
+        df = pd.DataFrame(events)
+
+        # sort the dataframe by time, but check that we have values, otherwise will raise keyerror
+        if len(df.index) > 0:
+            df = df.sort_values("time")
+
+        return df
+
+    def scalar_dataframe(self, include_scalars: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
+        """Produce a dataframe with scalar data and metadata.
+
+        Args:
+            include_scalars: list of scalar names to include in the dataframe. Special str "all" is also accepted.
+            include_meta: list of metadata fields to include in the dataframe. Special str "all" is also accepted.
+
+        Returns:
+            DataFrame with data from this session
+        """
+        # determine metadata fileds to include
+        if include_meta == "all":
+            meta = self.metadata
+        else:
+            meta = {k: v for k, v in self.metadata.items() if k in include_meta}
+
+        # determine scalars to include
+        if include_scalars == "all":
+            scalar_names = list(self.scalars.keys())
+        else:
+            scalar_names = [k for k in self.scalars.keys() if k in include_scalars]
+
+        scalars = []
+        for sn in scalar_names:
+            scalars.append({**meta, "scalar_name": sn, "scalar_value": self.scalars[sn]})
+
+        return pd.DataFrame(scalars)
 
 
 class SessionCollection(list[Session]):
@@ -205,6 +286,16 @@ class SessionCollection(list[Session]):
         """
         for item in self:
             item.rename_epoc(old_name, new_name)
+
+    def rename_scalar(self, old_name: str, new_name: str) -> None:
+        """Rename an scalar on each session in this collection.
+
+        Args:
+            old_name: current name of the scalar
+            new_name: the new name for the scalar
+        """
+        for item in self:
+            item.rename_scalar(old_name, new_name)
 
     def filter(self, predicate: Callable[[Session], bool]) -> "SessionCollection":
         """Filter the items in this collection, returning a new `SessionCollection` containing sessions which pass `predicate`.
@@ -316,7 +407,33 @@ class SessionCollection(list[Session]):
         """
         return [item.signals[name] for item in self]
 
-    def get_signal_dataframe(self, signal: str, include_meta: FieldList = "all") -> pd.DataFrame:
+    def epoc_dataframe(self, include_epocs: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
+        """Produce a dataframe with epoc data and metadata across all the sessions in this collection.
+
+        Args:
+            include_epocs: list of epoc names to include in the dataframe. Special str "all" is also accepted.
+            include_meta: list of metadata fields to include in the dataframe. Special str "all" is also accepted.
+
+        Returns:
+            DataFrame with data from across this collection
+        """
+        dfs = [session.epoc_dataframe(include_epocs=include_epocs, include_meta=include_meta) for session in self]
+        return pd.concat(dfs).sort_values("time").reset_index(drop=True)
+
+    def scalar_dataframe(self, include_scalars: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
+        """Produce a dataframe with scalar data and metadata across all the sessions in this collection.
+
+        Args:
+            include_scalars: list of scalar names to include in the dataframe. Special str "all" is also accepted.
+            include_meta: list of metadata fields to include in the dataframe. Special str "all" is also accepted.
+
+        Returns:
+            DataFrame with data from across this collection
+        """
+        dfs = [session.scalar_dataframe(include_scalars=include_scalars, include_meta=include_meta) for session in self]
+        return pd.concat(dfs).reset_index(drop=True)
+
+    def signal_dataframe(self, signal: str, include_meta: FieldList = "all") -> pd.DataFrame:
         """Get data for a given signal across sessions, also injecting metadata.
 
         See also: `Signal.to_dataframe()`
