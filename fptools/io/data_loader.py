@@ -74,6 +74,7 @@ def load_data(
         manifest_path: if provided, path to metadata in a tabular format, indexed with `blockname`. See above for more details
         manifest_index: the name of the column to be set as the manifest DataFrame index.
         max_workers: number of workers in the process pool for loading blocks. If None, defaults to the number of CPUs on the machine.
+        locator: locator to use for finding data on `tank_path`
         preprocess: preprocess routine to run on the data. See above for more details.
         cache: If `True`, results will be cached for future use, or results will be loaded from the cache.
         cache_dir: path to the cache
