@@ -163,6 +163,7 @@ def _load(
 
         ## load the data
         session = Session()
+        session.name = dset.name
         for loader in dset.loaders:
             session = loader(session, dset.path)
 

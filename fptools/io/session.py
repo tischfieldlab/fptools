@@ -18,6 +18,7 @@ class Session(object):
 
     def __init__(self) -> None:
         """Initialize this Session object."""
+        self.name: str = ""
         self.metadata: dict[str, Any] = {}
         self.signals: dict[str, Signal] = {}
         self.epocs: dict[str, np.ndarray] = defaultdict(partial(np.ndarray, 0))
@@ -34,7 +35,7 @@ class Session(object):
         Returns:
             `None` if `as_str` is `False`; if `as_str` is `True`, returns the description as a `str`
         """
-        buffer = ""
+        buffer = f'Session with name "{self.name}"\n\n'
 
         buffer += "Metadata:\n"
         if len(self.metadata) > 0:
