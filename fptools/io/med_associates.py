@@ -26,8 +26,8 @@ def find_ma_blocks(path: str, pattern: str = "*.txt") -> list[DataTypeAdaptor]:
     items_out = []
     for f in filtered:
         adapt = DataTypeAdaptor()
-        adapt.path = f  # the med-associates txt file
-        adapt.name = os.path.basename(adapt.path)  # the name of the directory
+        adapt.path = f  # path to the med-associates txt file
+        adapt.name = os.path.splitext(os.path.basename(adapt.path))[0]  # the basename of the file without file extensions
         adapt.loaders.append(parse_ma_session)
         items_out.append(adapt)
     return items_out
