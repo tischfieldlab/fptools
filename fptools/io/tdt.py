@@ -18,7 +18,7 @@ def find_tdt_blocks(path: str) -> list[DataTypeAdaptor]:
     Returns:
         list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded
     """
-    tbk_files = glob.glob(os.path.join(path, "**/*.Tbk"), recursive=True)
+    tbk_files = glob.glob(os.path.join(path, "**/*.tbk"), recursive=True)
     items_out = []
     for tbk in tbk_files:
         adapt = DataTypeAdaptor()
