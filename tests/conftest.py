@@ -7,6 +7,11 @@ import pytest
 
 
 def list_files(startpath):
+    '''Helper method to print a directory tree with formatting.
+
+    Args:
+        startpath: root path to traverse
+    '''
     for root, dirs, files in os.walk(startpath):
         level = root.replace(startpath, '').count(os.sep)
         indent = ' ' * 4 * (level)
@@ -38,9 +43,13 @@ def pytest_sessionstart(session):
 
 @pytest.fixture
 def tdt_test_data_path():
+    """Get a path to a directory with TDT test data.
+    """
     return os.path.join(os.getcwd(), 'test_data', 'TDT-DLS-GRABDA2m-Male-PR4-2Day')
 
 
 @pytest.fixture
 def ma_test_data_path():
+    """Get a path to a directory with Med-Associates test data.
+    """
     return os.path.join(os.getcwd(), 'test_data', 'MA-PR4-4Day')
