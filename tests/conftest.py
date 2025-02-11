@@ -7,11 +7,11 @@ import pytest
 
 
 def list_files(startpath):
-    '''Helper method to print a directory tree with formatting.
+    """Helper method to print a directory tree with formatting.
 
     Args:
         startpath: root path to traverse
-    '''
+    """
     for root, dirs, files in os.walk(startpath):
         level = root.replace(startpath, '').count(os.sep)
         indent = ' ' * 4 * (level)
@@ -21,9 +21,11 @@ def list_files(startpath):
             print('{}{}'.format(subindent, f))
 
 def pytest_sessionstart(session):
-    ''' Ensure test data is downloaded and extracted.
-    '''
+    """Ensure test data is downloaded and extracted at the start of testing.
 
+    Data will be downloaded as a zip file hosted on Box, and then unpacked to the local `test_data` folder
+    in the root of the package.
+    """
     test_data_link = r"https://rutgers.box.com/shared/static/pd6pl4ieo9je5ahh2f22z3t0yssxjern.zip"
     dest = os.path.join(os.getcwd(), 'test_data')
 
@@ -42,14 +44,12 @@ def pytest_sessionstart(session):
 
 
 @pytest.fixture
-def tdt_test_data_path():
-    """Get a path to a directory with TDT test data.
-    """
+def tdt_test_data_path() -> str:
+    """Get a path to a directory with TDT test data."""
     return os.path.join(os.getcwd(), 'test_data', 'TDT-DLS-GRABDA2m-Male-PR4-2Day')
 
 
 @pytest.fixture
-def ma_test_data_path():
-    """Get a path to a directory with Med-Associates test data.
-    """
+def ma_test_data_path() -> str:
+    """Get a path to a directory with Med-Associates test data."""
     return os.path.join(os.getcwd(), 'test_data', 'MA-PR4-4Day')
