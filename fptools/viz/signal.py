@@ -1,5 +1,4 @@
 from collections.abc import Mapping
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.typing import ColorType
 from matplotlib.axes import Axes
@@ -11,7 +10,7 @@ import pandas as pd
 import seaborn as sns
 from typing import Any, Literal, Optional, Union
 
-from fptools.io import Session, Signal, SessionCollection
+from fptools.io import Signal, SessionCollection
 
 
 def plot_signal(
