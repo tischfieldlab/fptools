@@ -6,6 +6,9 @@ import os
 import glob
 import pytest
 
+from fptools.io.data_loader import load_data
+from fptools.preprocess.pipelines import lowpass_dff
+
 
 @pytest.fixture(scope="session", autouse=True)
 def always_spawn():
@@ -64,3 +67,36 @@ def tdt_test_data_path() -> str:
 def ma_test_data_path() -> str:
     """Get a path to a directory with Med-Associates test data."""
     return os.path.join(os.getcwd(), 'test_data', 'MA-PR4-4Day')
+
+@pytest.fixture
+def tdt_preprocessed_sessions(tdt_test_data_path):
+    """Test that we can load some TDT data via the data loader interface and run preprocessing.
+
+    lowpass_dff preprocessor will be run on the data.
+
+    show_steps should be false, can increase memory consumption during tests, causing actions to fail
+
+    Args:
+        tdt_test_data_path: fixture that provides a file system path to the TDT test data
+    """
+    signal_map = [{
+        'tdt_name': '_465A',
+        'dest_name': 'Dopamine',
+        'role': 'experimental'
+    }, {
+        'tdt_name': '_415A',
+        'dest_name': 'Isosbestic',
+        'role': 'control'
+    }]
+
+    sessions = load_data(tdt_test_data_path,
+                     signal_map,
+                     os.path.join(tdt_test_data_path, 'manifest.xlsx'),
+                     max_workers=2,
+                     locator="tdt",
+                     preprocess=lowpass_dff,
+                     cache=True,
+                     cache_dir=os.path.join(tdt_test_data_path, 'cache_lowpass_dff'),
+                     show_steps=False)
+
+    return sessions
