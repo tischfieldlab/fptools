@@ -1,12 +1,9 @@
-
-
-
-
 import requests
 import zipfile
 import io
 import os
 import glob
+import pytest
 
 
 def list_files(startpath):
@@ -37,3 +34,13 @@ def pytest_sessionstart(session):
     print()
     print(f"Here are the contents of the test data folder \"{dest}\":")
     list_files(dest)
+
+
+@pytest.fixture
+def tdt_test_data_path():
+    return os.path.join(os.getcwd(), 'test_data', 'TDT-DLS-GRABDA2m-Male-PR4-2Day')
+
+
+@pytest.fixture
+def ma_test_data_path():
+    return os.path.join(os.getcwd(), 'test_data', 'MA-PR4-4Day')
