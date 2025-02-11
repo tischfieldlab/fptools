@@ -53,14 +53,14 @@ def lowpass_dff(
 
         # trim raw signal start to when the optical system came online
         if trim_extent is not None:
-            if trim_extent == "auto":
-                trim_args = {"begin": int(session.scalars["Fi1i"][0] * sig.fs)}
-            elif isinstance(trim_extent, float):
-                trim_args = {"begin": int(trim_extent * sig.fs)}
-            elif len(trim_extent) == 2:
-                trim_args = {"begin": int(trim_extent[0] * sig.fs), "end": int(trim_extent[1] * sig.fs)}
-
             for sig in signals:
+                if trim_extent == "auto":
+                    trim_args = {"begin": int(session.scalars["Fi1i"][0] * sig.fs)}
+                elif isinstance(trim_extent, float):
+                    trim_args = {"begin": int(trim_extent * sig.fs)}
+                elif len(trim_extent) == 2:
+                    trim_args = {"begin": int(trim_extent[0] * sig.fs), "end": int(trim_extent[1] * sig.fs)}
+
                 sig.signal, sig.time = trim(sig.signal, sig.time, **trim_args)
 
             if show_steps:
