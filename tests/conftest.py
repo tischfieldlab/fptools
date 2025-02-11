@@ -1,9 +1,20 @@
+import multiprocessing
 import requests
 import zipfile
 import io
 import os
 import glob
 import pytest
+
+
+@pytest.fixture(scope="session", autouse=True)
+def always_spawn():
+    """Force multiprocessing to always use the `spawn` start method.
+
+    Scope == 'session' so that it only runs once during testing.
+    autouse == True so that this fixture automatically runs at the start of testing.
+    """
+    multiprocessing.set_start_method("spawn", force=True)
 
 
 def list_files(startpath):
