@@ -70,7 +70,7 @@ def ma_test_data_path() -> str:
 
 @pytest.fixture
 def tdt_preprocessed_sessions(tdt_test_data_path):
-    """Test that we can load some TDT data via the data loader interface and run preprocessing.
+    """Fixture to provide some preprocessed TDT test data.
 
     lowpass_dff preprocessor will be run on the data.
 
@@ -98,5 +98,30 @@ def tdt_preprocessed_sessions(tdt_test_data_path):
                      cache=True,
                      cache_dir=os.path.join(tdt_test_data_path, 'cache_lowpass_dff'),
                      show_steps=False)
+
+    return sessions
+
+
+@pytest.fixture
+def ma_preprocessed_sessions(ma_test_data_path):
+    """Fixture to provide some Med-Associates test data.
+
+    Args:
+        ma_test_data_path: fixture that provides a file system path to the med associates test data
+    """
+    signal_map = []
+
+    sessions = load_data(ma_test_data_path,
+                     signal_map,
+                     os.path.join(ma_test_data_path, 'manifest.xlsx'),
+                     max_workers=2,
+                     locator="ma",
+                     preprocess=None,
+                     cache=False)
+
+    sessions.rename_epoc('B', 'nosepoke')
+    sessions.rename_epoc('C', 'magazine_entry')
+    sessions.rename_epoc('D', 'reward_retrieval_latency')
+    sessions.rename_epoc('F', 'rewarded_nosepoke')
 
     return sessions
