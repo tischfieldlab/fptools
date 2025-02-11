@@ -10,6 +10,8 @@ import glob
 
 
 def pytest_sessionstart(session):
+    ''' Ensure test data is downloaded and extracted.
+    '''
 
     test_data_link = r"https://rutgers.box.com/shared/static/pd6pl4ieo9je5ahh2f22z3t0yssxjern.zip"
     dest = os.path.join(os.getcwd(), 'test_data')
