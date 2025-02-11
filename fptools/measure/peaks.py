@@ -61,6 +61,7 @@ def measure_peaks(sessions: SessionCollection, signal: str, include_meta: FieldL
             peaks, props = scipy.signal.find_peaks(sig[i, :], **detection_params)
 
             for peak_i in range(len(peaks)):
+                peak_slice = slice(props["left_bases"][peak_i], props["right_bases"][peak_i])
                 peak_data.append(
                     {
                         **meta,
@@ -69,7 +70,7 @@ def measure_peaks(sessions: SessionCollection, signal: str, include_meta: FieldL
                         "peak_index": peaks[peak_i],
                         "peak_time": t[peaks[peak_i]],
                         **{k: v[peak_i] for k, v in props.items()},
-                        "auc": metrics.auc(t, sig[i, props["left_bases"][peak_i] : props["right_bases"][peak_i]]),
+                        "auc": metrics.auc(t[peak_slice], sig[i, peak_slice]),
                     }
                 )
 
