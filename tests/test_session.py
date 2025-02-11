@@ -49,7 +49,8 @@ def test_load_tdt_preprocess(tdt_test_data_path):
                      max_workers=2,
                      locator="tdt",
                      preprocess=lowpass_dff,
-                     cache=False)
+                     cache=False,
+                     show_steps=False)
 
     assert len(sessions) == 16
 
