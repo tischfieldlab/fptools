@@ -102,7 +102,7 @@ class Signal(object):
         s.marks.update(**self.marks)
         return s
 
-    def __check_other_compatible(self, other: "Signal") -> bool:
+    def _check_other_compatible(self, other: "Signal") -> bool:
         return self.nsamples == other.nsamples and self.nobs == self.nobs and self.fs == other.fs
 
     def __add__(self, other: "Signal") -> "Signal":
@@ -114,7 +114,7 @@ class Signal(object):
         Return:
             A new Signal with the addition result.
         """
-        assert self.__check_other_compatible(other)
+        assert self._check_other_compatible(other)
         s = self.copy()
         s.signal += other.signal
         return s
@@ -128,7 +128,7 @@ class Signal(object):
         Return:
             A new Signal with the subtraction result.
         """
-        assert self.__check_other_compatible(other)
+        assert self._check_other_compatible(other)
         s = self.copy()
         s.signal -= other.signal
         return s
@@ -142,7 +142,7 @@ class Signal(object):
         Return:
             A new Signal with the multiplication result.
         """
-        assert self.__check_other_compatible(other)
+        assert self._check_other_compatible(other)
         s = self.copy()
         s.signal *= other.signal
         return s
@@ -156,7 +156,7 @@ class Signal(object):
         Return:
             A new Signal with the division result.
         """
-        assert self.__check_other_compatible(other)
+        assert self._check_other_compatible(other)
         s = self.copy()
         s.signal /= other.signal
         return s
