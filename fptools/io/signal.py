@@ -203,7 +203,7 @@ class Signal(object):
         Observations are across rows, and samples are across columns. Each sample colum is named with
         the pattern `Y.{i+1}` where i is the sample index. This also implies 1-based indexing on the output.
         """
-        return pd.DataFrame(self.signal, columns=[f"Y.{i+1}" for i in range(self.nsamples)])
+        return pd.DataFrame(np.atleast_2d(self.signal), columns=[f"Y.{i+1}" for i in range(self.nsamples)])
 
     def describe(self, as_str: bool = False, prefix: str = "") -> Union[str, None]:
         """Describe this Signal.
