@@ -9,6 +9,15 @@ import os
 import glob
 
 
+def list_files(startpath):
+    for root, dirs, files in os.walk(startpath):
+        level = root.replace(startpath, '').count(os.sep)
+        indent = ' ' * 4 * (level)
+        print('{}{}/'.format(indent, os.path.basename(root)))
+        subindent = ' ' * 4 * (level + 1)
+        for f in files:
+            print('{}{}'.format(subindent, f))
+
 def pytest_sessionstart(session):
     ''' Ensure test data is downloaded and extracted.
     '''
@@ -24,3 +33,7 @@ def pytest_sessionstart(session):
         z.extractall(dest)
     else:
         print("Test data appears to already be in place")
+
+    print()
+    print(f"Here are the contents of the test data folder \"{dest}\":")
+    list_files(dest)
