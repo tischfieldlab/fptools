@@ -5,12 +5,17 @@ from fptools.io import Signal, load_data
 from fptools.preprocess.pipelines import lowpass_dff
 
 
-def test_signal():
-    sig = Signal("sig1", np.sin(np.arange(1000)), fs=1)
+
 
 
 def test_load_tdt_vanilla(tdt_test_data_path):
+    """Test that we can load some TDT data via the data loader interface.
 
+    Do not perform any preprocessing on the data.
+
+    Args:
+        tdt_test_data_path: fixture that provides a file system path to the TDT test data
+    """
     signal_map = [{
         'tdt_name': '_465A',
         'dest_name': 'Dopamine',
@@ -29,10 +34,18 @@ def test_load_tdt_vanilla(tdt_test_data_path):
                      preprocess=None,
                      cache=False)
 
-    assert len(sessions) == 16
+    assert len(sessions) == 16, "Expecting 16 sessions to be loaded"
 
 def test_load_tdt_preprocess(tdt_test_data_path):
+    """Test that we can load some TDT data via the data loader interface and run preprocessing.
 
+    lowpass_dff preprocessor will be run on the data.
+
+    show_steps should be false, can increase memory consumption during tests, causing actions to fail
+
+    Args:
+        tdt_test_data_path: fixture that provides a file system path to the TDT test data
+    """
     signal_map = [{
         'tdt_name': '_465A',
         'dest_name': 'Dopamine',
@@ -56,6 +69,13 @@ def test_load_tdt_preprocess(tdt_test_data_path):
 
 
 def test_load_med_associates_vanilla(ma_test_data_path):
+    """Test that we can load some Med-Associates data via the data loader interface.
+
+    No preprocessing is performed.
+
+    Args:
+        ma_test_data_path: fixture that provides a file system path to the med-associates test data
+    """
     signal_map = []
 
     sessions = load_data(ma_test_data_path,
@@ -63,6 +83,28 @@ def test_load_med_associates_vanilla(ma_test_data_path):
                      os.path.join(ma_test_data_path, 'manifest.xlsx'),
                      max_workers=2,
                      locator="ma",
+                     preprocess=None,
+                     cache=False)
+
+    assert len(sessions) == 96
+
+
+def test_load_med_associates_auto_locator(ma_test_data_path):
+    """Test that we can load some Med-Associates data via the data loader interface.
+
+    No preprocessing is performed.
+    We will use the "auto" locator here, rather than the med associates specific locator
+
+    Args:
+        ma_test_data_path: fixture that provides a file system path to the med-associates test data
+    """
+    signal_map = []
+
+    sessions = load_data(ma_test_data_path,
+                     signal_map,
+                     os.path.join(ma_test_data_path, 'manifest.xlsx'),
+                     max_workers=2,
+                     locator="auto",
                      preprocess=None,
                      cache=False)
 
