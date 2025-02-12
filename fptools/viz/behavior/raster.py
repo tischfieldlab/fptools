@@ -1,6 +1,6 @@
 import dataclasses
 import sys
-from typing import List, Literal, Tuple, Union
+from typing import Any, List, Literal, Tuple, Union
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -62,6 +62,7 @@ def plot_event_raster(
     result = RasterPlotResult()
 
     # determine some parameters of the plot layout
+    plot_cols: list[Any]
     if col is None:
         plot_cols = [None]
     else:
@@ -71,6 +72,7 @@ def plot_event_raster(
             avail_cols = list(event_df[col].unique())
             plot_cols = [c for c in col_order if c in avail_cols]
 
+    plot_rows: list[Any]
     if row is None:
         plot_rows = [None]
     else:
