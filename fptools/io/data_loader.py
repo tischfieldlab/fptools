@@ -15,7 +15,16 @@ from tqdm.auto import tqdm
 def load_manifest(path: str, index: Optional[str] = None) -> pd.DataFrame:
     """Load a manifest file, accepting most common tabular formats.
 
-    Expects to find a column named `blockname`.
+    *.tsv (tab-separated values), *.csv (comma-separated values), or *.xlsx (Excel) file extensions are supported.
+
+    Optionally index the dataframe with one of the loaded columns.
+
+    Args:
+        path: path to the file to load
+        index: if not None, set this column to be the index of the DataFrame
+
+    Returns:
+        pandas.DataFrame containing the manifest data.
     """
     ext = os.path.splitext(path)[1]
 
@@ -27,13 +36,15 @@ def load_manifest(path: str, index: Optional[str] = None) -> pd.DataFrame:
     elif ext == ".xlsx":
         df = pd.read_excel(path)
     else:
-        raise ValueError("did not understand format")
+        raise ValueError(
+            f'Did not understand manifest format. Supported file extensions are *.tsv (tab-separated), *.csv (comma-separated), or *.xlsx (Excel), but got "{ext}"'
+        )
 
     if index is not None:
         if index in df.columns:
             df.set_index(index, inplace=True)
         else:
-            ValueError(f"Cannot set manifest index to column {index}; available columns: {df.columns.values}")
+            raise ValueError(f"Cannot set manifest index to column {index}; available columns: {df.columns.values}")
 
     return df
 

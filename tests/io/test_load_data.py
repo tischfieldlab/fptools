@@ -2,6 +2,7 @@ import os
 import pytest
 import numpy as np
 from fptools.io import Signal, load_data
+from fptools.io.data_loader import load_manifest
 from fptools.preprocess.pipelines import lowpass_dff
 
 
@@ -109,3 +110,31 @@ def test_load_med_associates_auto_locator(ma_test_data_path):
                      cache=False)
 
     assert len(sessions) == 96
+
+
+def test_load_manifest(tdt_test_data_path):
+    # try loading the Excel version of the manifest
+    manifest_path = os.path.join(tdt_test_data_path, 'manifest.xlsx')
+    manifest = load_manifest(manifest_path)
+
+    # convert to CSV and try to load the CSV version
+    man_path_csv = manifest_path.replace('.xlsx', '.csv')
+    manifest.to_csv(man_path_csv, index=False)
+    manifest = load_manifest(man_path_csv)
+
+    # convert to TSV and try to load the TSV version
+    man_path_tsv = manifest_path.replace('.xlsx', '.tsv')
+    manifest.to_csv(man_path_tsv, sep='\t', index=False)
+    manifest = load_manifest(man_path_tsv)
+
+    # try loading and setting an index
+    manifest = load_manifest(manifest_path, index='blockname')
+
+    # try loading and setting an index with a column that doesn't exist, should raise exception
+    with pytest.raises(ValueError):
+        manifest = load_manifest(manifest_path, index='non-existant-column')
+
+    # try loading a path that with an unsupported file extension
+    man_path_unsupported_ext = manifest_path.replace('.xlsx', '.pdf')
+    with pytest.raises(ValueError):
+        manifest = load_manifest(man_path_unsupported_ext, index='blockname')
