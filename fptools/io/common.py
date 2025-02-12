@@ -15,7 +15,7 @@ class SignalMapping2(TypedDict):
 
 
 class DataTypeAdaptor:
-    def __init__(self):
+    def __init__(self) -> None:
         """Initialize this DataTypeAdaptor."""
         self.name: str
         self.path: str
