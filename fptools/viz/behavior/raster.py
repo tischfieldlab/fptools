@@ -30,9 +30,9 @@ SORT_METRICS = Literal["max_rate", "median_rate", "ttf"]
 def plot_event_raster(
     event_df: pd.DataFrame,
     col: Union[str, None] = None,
-    col_order=None,
+    col_order: Union[list[str], None] = None,
     row: Union[str, None] = None,
-    row_order=None,
+    row_order: Union[list[str], None] = None,
     event: str = "rewarded_nosepoke",
     individual: Union[str, List[str]] = "Subject",
     palette: Palette = None,

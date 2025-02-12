@@ -11,6 +11,7 @@ import seaborn as sns
 from typing import Any, Literal, Optional, Union
 
 from fptools.io import Signal, SessionCollection
+from .common import Palette, get_colormap
 
 
 def plot_signal(
@@ -306,7 +307,7 @@ def sig_catplot(
 
 
 def plot_heatmap(
-    signal: Signal, ax: Optional[Axes] = None, cmap="viridis", vmin: Optional[float] = None, vmax: Optional[float] = None
+    signal: Signal, ax: Optional[Axes] = None, cmap: Palette = "viridis", vmin: Optional[float] = None, vmax: Optional[float] = None
 ) -> Axes:
     """Plot a signal as a heatmap.
 
@@ -325,7 +326,7 @@ def plot_heatmap(
 
     cbar_kwargs = {"label": f"{signal.name} ({signal.units})"}
 
-    sns.heatmap(data=np.atleast_2d(signal.signal), ax=ax, cmap=cmap, vmin=vmin, vmax=vmax, cbar_kws=cbar_kwargs)
+    sns.heatmap(data=np.atleast_2d(signal.signal), ax=ax, cmap=get_colormap(cmap), vmin=vmin, vmax=vmax, cbar_kws=cbar_kwargs)
 
     xticks = [0, signal.nsamples]
     xticklabels = [f"{signal.time[0]:0.0f}", f"{signal.time[-1]:0.0f}"]

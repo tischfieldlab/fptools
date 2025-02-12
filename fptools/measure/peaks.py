@@ -30,7 +30,7 @@ class PeakFilterProvider(Protocol):
 
 
 def measure_peaks(
-    sessions: SessionCollection, signal: str, include_meta: FieldList = "all", include_detection_params=False, **kwargs
+    sessions: SessionCollection, signal: str, include_meta: FieldList = "all", include_detection_params: bool = False, **kwargs
 ) -> pd.DataFrame:
     """Measure peaks within a signal.
 

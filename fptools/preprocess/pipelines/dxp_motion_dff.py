@@ -12,8 +12,8 @@ from fptools.preprocess.lib import detrend_double_exponential, estimate_motion, 
 def dxp_motion_dff(
     session: Session,
     signal_map: list[SignalMapping],
-    show_steps=True,
-    plot_dir="",
+    show_steps: bool = True,
+    plot_dir: str = "",
     trim_extent: Union[None, Literal["auto"], float, tuple[float, float]] = "auto",
 ):
     """Preprocess using a double exponential fit for detrending, producing df/f values.
@@ -24,7 +24,6 @@ def dxp_motion_dff(
         show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
         plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
         trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single flaot trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.
-        # downsample: if not `None`, downsample signal by `downsample` factor.
     """
     try:
         if show_steps:
