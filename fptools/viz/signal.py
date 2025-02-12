@@ -157,7 +157,7 @@ def sig_catplot(
         if col == "signal":
             plot_cols = [s for s in _signals]
         elif col_order is None:
-            if pd.api.types.is_categorical_dtype(metadata[col]):
+            if isinstance(metadata[col].dtype, pd.CategoricalDtype):
                 plot_cols = list(metadata[col].cat.categories.values)
             else:
                 plot_cols = sorted(metadata[col].unique())
@@ -172,7 +172,7 @@ def sig_catplot(
         if row == "signal":
             plot_rows = [s for s in _signals]
         elif row_order is None:
-            if pd.api.types.is_categorical_dtype(metadata[row]):
+            if isinstance(metadata[row].dtype, pd.CategoricalDtype):
                 plot_rows = list(metadata[row].cat.categories.values)
             else:
                 plot_rows = sorted(metadata[row].unique())
@@ -185,7 +185,7 @@ def sig_catplot(
     if hue is not None and hue_order is None:
         if hue == "signal":
             hue_order = [s for s in _signals]
-        elif pd.api.types.is_categorical_dtype(metadata[hue]):
+        elif isinstance(metadata[hue].dtype, pd.CategoricalDtype):
             hue_order = metadata[hue].cat.categories.values
         else:
             hue_order = sorted(metadata[hue].unique())
