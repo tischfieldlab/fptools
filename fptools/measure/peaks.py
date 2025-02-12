@@ -46,20 +46,21 @@ def measure_peaks(
     signal in a given session.
 
     The returned dataframe will contain the following information (one row corresponds to one peak)
-        - any metadata from the Session, as specified by the `include_meta` parameter
-        - trial: index of the observation from the signal data that the peak was found
-        - peak_num: which peak, within a given trial, for the case of multiple found peaks within a single trial
-        - peak_index: the index along the signal where the peak was found
-        - peak_time: this is `peak_index` converted to the time domain (i.e. relative seconds)
-        The following measurements are reported by `scipy.signal.find_peaks()`:
-            - peak_heights: this is the height of the peak, as returned by `scipy.signal.find_peaks()`
-            - left_thresholds, right_thresholds: this is the peak vertical distance to its neighbouring samples, as returned by `scipy.signal.find_peaks()`
-            - prominences: this is the prominence of the peak, as returned by `scipy.signal.find_peaks()`
-            - left_bases, right_bases: The peak's bases as indices in x to the left and right of each peak, as returned by `scipy.signal.find_peaks()`. The higher base of each pair is a peak's lowest contour line.
-            - widths: the width of the peak, as returned by `scipy.signal.find_peaks()`.
-            - width_heights: The height of the contour lines at which the widths where evaluated, as returned by `scipy.signal.find_peaks()`..
-            - left_ips, right_ips: Interpolated positions of left and right intersection points of a horizontal line at the respective evaluation height, as returned by `scipy.signal.find_peaks()`..
-        - auc: area under the curve of the given trial, as returned by `sklearn.metrics.auc()`
+    - any metadata from the Session, as specified by the `include_meta` parameter
+    - trial: index of the observation from the signal data that the peak was found
+    - peak_num: which peak, within a given trial, for the case of multiple found peaks within a single trial
+    - peak_index: the index along the signal where the peak was found
+    - peak_time: this is `peak_index` converted to the time domain (i.e. relative seconds)
+
+    The following measurements are reported by `scipy.signal.find_peaks()`:
+    - peak_heights: this is the height of the peak, as returned by `scipy.signal.find_peaks()`
+    - left_thresholds, right_thresholds: this is the peak vertical distance to its neighbouring samples, as returned by `scipy.signal.find_peaks()`
+    - prominences: this is the prominence of the peak, as returned by `scipy.signal.find_peaks()`
+    - left_bases, right_bases: The peak's bases as indices in x to the left and right of each peak, as returned by `scipy.signal.find_peaks()`. The higher base of each pair is a peak's lowest contour line.
+    - widths: the width of the peak, as returned by `scipy.signal.find_peaks()`.
+    - width_heights: The height of the contour lines at which the widths where evaluated, as returned by `scipy.signal.find_peaks()`..
+    - left_ips, right_ips: Interpolated positions of left and right intersection points of a horizontal line at the respective evaluation height, as returned by `scipy.signal.find_peaks()`..
+    - auc: area under the curve of the given trial, as returned by `sklearn.metrics.auc()`
 
     Args:
         sessions: collection of sessions to work on
