@@ -3,8 +3,10 @@ import copy
 import datetime
 from functools import partial
 import math
+import os
 from typing import Any, Callable, Literal, Optional, Union
 
+import h5py
 import numpy as np
 import pandas as pd
 
@@ -259,6 +261,117 @@ class Session(object):
                 return False
 
         return True
+
+    def save(self, path: str):
+        """Save this Session to and HDF5 file.
+
+        Args:
+            path: path where the data should be saved
+        """
+        with h5py.File(path, mode="w") as h5:
+            # save name
+            h5.create_dataset("/name", data=self.name)
+
+            # save signals
+            for k, sig in self.signals.items():
+                group = h5.create_group(f"/signals/{k}")
+                group.create_dataset("signal", data=sig.signal, compression="gzip")
+                group.create_dataset("time", data=sig.time, compression="gzip")
+                group.attrs["units"] = sig.units
+                group.attrs["fs"] = sig.fs
+                mark_group = group.create_group("marks")
+                for mk, mv in sig.marks.items():
+                    mark_group.create_dataset(mk, data=mv)
+
+            # save epocs
+            for k, epoc in self.epocs.items():
+                h5.create_dataset(f"/epocs/{k}", data=epoc, compression="gzip")
+
+            # save scalars
+            for k, scalar in self.scalars.items():
+                h5.create_dataset(f"/scalars/{k}", data=scalar, compression="gzip")
+
+            # save metadata
+            meta_group = h5.create_group("/metadata")
+            for k, v in self.metadata.items():
+                if isinstance(v, str):
+                    meta_group[k] = v
+                    meta_group[k].attrs["type"] = "str"
+                elif isinstance(v, bool):
+                    meta_group[k] = v
+                    meta_group[k].attrs["type"] = "bool"
+                elif isinstance(v, int):
+                    meta_group[k] = v
+                    meta_group[k].attrs["type"] = "int"
+                elif isinstance(v, float):
+                    meta_group[k] = v
+                    meta_group[k].attrs["type"] = "float"
+                elif isinstance(v, datetime.datetime):
+                    meta_group[k] = v.isoformat()
+                    meta_group[k].attrs["type"] = "datetime"
+                elif isinstance(v, datetime.timedelta):
+                    meta_group[k] = v.total_seconds()
+                    meta_group[k].attrs["type"] = "timedelta"
+                else:
+                    meta_group[k] = v
+
+    @classmethod
+    def load(cls, path: str) -> "Session":
+        """Load a Session from an HDF5 file.
+
+        Args:
+            path: path to the hdf5 file to load
+
+        Returns:
+            Session with data loaded
+        """
+        session = cls()
+        with h5py.File(path, mode="r") as h5:
+            # read name
+            session.name = h5["/name"][()].decode("utf-8")
+
+            # read signals
+            for signame in h5["/signals"].keys():
+                sig_group = h5[f"/signals/{signame}"]
+                sig = Signal(
+                    signame, sig_group["signal"][()], time=sig_group["time"][()], fs=sig_group.attrs["fs"], units=sig_group.attrs["units"]
+                )
+                for mark_name in sig_group["marks"].keys():
+                    sig.marks[mark_name] = sig_group[f"marks/{mark_name}"][()]
+                session.add_signal(sig)
+
+            # read epocs
+            for epoc_name in h5["/epocs"].keys():
+                session.epocs[epoc_name] = h5[f"/epocs/{epoc_name}"][()]
+
+            # read scalars
+            for scalar_name in h5["/scalars"].keys():
+                session.scalars[scalar_name] = h5[f"/scalars/{scalar_name}"][()]
+
+            # read metadata
+            for meta_name in h5[f"/metadata"].keys():
+                meta = h5[f"/metadata/{meta_name}"]
+                if "type" in meta.attrs:
+                    mtype = meta.attrs["type"]
+                    if mtype == "str":
+                        session.metadata[meta_name] = meta[()].decode("utf-8")
+                    elif mtype == "bool":
+                        session.metadata[meta_name] = bool(meta[()])
+                    elif mtype == "int":
+                        session.metadata[meta_name] = int(meta[()])
+                    elif mtype == "float":
+                        session.metadata[meta_name] = float(meta[()])
+                    elif mtype == "datetime":
+                        session.metadata[meta_name] = datetime.datetime.fromisoformat(meta[()].decode("utf-8"))
+                    elif mtype == "timedelta":
+                        session.metadata[meta_name] = datetime.timedelta(seconds=meta[()])
+                    else:
+                        raise ValueError(f'Did not understand type {mtype} for metadata key "{meta_name}"')
+                else:
+                    session.metadata[meta_name] = meta[()]
+
+        return session
+
 
 class SessionCollection(list[Session]):
     """Collection of session data."""
@@ -580,3 +693,17 @@ class SessionCollection(list[Session]):
         else:
             print(buffer)
             return None
+
+    def save(self, path: str):
+        """Save each Session in this SessionCollection to an hdf5 file.
+
+        Each Session will be named as the `Session.name` with an ".h5" file extension
+
+        Args:
+            path: path to a directory
+        """
+        # ensure the directory exists
+        os.makedirs(path, exist_ok=True)
+
+        for session in self:
+            session.save(os.path.join(path, f"{session.name}.h5"))
