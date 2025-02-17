@@ -2,7 +2,6 @@ import os
 import traceback
 from typing import Literal, Optional, Union
 import concurrent
-import joblib
 import pandas as pd
 
 from .common import DataLocator, SignalMapping, DataTypeAdaptor, Preprocessor
@@ -110,6 +109,8 @@ def load_data(
 
         for dset in _get_locator(locator)(tank_path):
 
+            # check if we were given a manifest. If so, try to load metadata from the manifest
+            # also perform some sanity checks along the way, and check some special flags (ex `exclude`)
             if has_manifest:
                 try:
                     block_meta = manifest.loc[dset.name]
@@ -163,17 +164,17 @@ def _load(
         cache_dir: path to the cache
         **kwargs: additional keyword arguments to pass to the `preprocess` callable.
     """
-    cache_path = os.path.join(cache_dir, f"{dset.name}.pkl")
+    cache_path = os.path.join(cache_dir, f"{dset.name}.h5")
 
     if cache and os.path.exists(cache_path):
         # check if the cached version exists, if so, load and return that
         print(f'loading cache: "{cache_path}"')
-        return joblib.load(cache_path)
+        return Session.load(cache_path)
 
     else:
         # otherwise, we need to load the data from scratch
 
-        ## load the data
+        # load the data
         session = Session()
         session.name = dset.name
         for loader in dset.loaders:
@@ -185,7 +186,7 @@ def _load(
 
         # cache the session, if requested
         if cache:
-            joblib.dump(session, cache_path, compress=True)
+            session.save(cache_path)
 
         return session
 
