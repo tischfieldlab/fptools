@@ -2,6 +2,7 @@ from collections import Counter, defaultdict
 import copy
 import datetime
 from functools import partial
+import math
 from typing import Any, Callable, Literal, Optional, Union
 
 import numpy as np
@@ -208,6 +209,56 @@ class Session(object):
 
         return pd.DataFrame(scalars)
 
+    def __eq__(self, value: object) -> bool:
+        """Test this Session for equality to another Session.
+
+        Args:
+            value: value to test against for equality
+
+        Returns:
+            True if this Session is equal to value, False otherwise. Name, metadata, signals, epocs, scalars are consdered for equality.
+        """
+        # check we have a session instance to compare to
+        if not isinstance(value, Session):
+            return False
+
+        # check name for equality
+        if self.name != value.name:
+            return False
+
+        # check metadata for equality
+        if self.metadata.keys() != value.metadata.keys():
+            return False
+        for meta_key in self.metadata.keys():
+            val1 = self.metadata[meta_key]
+            val2 = value.metadata[meta_key]
+            if isinstance(val1, float) and isinstance(val2, float) and math.isnan(val1) and math.isnan(val2):
+                continue  # allow NaN values for the same key to be considered equal
+            elif val1 != val2:
+                return False
+
+        # check signals for equality
+        if self.signals.keys() != value.signals.keys():
+            return False
+        for k in self.signals.keys():
+            if self.signals[k] != value.signals[k]:
+                return False
+
+        # check epocs for equality
+        if self.epocs.keys() != value.epocs.keys():
+            return False
+        for k in self.epocs.keys():
+            if not np.array_equal(self.epocs[k], value.epocs[k]):
+                return False
+
+        # check scalars for equality
+        if self.scalars.keys() != value.scalars.keys():
+            return False
+        for k in self.scalars.keys():
+            if not np.array_equal(self.scalars[k], value.scalars[k]):
+                return False
+
+        return True
 
 class SessionCollection(list[Session]):
     """Collection of session data."""
