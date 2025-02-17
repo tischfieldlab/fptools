@@ -7,6 +7,7 @@ import glob
 import pytest
 
 from fptools.io.data_loader import load_data
+from fptools.io.test import download_test_data
 from fptools.preprocess.pipelines import lowpass_dff
 
 
@@ -40,17 +41,7 @@ def pytest_sessionstart(session):
     Data will be downloaded as a zip file hosted on Box, and then unpacked to the local `test_data` folder
     in the root of the package.
     """
-    test_data_link = r"https://rutgers.box.com/shared/static/pd6pl4ieo9je5ahh2f22z3t0yssxjern.zip"
-    dest = os.path.join(os.getcwd(), 'test_data')
-
-    # check if the data appears to be already in place
-    if len(glob.glob(os.path.join(dest, "*"))) <= 0:
-        print(f"Downloading test data and unpacking to \"{dest}\"")
-        r = requests.get(test_data_link)
-        z = zipfile.ZipFile(io.BytesIO(r.content))
-        z.extractall(dest)
-    else:
-        print("Test data appears to already be in place")
+    dest = download_test_data(os.path.join(os.getcwd(), 'test_data'))
 
     print()
     print(f"Here are the contents of the test data folder \"{dest}\":")
