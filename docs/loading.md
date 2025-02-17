@@ -18,7 +18,7 @@ We offer several preprocessing routines you may choose from, or you may provide 
 ## DataLocators, Loaders and DataTypeAdaptors
 The `load_data()` function takes a parameter `locator` which allows flexibility for finding a loading arbitrary data. For most users, the `locator` parameter can be set to the special strings `tdt`, `ma` or `auto` to find TDT blocks, med-associates data files, or a combination of the two, respectively.
 
-For more advanced use cases, you may supply a function that implements the `DataLocator` protocol. The purpose of a `DataLocator` is to locate data, returning a list of `DataTypeAdaptor`s, and each `DataTypeAdaptor` corresponds to one `Session`. The `DataTypeAdaptor` should be populated with a `name` for the eventually created `Session`, a `path` to the data, and finally a list of one or more functions implementing the `Loader` protocol. A `Loader` recieves a `Sesssion` and path (from the `DataTypeAdaptor`) and is responsible for reading data from that path and populating the `Session` with the loaded data.
+For more advanced use cases, one may supply a function that implements the `DataLocator` protocol. The purpose of a `DataLocator` is to locate data, returning a list of `DataTypeAdaptor`s, with each `DataTypeAdaptor` corresponding to one `Session`. The `DataTypeAdaptor` should be populated with a `name` for the eventually created `Session`, a `path` to the data, and finally a list of one or more functions implementing the `Loader` protocol. A `Loader` recieves a `Sesssion` and path (from the `DataTypeAdaptor`) and is responsible for reading data from that path and populating the `Session` with the loaded data.
 
 ## Example
 See the notebook `01_Data_Loading.ipnb` for an example of data loading.

@@ -8,6 +8,7 @@ Many functions in this package accept a `Session` or `SessionCollection`.
   - [`metadata`](#metadata): arbitrary metadata for a given session
   - [`signals`](#signals): continuous-valued time-series data sampled at fixed intervals
   - [`epocs`](#epocs): discrete event timestamps
+  - [`scalars`](#scalars): single-value stores
 
 ## Metadata
 Sessions can keep track of metadata about a recording as a simple dictionary, accessable via the `metadata` property.
@@ -29,7 +30,7 @@ Dopamine:
 ```
 
 ### Shape of `Signal.signal`
-Signal data can first be described by the number of samples it contains (i.e. the length of the array), and is retrievable by `Signal.nsamples`. The duration, as a wall clock amount of time, can be retrieved as a `datetime` by `Signal.duration`, and is equivelent to `Signal.nsamples * Signal.fs`. 
+Signal data can be described by the number of samples it contains (i.e. the length of the array), and is retrievable by `Signal.nsamples`. The duration, as a wall clock amount of time, can be retrieved as a `datetime.timedelta` by `Signal.duration`, and is equivelent to `Signal.nsamples * Signal.fs`. 
 
 A `Signal` can contain data from a single observation (in this case `Signal.nobs == 1`), or from muliple observation (typical in the case of the return from `collect_signals()`, in this case `Signal.nobs > 1`). In the case of a single observation, the shape of the signal will be 1D, while in the case of multiple observations, the signal will be 2D `(nobs, nsamples)`.
 
