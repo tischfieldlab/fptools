@@ -105,6 +105,35 @@ class Signal(object):
     def _check_other_compatible(self, other: "Signal") -> bool:
         return self.nsamples == other.nsamples and self.nobs == self.nobs and self.fs == other.fs
 
+    def __eq__(self, value: object) -> bool:
+        """Test if this Signal is equal to another Signal.
+
+        Args:
+            value: value to test against for equality
+
+        Returns:
+            True if value is equal to self, False otherwise. Equality is checked for FS, units, signal, time, and marks data.
+        """
+        if not isinstance(value, Signal):
+            return False
+
+        if self.fs != value.fs:
+            return False
+
+        if self.units != value.units:
+            return False
+
+        if not np.array_equal(self.signal, value.signal):
+            return False
+
+        if not np.array_equal(self.time, value.time):
+            return False
+
+        if not self.marks == value.marks:
+            return False
+
+        return True
+
     def __add__(self, other: "Signal") -> "Signal":
         """Add another signal to this signal, returning a new signal.
 
