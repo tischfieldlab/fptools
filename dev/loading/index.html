@@ -769,6 +769,28 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/fptools/io/test/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    test
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1416,7 +1438,7 @@
 <p>We offer several preprocessing routines you may choose from, or you may provide your own implementation; simply pass a function to the <code>preprocess</code>. If no preprocessor implementation is passed, the signals specified in the <code>signal_map</code> are simply added to the <code>Session</code> with no further changes.</p>
 <h2 id="datalocators-loaders-and-datatypeadaptors">DataLocators, Loaders and DataTypeAdaptors<a class="headerlink" href="#datalocators-loaders-and-datatypeadaptors" title="Permanent link">&para;</a></h2>
 <p>The <code>load_data()</code> function takes a parameter <code>locator</code> which allows flexibility for finding a loading arbitrary data. For most users, the <code>locator</code> parameter can be set to the special strings <code>tdt</code>, <code>ma</code> or <code>auto</code> to find TDT blocks, med-associates data files, or a combination of the two, respectively.</p>
-<p>For more advanced use cases, you may supply a function that implements the <code>DataLocator</code> protocol. The purpose of a <code>DataLocator</code> is to locate data, returning a list of <code>DataTypeAdaptor</code>s, and each <code>DataTypeAdaptor</code> corresponds to one <code>Session</code>. The <code>DataTypeAdaptor</code> should be populated with a <code>name</code> for the eventually created <code>Session</code>, a <code>path</code> to the data, and finally a list of one or more functions implementing the <code>Loader</code> protocol. A <code>Loader</code> recieves a <code>Sesssion</code> and path (from the <code>DataTypeAdaptor</code>) and is responsible for reading data from that path and populating the <code>Session</code> with the loaded data.</p>
+<p>For more advanced use cases, one may supply a function that implements the <code>DataLocator</code> protocol. The purpose of a <code>DataLocator</code> is to locate data, returning a list of <code>DataTypeAdaptor</code>s, with each <code>DataTypeAdaptor</code> corresponding to one <code>Session</code>. The <code>DataTypeAdaptor</code> should be populated with a <code>name</code> for the eventually created <code>Session</code>, a <code>path</code> to the data, and finally a list of one or more functions implementing the <code>Loader</code> protocol. A <code>Loader</code> recieves a <code>Sesssion</code> and path (from the <code>DataTypeAdaptor</code>) and is responsible for reading data from that path and populating the <code>Session</code> with the loaded data.</p>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
 <p>See the notebook <code>01_Data_Loading.ipnb</code> for an example of data loading.</p>
 

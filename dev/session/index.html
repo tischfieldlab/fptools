@@ -742,6 +742,28 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/fptools/io/test/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    test
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1358,6 +1380,7 @@ Many functions in this package accept a <code>Session</code> or <code>SessionCol
 <li><a href="#metadata"><code>metadata</code></a>: arbitrary metadata for a given session</li>
 <li><a href="#signals"><code>signals</code></a>: continuous-valued time-series data sampled at fixed intervals</li>
 <li><a href="#epocs"><code>epocs</code></a>: discrete event timestamps</li>
+<li><a href="#scalars"><code>scalars</code></a>: single-value stores</li>
 </ul>
 <h2 id="metadata">Metadata<a class="headerlink" href="#metadata" title="Permanent link">&para;</a></h2>
 <p>Sessions can keep track of metadata about a recording as a simple dictionary, accessable via the <code>metadata</code> property.
@@ -1374,7 +1397,7 @@ Metadata is typically populated when a session is loaded, but metadata can be ad
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    sample_rate = 101.72526245132634
 </code></pre></div>
 <h3 id="shape-of-signalsignal">Shape of <code>Signal.signal</code><a class="headerlink" href="#shape-of-signalsignal" title="Permanent link">&para;</a></h3>
-<p>Signal data can first be described by the number of samples it contains (i.e. the length of the array), and is retrievable by <code>Signal.nsamples</code>. The duration, as a wall clock amount of time, can be retrieved as a <code>datetime</code> by <code>Signal.duration</code>, and is equivelent to <code>Signal.nsamples * Signal.fs</code>. </p>
+<p>Signal data can be described by the number of samples it contains (i.e. the length of the array), and is retrievable by <code>Signal.nsamples</code>. The duration, as a wall clock amount of time, can be retrieved as a <code>datetime.timedelta</code> by <code>Signal.duration</code>, and is equivelent to <code>Signal.nsamples * Signal.fs</code>. </p>
 <p>A <code>Signal</code> can contain data from a single observation (in this case <code>Signal.nobs == 1</code>), or from muliple observation (typical in the case of the return from <code>collect_signals()</code>, in this case <code>Signal.nobs &gt; 1</code>). In the case of a single observation, the shape of the signal will be 1D, while in the case of multiple observations, the signal will be 2D <code>(nobs, nsamples)</code>.</p>
 <h3 id="signal-aggregation">Signal aggregation<a class="headerlink" href="#signal-aggregation" title="Permanent link">&para;</a></h3>
 <p>In the case there are multiple observations, one would commonly want to aggregate to produce a mean/median signal representative of all observations. To do so, use the <code>aggregate()</code> method of the signal object. This method return a new <code>Signal</code> with propegated marks, units, sampling frequency and time. The new signal will be named according to this signal, with <code>#{func}</code> appended. The parameter <code>func</code> determines how the signal is aggregated, and can accept several types of argument.</p>
