@@ -1,5 +1,5 @@
 import dataclasses
-from typing import List, Literal, Tuple, Union
+from typing import List, Union
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
@@ -7,7 +7,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from matplotlib.figure import Figure
-from matplotlib.cm import ScalarMappable
+
 from ..common import Palette
 
 

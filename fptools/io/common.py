@@ -1,4 +1,4 @@
-from typing import Any, Literal, Protocol, TypedDict
+from typing import Literal, Protocol, TypedDict
 
 from .session import Session
 

@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
-from fptools.preprocess.lib import lowpass_filter, t2fs, trim, fs2t, downsample as downsample_fn
+from fptools.preprocess.lib import trim, downsample as downsample_fn
 from fptools.io import Session, Signal, SignalMapping
 
 

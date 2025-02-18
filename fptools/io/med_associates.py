@@ -6,7 +6,6 @@ import re
 import numpy as np
 
 from .common import DataTypeAdaptor
-
 from .session import Session
 
 

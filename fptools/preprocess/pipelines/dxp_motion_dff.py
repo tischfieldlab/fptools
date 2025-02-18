@@ -1,5 +1,5 @@
 import os
-from typing import Any, Literal, Union
+from typing import Literal, Union
 
 import matplotlib.pyplot as plt
 import numpy as np

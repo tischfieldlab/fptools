@@ -1,5 +1,5 @@
 import os
-from typing import Any, Literal, Optional, Union
+from typing import Literal, Optional, Union
 
 import matplotlib.pyplot as plt
 import seaborn as sns

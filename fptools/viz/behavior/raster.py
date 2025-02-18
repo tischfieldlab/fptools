@@ -1,6 +1,5 @@
 import dataclasses
-import sys
-from typing import Any, List, Literal, Tuple, Union
+from typing import Any, List, Literal, Union
 
 import matplotlib as mpl
 import matplotlib.pyplot as plt
