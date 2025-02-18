@@ -1,7 +1,9 @@
 import multiprocessing
 import os
+from typing import cast
 import pytest
 
+from fptools.io.common import Preprocessor, SignalMapping
 from fptools.io.data_loader import load_data, SessionCollection
 from fptools.io.test import download_test_data
 from fptools.preprocess.pipelines import lowpass_dff
@@ -75,7 +77,7 @@ def tdt_preprocessed_sessions(tdt_test_data_path) -> SessionCollection:
     Args:
         tdt_test_data_path: fixture that provides a file system path to the TDT test data
     """
-    signal_map = [{
+    signal_map: list[SignalMapping] = [{
         'tdt_name': '_465A',
         'dest_name': 'Dopamine',
         'role': 'experimental'
@@ -90,7 +92,7 @@ def tdt_preprocessed_sessions(tdt_test_data_path) -> SessionCollection:
                      os.path.join(tdt_test_data_path, 'manifest.xlsx'),
                      max_workers=2,
                      locator="tdt",
-                     preprocess=lowpass_dff,
+                     preprocess=cast(Preprocessor, lowpass_dff),
                      cache=True,
                      cache_dir=os.path.join(tdt_test_data_path, 'cache_lowpass_dff'),
                      show_steps=False)
@@ -105,7 +107,7 @@ def ma_preprocessed_sessions(ma_test_data_path) -> SessionCollection:
     Args:
         ma_test_data_path: fixture that provides a file system path to the med associates test data
     """
-    signal_map = []
+    signal_map: list[SignalMapping] = []
 
     sessions = load_data(ma_test_data_path,
                      signal_map,
