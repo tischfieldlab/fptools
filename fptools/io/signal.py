@@ -134,7 +134,7 @@ class Signal(object):
 
         return True
 
-    def __add__(self, other: "Signal") -> "Signal":
+    def __add__(self, other) -> "Signal":
         """Add another signal to this signal, returning a new signal.
 
         Args:
@@ -143,12 +143,17 @@ class Signal(object):
         Return:
             A new Signal with the addition result.
         """
-        assert self._check_other_compatible(other)
         s = self.copy()
-        s.signal += other.signal
+        if isinstance(other, Signal):
+            assert self._check_other_compatible(other)
+            s.signal += other.signal
+        elif issubclass(other, (int, float)):
+            s.signal += other
+        else:
+            raise NotImplementedError(f"Add is not defined for type {type(other)}")
         return s
 
-    def __sub__(self, other: "Signal") -> "Signal":
+    def __sub__(self, other) -> "Signal":
         """Subtract another signal from this signal, returning a new signal.
 
         Args:
@@ -157,12 +162,17 @@ class Signal(object):
         Return:
             A new Signal with the subtraction result.
         """
-        assert self._check_other_compatible(other)
         s = self.copy()
-        s.signal -= other.signal
+        if isinstance(other, Signal):
+            assert self._check_other_compatible(other)
+            s.signal -= other.signal
+        elif issubclass(other, (int, float)):
+            s.signal -= other
+        else:
+            raise NotImplementedError(f"Subtract is not defined for type {type(other)}")
         return s
 
-    def __mul__(self, other: "Signal") -> "Signal":
+    def __mul__(self, other) -> "Signal":
         """Multiply another signal against this signal, returning a new signal.
 
         Args:
@@ -171,12 +181,17 @@ class Signal(object):
         Return:
             A new Signal with the multiplication result.
         """
-        assert self._check_other_compatible(other)
         s = self.copy()
-        s.signal *= other.signal
+        if isinstance(other, Signal):
+            assert self._check_other_compatible(other)
+            s.signal *= other.signal
+        elif issubclass(other, (int, float)):
+            s.signal *= other
+        else:
+            raise NotImplementedError(f"Multiply is not defined for type {type(other)}")
         return s
 
-    def __div__(self, other: "Signal") -> "Signal":
+    def __truediv__(self, other) -> "Signal":
         """Divide this signal by another signal, returning a new signal.
 
         Args:
@@ -185,9 +200,14 @@ class Signal(object):
         Return:
             A new Signal with the division result.
         """
-        assert self._check_other_compatible(other)
         s = self.copy()
-        s.signal /= other.signal
+        if isinstance(other, Signal):
+            assert self._check_other_compatible(other)
+            s.signal /= other.signal
+        elif issubclass(other, (int, float)):
+            s.signal /= other
+        else:
+            raise NotImplementedError(f"Division is not defined for type {type(other)}")
         return s
 
     def aggregate(self, func: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]]) -> "Signal":
