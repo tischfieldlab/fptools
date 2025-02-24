@@ -52,7 +52,7 @@ class Signal(object):
                 )
 
         elif time is None and fs is not None:
-            # sampleing frequency is provided, infer time from fs
+            # sampling frequency is provided, infer time from fs
             self.fs = fs
             self.time = np.linspace(1, signal.shape[-1], signal.shape[-1]) / self.fs
 
@@ -216,10 +216,10 @@ class Signal(object):
         If there is only a single observation, that observation is returned unchanged, otherwise  observations will
         be aggregated by `func` along axis=0.
 
-        Marks, units, and time will be propegated. The new signal will be named according to this signal, with `#{func_name}` appended.
+        Marks, units, and time will be propagated. The new signal will be named according to this signal, with `#{func_name}` appended.
 
         Args:
-            func: string or callable that take a (nobs x nsample) array and returns a (nsample,) shaped array. If a string
+            func: string or callable that take a (nobs x nsamples) array and returns a (nsamples,) shaped array. If a string
                 will be interpreted as the name of a numpy function (e.x. mean, median, etc)
 
         Returns:
@@ -249,7 +249,7 @@ class Signal(object):
     def to_dataframe(self) -> pd.DataFrame:
         """Get the signal data as a `pandas.DataFrame`.
 
-        Observations are across rows, and samples are across columns. Each sample colum is named with
+        Observations are across rows, and samples are across columns. Each sample column is named with
         the pattern `Y.{i+1}` where i is the sample index. This also implies 1-based indexing on the output.
         """
         return pd.DataFrame(np.atleast_2d(self.signal), columns=[f"Y.{i+1}" for i in range(self.nsamples)])

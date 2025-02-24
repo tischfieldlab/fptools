@@ -2,7 +2,7 @@
 ### Tools for Fiber Photometry Analysis
 Codes/Notebooks to analyze Fiber Photometry and behavioral data
 
-See also related package for analysing event data from TDT and MedAssociate systems: [med-associates-utils](https://github.com/tischfieldlab/med-associates-utils)
+See also related package for analyzing event data from TDT and MedAssociate systems: [med-associates-utils](https://github.com/tischfieldlab/med-associates-utils)
 
 ## About
 This package allows you to load data produced by TDT Synapse software, and eases working with the resulting data. Also includes a growing library of analysis routines.
@@ -10,7 +10,7 @@ This package allows you to load data produced by TDT Synapse software, and eases
 ## Features
 - read TDT tank files
 - metadata management and propagation
-- 
+- more being added with time
 
 ## Installation
 We recommend you use anaconda virtual environments.

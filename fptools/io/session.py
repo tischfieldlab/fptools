@@ -155,7 +155,7 @@ class Session(object):
         Returns:
             DataFrame with data from this session
         """
-        # determine metadata fileds to include
+        # determine metadata fields to include
         if include_meta == "all":
             meta = self.metadata
         else:
@@ -193,7 +193,7 @@ class Session(object):
         Returns:
             DataFrame with data from this session
         """
-        # determine metadata fileds to include
+        # determine metadata fields to include
         if include_meta == "all":
             meta = self.metadata
         else:
@@ -218,7 +218,7 @@ class Session(object):
             value: value to test against for equality
 
         Returns:
-            True if this Session is equal to value, False otherwise. Name, metadata, signals, epocs, scalars are consdered for equality.
+            True if this Session is equal to value, False otherwise. Name, metadata, signals, epocs, scalars are considered for equality.
         """
         # check we have a session instance to compare to
         if not isinstance(value, Session):
@@ -521,7 +521,7 @@ class SessionCollection(list[Session]):
             session_collections: SessionCollections to merge
             primary_key: metadata key used to join sessions
             what: the data within each session to merge
-            prefixes: list of prefixes, of the same length as the number of passed SessionCollections. each prefix will be preprended to signals to avoid overwriting
+            prefixes: list of prefixes, of the same length as the number of passed SessionCollections. each prefix will be prepended to signals to avoid overwriting
         """
         available_whats = ["signal", "epocs", "metadata"]
         use_what: list[str] = []
