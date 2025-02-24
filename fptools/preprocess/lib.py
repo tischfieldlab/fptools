@@ -118,19 +118,6 @@ def are_arrays_same_length(*arrays: np.ndarray) -> bool:
     return bool(np.all(np.array(lengths) == lengths[0]))
 
 
-# def downsample(*signals, factor: int = 10):
-#     assert are_arrays_same_length(*signals)
-
-#     old_shape = signals[0].shape[0]
-#     new_shape = old_shape // factor
-#     downsampled = [np.empty_like(sig, shape=new_shape) for sig in signals]
-#     for i in range(0, old_shape, factor):
-#         for si, sig in enumerate(signals):
-#             downsampled[si][i] = np.mean(sig[i:i+factor])  # This is the moving window mean
-
-#     return downsampled
-
-
 def downsample(*signals: np.ndarray, window: int = 10, factor: int = 10) -> tuple[np.ndarray, ...]:
     """Downsample one or more signals by factor across windows of size `window`.
 
