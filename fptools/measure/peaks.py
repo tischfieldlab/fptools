@@ -42,7 +42,7 @@ def measure_peaks(
     You may override any of these parameters to `scipy.signal.find_peaks()` via this functions `**kwargs`.
 
     Also allowed for any valid detection parameter is a callable (see `PeakFilterProvider` for signature) that is given the session, signal, trial index and trial
-    data, and should return valid detection parameter values (i.e. None, float, or tuple of the preceeding). The callable is evaluated for each observation in the
+    data, and should return valid detection parameter values (i.e. None, float, or tuple of the preceding). The callable is evaluated for each observation in the
     signal in a given session.
 
     The returned dataframe will contain the following information (one row corresponds to one peak)
@@ -54,7 +54,7 @@ def measure_peaks(
 
     The following measurements are reported by `scipy.signal.find_peaks()`:
     - peak_heights: this is the height of the peak, as returned by `scipy.signal.find_peaks()`
-    - left_thresholds, right_thresholds: this is the peak vertical distance to its neighbouring samples, as returned by `scipy.signal.find_peaks()`
+    - left_thresholds, right_thresholds: this is the peak vertical distance to its neighboring samples, as returned by `scipy.signal.find_peaks()`
     - prominences: this is the prominence of the peak, as returned by `scipy.signal.find_peaks()`
     - left_bases, right_bases: The peak's bases as indices in x to the left and right of each peak, as returned by `scipy.signal.find_peaks()`. The higher base of each pair is a peak's lowest contour line.
     - widths: the width of the peak, as returned by `scipy.signal.find_peaks()`.
@@ -86,7 +86,7 @@ def measure_peaks(
 
     peak_data = []
     for session in sessions:
-        # determine metadata fileds to include
+        # determine metadata fields to include
         if include_meta == "all":
             meta = session.metadata
         else:

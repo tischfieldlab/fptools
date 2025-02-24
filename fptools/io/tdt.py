@@ -8,7 +8,7 @@ from .session import Session, Signal
 
 
 def find_tdt_blocks(path: str) -> list[DataTypeAdaptor]:
-    """Data Loactor for TDT blocks.
+    """Data Locator for TDT blocks.
 
     Given a path to a directory, will search that path recursively for TDT blocks.
 

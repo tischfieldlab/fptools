@@ -73,9 +73,9 @@ def fit_double_exponential(time: np.ndarray, signal: np.ndarray) -> np.ndarray:
         array of values from the fitted double exponential curve, samples at the times in `time`.
     """
     max_sig = np.max(signal)
-    inital_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
+    initial_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
     bounds = ([0, 0, 0, 600, 0], [max_sig, max_sig, max_sig, 36000, 1])
-    parm_opt, parm_cov = scipy.optimize.curve_fit(double_exponential, time, signal, p0=inital_params, bounds=bounds, maxfev=1000)
+    parm_opt, parm_cov = scipy.optimize.curve_fit(double_exponential, time, signal, p0=initial_params, bounds=bounds, maxfev=1000)
     return double_exponential(time, *parm_opt)
 
 

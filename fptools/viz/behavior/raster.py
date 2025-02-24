@@ -49,7 +49,7 @@ def plot_event_raster(
         row: column in the dataframe to form plot rows on
         row_order: order for the rows in the plot. If None, use the natural sorted order of unique items
         event: the event type to be plotted
-        individual: key in the dataframe for indentifying individual subjects
+        individual: key in the dataframe for identifying individual subjects
         palette: palette of colors to be used.
         sort_col: col value to sort individuals
         rate_max: max rate for the ceiling of the colormap. If "auto" calculate max from the data; if float the value is taken literally, if str and ends with "%" the value is interpreted as a percentage.

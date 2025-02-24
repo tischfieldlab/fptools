@@ -28,7 +28,7 @@ def measure_snr_overall(sessions: SessionCollection, signals: Union[str, list[st
 
     data = []
     for session in sessions:
-        # determine metadata fileds to include
+        # determine metadata fields to include
         if include_meta == "all":
             meta = session.metadata
         else:
@@ -92,7 +92,7 @@ def measure_snr_event(
 
     data = []
     for session in sessions:
-        # determine metadata fileds to include
+        # determine metadata fields to include
         if include_meta == "all":
             meta = session.metadata
         else:

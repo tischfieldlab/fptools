@@ -34,7 +34,7 @@ def plot_signal(
         indv_c: color of individual traces
         indv_alpha: alpha transparency for individual traces
         indv_kwargs: kwargs to pass to `seaborn.lineplot()` for individual traces
-        agg_kwargs: kwarge to pass to `seaborn.lineplot()` for aggregate traces
+        agg_kwargs: kwargs to pass to `seaborn.lineplot()` for aggregate traces
 
     Returns:
         Axes
@@ -63,7 +63,7 @@ def plot_signal(
 
     sns.lineplot(data=df, x=df.index, y="value", ax=ax, **_agg_kwargs)
 
-    ax.set_xlabel("Time, Reletive to Event (s)")
+    ax.set_xlabel("Time, Relative to Event (s)")
     ax.set_ylabel(f"{signal.name} ({signal.units})")
 
     xticks = ax.get_xticks()
@@ -340,6 +340,6 @@ def plot_heatmap(
     xticklabels = [xticklabels[i] for i in order]
     ax.set_xticks(xticks, labels=xticklabels, rotation=0)
 
-    ax.set_xlabel("Time, Reletive to Event (sec)")
+    ax.set_xlabel("Time, Relative to Event (sec)")
 
     return ax

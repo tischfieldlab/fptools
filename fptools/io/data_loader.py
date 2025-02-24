@@ -64,7 +64,7 @@ def load_data(
 
     Loading will happen in parallel, split across `max_workers` worker processes.
 
-    For quicker future loading, results may be cached. Cacheing is controlled by the `cache` parameter, and the location of cached
+    For quicker future loading, results may be cached. Caching is controlled by the `cache` parameter, and the location of cached
     files is controlled by the `cache_dir` parameter.
 
     You can specify a manifest (in TSV, CSV or XLSX formats) containing additional metadata to be injected into the loaded data.
@@ -154,7 +154,7 @@ def _load(
 ) -> Session:
     """Load data for the given DataTypeAdaptor.
 
-    Handles session instance creation, loading across possibly multiple loaders, cacheing, preprocessing
+    Handles session instance creation, loading across possibly multiple loaders, caching, preprocessing
 
     Args:
         dset: a DataTypeAdaptor instance describing what data and how to load it
@@ -213,7 +213,7 @@ def _get_locator(locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "au
 def _find_data(path: str) -> list[DataTypeAdaptor]:
     """Data locator for type "auto".
 
-    Tries to find any type of data (TDT and med-assocates currently supported)
+    Tries to find any type of data (TDT and med-associates currently supported)
 
     Args:
         path: path to search for data

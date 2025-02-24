@@ -41,7 +41,7 @@ def plot_cumulative_events(
         row: column in the dataframe to form plot rows on
         row_order: order for the rows in the plot. If None, use the natural sorted order of unique items
         event: the event type to be plotted
-        individual: key in the dataframe for indentifying individual subjects
+        individual: key in the dataframe for identifying individual subjects
         palette: palette of colors to be used.
         hue: key in the dataframe that will produce different colors
         hue_order: order for processing the hue semantic

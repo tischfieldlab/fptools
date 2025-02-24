@@ -42,7 +42,7 @@ class Loader(Protocol):
     def __call__(self, session: Session, path: str) -> Session:
         """Data Loader Protocol.
 
-        A Loader recieves a session instance and a path to data. It should load this data into
+        A Loader receives a session instance and a path to data. It should load this data into
         the Session instance and return back the session.
 
         Args:

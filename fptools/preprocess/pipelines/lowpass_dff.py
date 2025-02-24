@@ -24,7 +24,7 @@ def lowpass_dff(
 
     Pipeline steps:
     1) Signals are trimmed to the optical system start.
-    2) Signals are lowpass filterd at 0.01 Hz (~100 second timescale)
+    2) Signals are lowpass filtered at 0.01 Hz (~100 second timescale)
     3) Signals are converted to dF/F using lowpass filtered signals as F0
     4) Signals are optionally downsampled factor `downsample`
 
@@ -33,7 +33,7 @@ def lowpass_dff(
         signal_map: mapping of signals to perform
         show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
         plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
-        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single flaot trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.
+        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.
         downsample: if not `None`, downsample signal by `downsample` factor.
     """
     try:
@@ -81,7 +81,7 @@ def lowpass_dff(
         if show_steps:
             for i, sig in enumerate(lowpass_signals):
                 axs[2].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
-            axs[2].set_title("Lowpasss filtered (0.01 Hz)")
+            axs[2].set_title("Lowpass filtered (0.01 Hz)")
             axs[2].legend()
 
         # calculate dF/F

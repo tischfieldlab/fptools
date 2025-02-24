@@ -10,9 +10,9 @@ from .session import Session
 
 
 def find_ma_blocks(path: str, pattern: str = "*.txt") -> list[DataTypeAdaptor]:
-    """Data Loactor for med-associates files.
+    """Data Locator for med-associates files.
 
-    Given a path to a directory, will search that path recursively for med-assocaites files.
+    Given a path to a directory, will search that path recursively for med-associates files.
 
     Args:
         path: path to search for med-associates data files

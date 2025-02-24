@@ -28,15 +28,15 @@ def collect_signals(
     events = session.epocs[event]
 
     n_samples = int(np.rint((stop - start) * sig.fs))
-    offest = int(np.rint(start * sig.fs))
+    offset = int(np.rint(start * sig.fs))
     new_time = fs2t(sig.fs, n_samples) + start
 
     accum = np.zeros_like(sig.signal, shape=(events.shape[0], n_samples))
-    padding = abs(offest) + n_samples
+    padding = abs(offset) + n_samples
     padded_signal = np.pad(sig.signal, (padding, padding), mode="constant", constant_values=0)
     for ei, evt in enumerate(events):
         event_idx = sig.tindex(evt) + padding  # add padding
-        accum[ei, :] = padded_signal[(event_idx + offest) : (event_idx + offest + n_samples)]
+        accum[ei, :] = padded_signal[(event_idx + offset) : (event_idx + offset + n_samples)]
 
     if out_name is None:
         out_name = f"{signal}@{event}"
@@ -68,7 +68,7 @@ def collect_signals_2event(
         event2: the name of the second event to use
         signal: the name of the signal to collect
         pre: amount of time, in seconds, to collect prior to each event
-        inter: amouont of "meta" time, in seconds, to collect between events
+        inter: amount of "meta" time, in seconds, to collect between events
         post: amount of time, in seconds, to collect after each event
 
     Returns:
@@ -150,7 +150,7 @@ def collect_signals_2event(
 #         event2': the name of the second event to use
 #         signal: the name of the signal to collect
 #         pre: amount of time, in seconds, to collect prior to each event
-#         inter: amouont of "meta" time, in seconds, to collect between events
+#         inter: amount of "meta" time, in seconds, to collect between events
 #         post: amount of time, in seconds, to collect after each event
 
 #     Returns:
@@ -173,10 +173,10 @@ def collect_signals_2event(
 #     new_time = fs2t(sig.fs, n_samples) - pre
 
 #     e1_nsamples = int(np.rint((e1_range[1] - e1_range[0]) * sig.fs))
-#     e1_offest = int(np.rint(e1_range[0] * sig.fs))
+#     e1_offset = int(np.rint(e1_range[0] * sig.fs))
 
 #     e2_nsamples = int(np.rint((e2_range[1] - e2_range[0]) * sig.fs))
-#     e2_offest = int(np.rint(e2_range[0] * sig.fs))
+#     e2_offset = int(np.rint(e2_range[0] * sig.fs))
 
 #     # destination slices in the final signal
 #     slice1 = slice(0, pre_idxs)
