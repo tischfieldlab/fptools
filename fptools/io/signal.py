@@ -123,7 +123,7 @@ class Signal(object):
         if self.units != value.units:
             return False
 
-        if not np.array_equal(self.signal, value.signal):
+        if not np.allclose(self.signal, value.signal, equal_nan=True):
             return False
 
         if not np.array_equal(self.time, value.time):
@@ -147,7 +147,7 @@ class Signal(object):
         if isinstance(other, Signal):
             assert self._check_other_compatible(other)
             s.signal += other.signal
-        elif issubclass(other, (int, float)):
+        elif isinstance(other, (int, float)):
             s.signal += other
         else:
             raise NotImplementedError(f"Add is not defined for type {type(other)}")
@@ -166,7 +166,7 @@ class Signal(object):
         if isinstance(other, Signal):
             assert self._check_other_compatible(other)
             s.signal -= other.signal
-        elif issubclass(other, (int, float)):
+        elif isinstance(other, (int, float)):
             s.signal -= other
         else:
             raise NotImplementedError(f"Subtract is not defined for type {type(other)}")
@@ -185,7 +185,7 @@ class Signal(object):
         if isinstance(other, Signal):
             assert self._check_other_compatible(other)
             s.signal *= other.signal
-        elif issubclass(other, (int, float)):
+        elif isinstance(other, (int, float)):
             s.signal *= other
         else:
             raise NotImplementedError(f"Multiply is not defined for type {type(other)}")
@@ -204,7 +204,7 @@ class Signal(object):
         if isinstance(other, Signal):
             assert self._check_other_compatible(other)
             s.signal /= other.signal
-        elif issubclass(other, (int, float)):
+        elif isinstance(other, (int, float)):
             s.signal /= other
         else:
             raise NotImplementedError(f"Division is not defined for type {type(other)}")
