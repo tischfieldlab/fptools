@@ -1,6 +1,6 @@
 import datetime
 from functools import partial
-from typing import Callable, Optional, Union, cast
+from typing import Any, Callable, Optional, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -134,7 +134,7 @@ class Signal(object):
 
         return True
 
-    def __add__(self, other) -> "Signal":
+    def __add__(self, other: Any) -> "Signal":
         """Add another signal to this signal, returning a new signal.
 
         Args:
@@ -153,7 +153,7 @@ class Signal(object):
             raise NotImplementedError(f"Add is not defined for type {type(other)}")
         return s
 
-    def __sub__(self, other) -> "Signal":
+    def __sub__(self, other: Any) -> "Signal":
         """Subtract another signal from this signal, returning a new signal.
 
         Args:
@@ -172,7 +172,7 @@ class Signal(object):
             raise NotImplementedError(f"Subtract is not defined for type {type(other)}")
         return s
 
-    def __mul__(self, other) -> "Signal":
+    def __mul__(self, other: Any) -> "Signal":
         """Multiply another signal against this signal, returning a new signal.
 
         Args:
@@ -191,7 +191,7 @@ class Signal(object):
             raise NotImplementedError(f"Multiply is not defined for type {type(other)}")
         return s
 
-    def __truediv__(self, other) -> "Signal":
+    def __truediv__(self, other: Any) -> "Signal":
         """Divide this signal by another signal, returning a new signal.
 
         Args:
