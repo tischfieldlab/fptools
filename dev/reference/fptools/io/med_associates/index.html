@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -1358,21 +1358,21 @@
 <p><span class="doc-section-title">Functions:</span></p>
     <ul>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.io.med_associates.find_ma_blocks" href="#fptools.io.med_associates.find_ma_blocks">find_ma_blocks</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.med_associates.find_ma_blocks&lt;/code&gt;" href="#fptools.io.med_associates.find_ma_blocks">find_ma_blocks</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Data Loactor for med-associates files.</p>
+              <p>Data Locator for med-associates files.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.io.med_associates.is_file_ma" href="#fptools.io.med_associates.is_file_ma">is_file_ma</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.med_associates.is_file_ma&lt;/code&gt;" href="#fptools.io.med_associates.is_file_ma">is_file_ma</a></code></b>
             –
             <div class="doc-md-description">
               <p>Test if a file looks like a med-associates data file.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.io.med_associates.parse_ma_session" href="#fptools.io.med_associates.parse_ma_session">parse_ma_session</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.med_associates.parse_ma_session&lt;/code&gt;" href="#fptools.io.med_associates.parse_ma_session">parse_ma_session</a></code></b>
             –
             <div class="doc-md-description">
               <p>Parse a session data file from MedAssociates.</p>
@@ -1414,7 +1414,7 @@ return the key and match result of the first matching regex</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>line</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>the line to parse</p>
@@ -1470,15 +1470,15 @@ return the key and match result of the first matching regex</p>
 
     <div class="doc doc-contents ">
 
-        <p>Data Loactor for med-associates files.</p>
-<p>Given a path to a directory, will search that path recursively for med-assocaites files.</p>
+        <p>Data Locator for med-associates files.</p>
+<p>Given a path to a directory, will search that path recursively for med-associates files.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>path</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>path to search for med-associates data files</p>
@@ -1490,7 +1490,7 @@ return the key and match result of the first matching regex</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code>list[<a class="autorefs autorefs-internal" title="fptools.io.common.DataTypeAdaptor" href="../common/#fptools.io.common.DataTypeAdaptor">DataTypeAdaptor</a>]</code>
+              <code><span title="list">list</span>[<a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.common.DataTypeAdaptor&lt;/code&gt;" href="../common/#fptools.io.common.DataTypeAdaptor">DataTypeAdaptor</a>]</code>
           –
           <div class="doc-md-description">
             <p>list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded</p>
@@ -1501,9 +1501,9 @@ return the key and match result of the first matching regex</p>
             <details class="quote">
               <summary>Source code in <code>fptools/io/med_associates.py</code></summary>
               <div class="highlight"><pre><span></span><code><a id="__codelineno-0-12" name="__codelineno-0-12"></a><a href="#__codelineno-0-12"><span class="linenos" data-linenos="12 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">find_ma_blocks</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">pattern</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;*.txt&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">DataTypeAdaptor</span><span class="p">]:</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a><a href="#__codelineno-0-13"><span class="linenos" data-linenos="13 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Data Loactor for med-associates files.</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><a href="#__codelineno-0-13"><span class="linenos" data-linenos="13 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Data Locator for med-associates files.</span>
 <a id="__codelineno-0-14" name="__codelineno-0-14"></a><a href="#__codelineno-0-14"><span class="linenos" data-linenos="14 "></span></a>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a><a href="#__codelineno-0-15"><span class="linenos" data-linenos="15 "></span></a><span class="sd">    Given a path to a directory, will search that path recursively for med-assocaites files.</span>
+<a id="__codelineno-0-15" name="__codelineno-0-15"></a><a href="#__codelineno-0-15"><span class="linenos" data-linenos="15 "></span></a><span class="sd">    Given a path to a directory, will search that path recursively for med-associates files.</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16"></a><a href="#__codelineno-0-16"><span class="linenos" data-linenos="16 "></span></a>
 <a id="__codelineno-0-17" name="__codelineno-0-17"></a><a href="#__codelineno-0-17"><span class="linenos" data-linenos="17 "></span></a><span class="sd">    Args:</span>
 <a id="__codelineno-0-18" name="__codelineno-0-18"></a><a href="#__codelineno-0-18"><span class="linenos" data-linenos="18 "></span></a><span class="sd">        path: path to search for med-associates data files</span>
@@ -1545,7 +1545,7 @@ return the key and match result of the first matching regex</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>path</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>path to a file to test.</p>
@@ -1557,7 +1557,7 @@ return the key and match result of the first matching regex</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code>bool</code>
+              <code><span title="bool">bool</span></code>
           –
           <div class="doc-md-description">
             <p>True if the file looks like a med-associates file, otherwise False.</p>
@@ -1606,7 +1606,7 @@ return the key and match result of the first matching regex</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>path</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>Filepath for file_object to be parsed</p>
@@ -1618,7 +1618,7 @@ return the key and match result of the first matching regex</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="fptools.io.session.Session" href="../session/#fptools.io.session.Session">Session</a></code>
+              <code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.session.Session&lt;/code&gt;" href="../session/#fptools.io.session.Session">Session</a></code>
           –
           <div class="doc-md-description">
             <p>SessionCollection</p>

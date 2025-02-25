@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -453,9 +453,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#epocs" class="md-nav__link">
+  <a href="#epochs" class="md-nav__link">
     <span class="md-ellipsis">
-      Epocs
+      Epochs
     </span>
   </a>
   
@@ -1344,9 +1344,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#epocs" class="md-nav__link">
+  <a href="#epochs" class="md-nav__link">
     <span class="md-ellipsis">
-      Epocs
+      Epochs
     </span>
   </a>
   
@@ -1373,7 +1373,7 @@
 
 <h1 id="sessions-and-sessioncollections">Sessions and SessionCollections<a class="headerlink" href="#sessions-and-sessioncollections" title="Permanent link">&para;</a></h1>
 <p>A <code>Session</code> serves as the basic container for data. It typically would correspond to data from a single animal and a single bout of recording.
-A group of <code>Session</code>s can be added to a <code>SessionCollection</code>. A <code>SessionCollection</code> offers several convience methods for working with many sessions.
+One or more <code>Session</code>s can be added to a <code>SessionCollection</code>. A <code>SessionCollection</code> offers several convenience methods for working with many sessions.
 Many functions in this package accept a <code>Session</code> or <code>SessionCollection</code>.</p>
 <p><code>Session</code>s typically will contain the following types of data on the attributes:</p>
 <ul>
@@ -1383,9 +1383,9 @@ Many functions in this package accept a <code>Session</code> or <code>SessionCol
 <li><a href="#scalars"><code>scalars</code></a>: single-value stores</li>
 </ul>
 <h2 id="metadata">Metadata<a class="headerlink" href="#metadata" title="Permanent link">&para;</a></h2>
-<p>Sessions can keep track of metadata about a recording as a simple dictionary, accessable via the <code>metadata</code> property.
+<p>Sessions can keep track of metadata about a recording as a simple dictionary, accessible via the <code>metadata</code> property.
 Metadata is typically populated when a session is loaded, but metadata can be added at anytime.</p>
-<p>When working with a <code>SessionCollection</code>, metadata for all sessions can be returned as a <code>pandas.DataFrame</code> from the <code>.metadata</code> property. There are several conveince methods that are useful for decorating sessions with addition metadata.</p>
+<p>When working with a <code>SessionCollection</code>, metadata for all sessions can be returned as a <code>pandas.DataFrame</code> from the <code>.metadata</code> property. There are several convenience methods that are useful for decorating sessions with addition metadata.</p>
 <h2 id="signals">Signals<a class="headerlink" href="#signals" title="Permanent link">&para;</a></h2>
 <p>A <code>Signal</code> encapsulates continuous-valued time-series data sampled at fixed intervals, along with some metadata, such as <code>name</code>, <code>unit</code>, <code>marks</code>. A <code>Signal</code> can describe itself.</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>&gt; signal.describe()
@@ -1397,17 +1397,17 @@ Metadata is typically populated when a session is loaded, but metadata can be ad
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>    sample_rate = 101.72526245132634
 </code></pre></div>
 <h3 id="shape-of-signalsignal">Shape of <code>Signal.signal</code><a class="headerlink" href="#shape-of-signalsignal" title="Permanent link">&para;</a></h3>
-<p>Signal data can be described by the number of samples it contains (i.e. the length of the array), and is retrievable by <code>Signal.nsamples</code>. The duration, as a wall clock amount of time, can be retrieved as a <code>datetime.timedelta</code> by <code>Signal.duration</code>, and is equivelent to <code>Signal.nsamples * Signal.fs</code>. </p>
-<p>A <code>Signal</code> can contain data from a single observation (in this case <code>Signal.nobs == 1</code>), or from muliple observation (typical in the case of the return from <code>collect_signals()</code>, in this case <code>Signal.nobs &gt; 1</code>). In the case of a single observation, the shape of the signal will be 1D, while in the case of multiple observations, the signal will be 2D <code>(nobs, nsamples)</code>.</p>
+<p>Signal data can be described by the number of samples it contains (i.e. the length of the array), and is retrievable by <code>Signal.nsamples</code>. The duration, as a wall clock amount of time, can be retrieved as a <code>datetime.timedelta</code> by <code>Signal.duration</code>, and is equivalent to <code>Signal.nsamples * Signal.fs</code>. </p>
+<p>A <code>Signal</code> can contain data from a single observation (in this case <code>Signal.nobs == 1</code>), or from multiple observation (typical in the case of the return from <code>collect_signals()</code>, in this case <code>Signal.nobs &gt; 1</code>). In the case of a single observation, the shape of the signal will be 1D, while in the case of multiple observations, the signal will be 2D <code>(nobs, nsamples)</code>.</p>
 <h3 id="signal-aggregation">Signal aggregation<a class="headerlink" href="#signal-aggregation" title="Permanent link">&para;</a></h3>
-<p>In the case there are multiple observations, one would commonly want to aggregate to produce a mean/median signal representative of all observations. To do so, use the <code>aggregate()</code> method of the signal object. This method return a new <code>Signal</code> with propegated marks, units, sampling frequency and time. The new signal will be named according to this signal, with <code>#{func}</code> appended. The parameter <code>func</code> determines how the signal is aggregated, and can accept several types of argument.</p>
+<p>In the case there are multiple observations, one would commonly want to aggregate to produce a mean/median signal representative of all observations. To do so, use the <code>aggregate()</code> method of the signal object. This method return a new <code>Signal</code> with propagated marks, units, sampling frequency and time. The new signal will be named according to this signal, with <code>#{func}</code> appended. The parameter <code>func</code> determines how the signal is aggregated, and can accept several types of argument.</p>
 <ul>
 <li>simple strings, like <code>mean</code>, <code>median</code>, <code>min</code>, <code>max</code> will invoke the <code>numpy</code> implementation (really any numpy function that is a <code>ufunc</code> and exists in the global <code>numpy</code> namespace)</li>
 <li>reference to a <code>numpy</code> <code>ufunc</code>, such as <code>numpy.mean</code></li>
 <li>any other arbitrary function that accepts and array and returns an array</li>
 </ul>
-<h2 id="epocs">Epocs<a class="headerlink" href="#epocs" title="Permanent link">&para;</a></h2>
-<p>Epocs contain behavioral data. Currently, these are stored as a simple dictionary on <code>Session</code> objects, with string keys as the event name, and the values as numpy arrays of relative event times, in seconds.</p>
+<h2 id="epochs">Epochs<a class="headerlink" href="#epochs" title="Permanent link">&para;</a></h2>
+<p>Epochs contain behavioral data. Currently, these are stored as a simple dictionary on <code>Session</code> objects, with string keys as the event name, and the values as numpy arrays of relative event times, in seconds.</p>
 
 
 

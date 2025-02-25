@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -1358,14 +1358,14 @@
 <p><span class="doc-section-title">Functions:</span></p>
     <ul>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.io.tdt.find_tdt_blocks" href="#fptools.io.tdt.find_tdt_blocks">find_tdt_blocks</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.tdt.find_tdt_blocks&lt;/code&gt;" href="#fptools.io.tdt.find_tdt_blocks">find_tdt_blocks</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Data Loactor for TDT blocks.</p>
+              <p>Data Locator for TDT blocks.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.io.tdt.load_tdt_block" href="#fptools.io.tdt.load_tdt_block">load_tdt_block</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.tdt.load_tdt_block&lt;/code&gt;" href="#fptools.io.tdt.load_tdt_block">load_tdt_block</a></code></b>
             –
             <div class="doc-md-description">
               <p>Data Loader for TDT blocks.</p>
@@ -1398,7 +1398,7 @@
 
     <div class="doc doc-contents ">
 
-        <p>Data Loactor for TDT blocks.</p>
+        <p>Data Locator for TDT blocks.</p>
 <p>Given a path to a directory, will search that path recursively for TDT blocks.</p>
 
 
@@ -1406,7 +1406,7 @@
     <ul>
         <li class="doc-section-item field-body">
             <b><code>path</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>path to search for TDT blocks</p>
@@ -1418,7 +1418,7 @@
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code>list[<a class="autorefs autorefs-internal" title="fptools.io.common.DataTypeAdaptor" href="../common/#fptools.io.common.DataTypeAdaptor">DataTypeAdaptor</a>]</code>
+              <code><span title="list">list</span>[<a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.common.DataTypeAdaptor&lt;/code&gt;" href="../common/#fptools.io.common.DataTypeAdaptor">DataTypeAdaptor</a>]</code>
           –
           <div class="doc-md-description">
             <p>list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded</p>
@@ -1429,7 +1429,7 @@
             <details class="quote">
               <summary>Source code in <code>fptools/io/tdt.py</code></summary>
               <div class="highlight"><pre><span></span><code><a id="__codelineno-0-10" name="__codelineno-0-10"></a><a href="#__codelineno-0-10"><span class="linenos" data-linenos="10 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">find_tdt_blocks</span><span class="p">(</span><span class="n">path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">DataTypeAdaptor</span><span class="p">]:</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11"></a><a href="#__codelineno-0-11"><span class="linenos" data-linenos="11 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Data Loactor for TDT blocks.</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11"></a><a href="#__codelineno-0-11"><span class="linenos" data-linenos="11 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Data Locator for TDT blocks.</span>
 <a id="__codelineno-0-12" name="__codelineno-0-12"></a><a href="#__codelineno-0-12"><span class="linenos" data-linenos="12 "></span></a>
 <a id="__codelineno-0-13" name="__codelineno-0-13"></a><a href="#__codelineno-0-13"><span class="linenos" data-linenos="13 "></span></a><span class="sd">    Given a path to a directory, will search that path recursively for TDT blocks.</span>
 <a id="__codelineno-0-14" name="__codelineno-0-14"></a><a href="#__codelineno-0-14"><span class="linenos" data-linenos="14 "></span></a>
@@ -1472,7 +1472,7 @@
     <ul>
         <li class="doc-section-item field-body">
             <b><code>session</code></b>
-              (<code><a class="autorefs autorefs-internal" title="fptools.io.session.Session" href="../session/#fptools.io.session.Session">Session</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.session.Session&lt;/code&gt;" href="../session/#fptools.io.session.Session">Session</a></code>)
           –
           <div class="doc-md-description">
             <p>the session for data to be loaded into</p>
@@ -1480,7 +1480,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>path</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>path to a TDT block folder</p>
@@ -1492,7 +1492,7 @@
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="fptools.io.session.Session" href="../session/#fptools.io.session.Session">Session</a></code>
+              <code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.session.Session&lt;/code&gt;" href="../session/#fptools.io.session.Session">Session</a></code>
           –
           <div class="doc-md-description">
             <p>Session object with data added</p>

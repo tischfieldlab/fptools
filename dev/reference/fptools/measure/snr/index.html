@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -1358,14 +1358,14 @@
 <p><span class="doc-section-title">Functions:</span></p>
     <ul>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.measure.snr.measure_snr_event" href="#fptools.measure.snr.measure_snr_event">measure_snr_event</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.measure.snr.measure_snr_event&lt;/code&gt;" href="#fptools.measure.snr.measure_snr_event">measure_snr_event</a></code></b>
             –
             <div class="doc-md-description">
               <p>Measure Signal to Noise ratio (SNR) in signals surrounding events.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.measure.snr.measure_snr_overall" href="#fptools.measure.snr.measure_snr_overall">measure_snr_overall</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.measure.snr.measure_snr_overall&lt;/code&gt;" href="#fptools.measure.snr.measure_snr_overall">measure_snr_overall</a></code></b>
             –
             <div class="doc-md-description">
               <p>Measure Signal to Noise ratio (SNR) of the overall stream.</p>
@@ -1405,7 +1405,7 @@
     <ul>
         <li class="doc-section-item field-body">
             <b><code>signals</code></b>
-              (<code><span title="typing.Union">Union</span>[str, list[str]]</code>)
+              (<code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="list">list</span>[<span title="str">str</span>]]</code>)
           –
           <div class="doc-md-description">
             <p>one or more signals to measure</p>
@@ -1413,7 +1413,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>events</code></b>
-              (<code><span title="typing.Union">Union</span>[str, list[str]]</code>)
+              (<code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="list">list</span>[<span title="str">str</span>]]</code>)
           –
           <div class="doc-md-description">
             <p>one or more events at which to measure signals</p>
@@ -1421,7 +1421,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>noise_range</code></b>
-              (<code><span title="typing.Union">Union</span>[tuple[float, float], list[tuple[float, float]]]</code>)
+              (<code><span title="typing.Union">Union</span>[<span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>], <span title="list">list</span>[<span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>]]]</code>)
           –
           <div class="doc-md-description">
             <p>tuple(s) of start/stop times relative to the event to consider as noise</p>
@@ -1429,7 +1429,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>signal_range</code></b>
-              (<code><span title="typing.Union">Union</span>[tuple[float, float], list[tuple[float, float]]]</code>)
+              (<code><span title="typing.Union">Union</span>[<span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>], <span title="list">list</span>[<span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>]]]</code>)
           –
           <div class="doc-md-description">
             <p>tuple(s) of start/stop times relative to the event to consider as signal</p>
@@ -1507,7 +1507,7 @@
 <a id="__codelineno-0-92" name="__codelineno-0-92"></a><a href="#__codelineno-0-92"><span class="linenos" data-linenos=" 92 "></span></a>
 <a id="__codelineno-0-93" name="__codelineno-0-93"></a><a href="#__codelineno-0-93"><span class="linenos" data-linenos=" 93 "></span></a>    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 <a id="__codelineno-0-94" name="__codelineno-0-94"></a><a href="#__codelineno-0-94"><span class="linenos" data-linenos=" 94 "></span></a>    <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">sessions</span><span class="p">:</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a><a href="#__codelineno-0-95"><span class="linenos" data-linenos=" 95 "></span></a>        <span class="c1"># determine metadata fileds to include</span>
+<a id="__codelineno-0-95" name="__codelineno-0-95"></a><a href="#__codelineno-0-95"><span class="linenos" data-linenos=" 95 "></span></a>        <span class="c1"># determine metadata fields to include</span>
 <a id="__codelineno-0-96" name="__codelineno-0-96"></a><a href="#__codelineno-0-96"><span class="linenos" data-linenos=" 96 "></span></a>        <span class="k">if</span> <span class="n">include_meta</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
 <a id="__codelineno-0-97" name="__codelineno-0-97"></a><a href="#__codelineno-0-97"><span class="linenos" data-linenos=" 97 "></span></a>            <span class="n">meta</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">metadata</span>
 <a id="__codelineno-0-98" name="__codelineno-0-98"></a><a href="#__codelineno-0-98"><span class="linenos" data-linenos=" 98 "></span></a>        <span class="k">else</span><span class="p">:</span>
@@ -1550,7 +1550,7 @@
     <ul>
         <li class="doc-section-item field-body">
             <b><code>sessions</code></b>
-              (<code><a class="autorefs autorefs-internal" title="fptools.io.SessionCollection" href="../../io/session/#fptools.io.session.SessionCollection">SessionCollection</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.SessionCollection&lt;/code&gt;" href="../../io/session/#fptools.io.session.SessionCollection">SessionCollection</a></code>)
           –
           <div class="doc-md-description">
             <p>sessions to pull signals from</p>
@@ -1558,7 +1558,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>signals</code></b>
-              (<code><span title="typing.Union">Union</span>[str, list[str]]</code>)
+              (<code><span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="list">list</span>[<span title="str">str</span>]]</code>)
           –
           <div class="doc-md-description">
             <p>one or more signal names to operate on"</p>
@@ -1611,7 +1611,7 @@
 <a id="__codelineno-0-28" name="__codelineno-0-28"></a><a href="#__codelineno-0-28"><span class="linenos" data-linenos="28 "></span></a>
 <a id="__codelineno-0-29" name="__codelineno-0-29"></a><a href="#__codelineno-0-29"><span class="linenos" data-linenos="29 "></span></a>    <span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
 <a id="__codelineno-0-30" name="__codelineno-0-30"></a><a href="#__codelineno-0-30"><span class="linenos" data-linenos="30 "></span></a>    <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">sessions</span><span class="p">:</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><a href="#__codelineno-0-31"><span class="linenos" data-linenos="31 "></span></a>        <span class="c1"># determine metadata fileds to include</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><a href="#__codelineno-0-31"><span class="linenos" data-linenos="31 "></span></a>        <span class="c1"># determine metadata fields to include</span>
 <a id="__codelineno-0-32" name="__codelineno-0-32"></a><a href="#__codelineno-0-32"><span class="linenos" data-linenos="32 "></span></a>        <span class="k">if</span> <span class="n">include_meta</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
 <a id="__codelineno-0-33" name="__codelineno-0-33"></a><a href="#__codelineno-0-33"><span class="linenos" data-linenos="33 "></span></a>            <span class="n">meta</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">metadata</span>
 <a id="__codelineno-0-34" name="__codelineno-0-34"></a><a href="#__codelineno-0-34"><span class="linenos" data-linenos="34 "></span></a>        <span class="k">else</span><span class="p">:</span>

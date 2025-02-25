@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -1360,7 +1360,7 @@
 <p><span class="doc-section-title">Functions:</span></p>
     <ul>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.preprocess.pipelines.dxp_motion_dff.dxp_motion_dff" href="#fptools.preprocess.pipelines.dxp_motion_dff.dxp_motion_dff">dxp_motion_dff</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.preprocess.pipelines.dxp_motion_dff.dxp_motion_dff&lt;/code&gt;" href="#fptools.preprocess.pipelines.dxp_motion_dff.dxp_motion_dff">dxp_motion_dff</a></code></b>
             –
             <div class="doc-md-description">
               <p>Preprocess using a double exponential fit for detrending, producing df/f values.</p>
@@ -1400,7 +1400,7 @@
     <ul>
         <li class="doc-section-item field-body">
             <b><code>session</code></b>
-              (<code><a class="autorefs autorefs-internal" title="fptools.io.Session" href="../../../io/session/#fptools.io.session.Session">Session</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.Session&lt;/code&gt;" href="../../../io/session/#fptools.io.session.Session">Session</a></code>)
           –
           <div class="doc-md-description">
             <p>the session to populate.</p>
@@ -1408,7 +1408,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>signal_map</code></b>
-              (<code>list[<span title="fptools.io.SignalMapping">SignalMapping</span>]</code>)
+              (<code><span title="list">list</span>[<span title="fptools.io.SignalMapping">SignalMapping</span>]</code>)
           –
           <div class="doc-md-description">
             <p>mapping of signals to perform</p>
@@ -1416,7 +1416,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>show_steps</code></b>
-              (<code>bool</code>, default:
+              (<code><span title="bool">bool</span></code>, default:
                   <code>True</code>
 )
           –
@@ -1426,7 +1426,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>plot_dir</code></b>
-              (<code>str</code>, default:
+              (<code><span title="str">str</span></code>, default:
                   <code>&#39;&#39;</code>
 )
           –
@@ -1436,12 +1436,12 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>trim_extent</code></b>
-              (<code><span title="typing.Union">Union</span>[None, <span title="typing.Literal">Literal</span>[&#39;auto&#39;], float, tuple[float, float]]</code>, default:
+              (<code><span title="typing.Union">Union</span>[None, <span title="typing.Literal">Literal</span>[&#39;auto&#39;], <span title="float">float</span>, <span title="tuple">tuple</span>[<span title="float">float</span>, <span title="float">float</span>]]</code>, default:
                   <code>&#39;auto&#39;</code>
 )
           –
           <div class="doc-md-description">
-            <p>specification for trimming. None disables trimming, auto uses the offset stored in <code>block.scalars.Fi1i.ts</code>, a single flaot trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.</p>
+            <p>specification for trimming. None disables trimming, auto uses the offset stored in <code>block.scalars.Fi1i.ts</code>, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.</p>
           </div>
         </li>
     </ul>
@@ -1462,7 +1462,7 @@
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a><a href="#__codelineno-0-23"><span class="linenos" data-linenos=" 23 "></span></a><span class="sd">        signal_map: mapping of signals to perform</span>
 <a id="__codelineno-0-24" name="__codelineno-0-24"></a><a href="#__codelineno-0-24"><span class="linenos" data-linenos=" 24 "></span></a><span class="sd">        show_steps: if `True`, produce diagnostic plots of the preprocessing steps.</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a><a href="#__codelineno-0-25"><span class="linenos" data-linenos=" 25 "></span></a><span class="sd">        plot_dir: path where diagnostic plots of the preprocessing steps should be saved.</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a><a href="#__codelineno-0-26"><span class="linenos" data-linenos=" 26 "></span></a><span class="sd">        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single flaot trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><a href="#__codelineno-0-26"><span class="linenos" data-linenos=" 26 "></span></a><span class="sd">        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.</span>
 <a id="__codelineno-0-27" name="__codelineno-0-27"></a><a href="#__codelineno-0-27"><span class="linenos" data-linenos=" 27 "></span></a><span class="sd">    &quot;&quot;&quot;</span>
 <a id="__codelineno-0-28" name="__codelineno-0-28"></a><a href="#__codelineno-0-28"><span class="linenos" data-linenos=" 28 "></span></a>    <span class="k">try</span><span class="p">:</span>
 <a id="__codelineno-0-29" name="__codelineno-0-29"></a><a href="#__codelineno-0-29"><span class="linenos" data-linenos=" 29 "></span></a>        <span class="k">if</span> <span class="n">show_steps</span><span class="p">:</span>

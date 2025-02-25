@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -431,9 +431,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parallelism-and-cacheing" class="md-nav__link">
+  <a href="#parallelism-and-caching" class="md-nav__link">
     <span class="md-ellipsis">
-      Parallelism and Cacheing
+      Parallelism and Caching
     </span>
   </a>
   
@@ -1371,9 +1371,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#parallelism-and-cacheing" class="md-nav__link">
+  <a href="#parallelism-and-caching" class="md-nav__link">
     <span class="md-ellipsis">
-      Parallelism and Cacheing
+      Parallelism and Caching
     </span>
   </a>
   
@@ -1426,21 +1426,21 @@
 
 
 <h1 id="loading-data">Loading Data<a class="headerlink" href="#loading-data" title="Permanent link">&para;</a></h1>
-<p><code>fptools</code> offers robust data loading functionality for a variety of file types, including metadata injection, parallelism, cacheing, preprocessing and selection/renaming of streams to load. Built-in are loaders for TDT tanks and Med-Associates files. You may also specify your own data loading functionality that plugs into the <code>fptools</code> data loading infrastructure.</p>
+<p><code>fptools</code> offers robust data loading functionality for a variety of file types, including metadata injection, parallelism, caching, and preprocessing. Built-in are loaders for TDT tanks and Med-Associates files. You may also specify your own data loading functionality for arbitrary data which plugs into the <code>fptools</code> data loading infrastructure.</p>
 <h2 id="signal-map">Signal Map<a class="headerlink" href="#signal-map" title="Permanent link">&para;</a></h2>
 <p>Signal maps tell the system what data to load, the relationship between different streams, and allows renaming of data streams.</p>
 <h2 id="manifest">Manifest<a class="headerlink" href="#manifest" title="Permanent link">&para;</a></h2>
 <p>Provide a tabular data file (ex: xlsx, csv, tsv), and the fields in that row will be added to a given sessions metadata.</p>
-<h2 id="parallelism-and-cacheing">Parallelism and Cacheing<a class="headerlink" href="#parallelism-and-cacheing" title="Permanent link">&para;</a></h2>
-<p>Data loading can occur in parallel. Just specify the number of workers to use via the <code>max_workers</code> parameter. each worker runs in a separate process, suitable for running preprocessing routines. The optimal number of workers would depend on the resources of the computer running the analysis.</p>
-<p>Preprocessed data can be cached for quick retrieval later, without needing to re-perform expensive operations. To enable cacheing, set the <code>cache</code> parameter to <code>True</code>, setting to <code>False</code> will disable the cache. Cached data needs to be stored someplace on disk, and can be controlled by providing a filesystem path to the <code>cache_dir</code> parameter to a directory to contain the cache.</p>
+<h2 id="parallelism-and-caching">Parallelism and Caching<a class="headerlink" href="#parallelism-and-caching" title="Permanent link">&para;</a></h2>
+<p>Data loading can occur in parallel. Just specify the number of workers to use via the <code>max_workers</code> parameter. Each worker runs in a separate process, suitable for running preprocessing routines. The optimal number of workers would depend on the resources of the computer running the analysis.</p>
+<p>Preprocessed data can be cached for quick retrieval later, without needing to re-perform expensive operations. To enable caching, set the <code>cache</code> parameter to <code>True</code>, setting to <code>False</code> will disable the cache. Cached data needs to be stored someplace on disk, and can be controlled by providing a filesystem path to the <code>cache_dir</code> parameter to a directory to contain the cache.</p>
 <h2 id="preprocessors">Preprocessors<a class="headerlink" href="#preprocessors" title="Permanent link">&para;</a></h2>
 <p>We offer several preprocessing routines you may choose from, or you may provide your own implementation; simply pass a function to the <code>preprocess</code>. If no preprocessor implementation is passed, the signals specified in the <code>signal_map</code> are simply added to the <code>Session</code> with no further changes.</p>
 <h2 id="datalocators-loaders-and-datatypeadaptors">DataLocators, Loaders and DataTypeAdaptors<a class="headerlink" href="#datalocators-loaders-and-datatypeadaptors" title="Permanent link">&para;</a></h2>
 <p>The <code>load_data()</code> function takes a parameter <code>locator</code> which allows flexibility for finding a loading arbitrary data. For most users, the <code>locator</code> parameter can be set to the special strings <code>tdt</code>, <code>ma</code> or <code>auto</code> to find TDT blocks, med-associates data files, or a combination of the two, respectively.</p>
-<p>For more advanced use cases, one may supply a function that implements the <code>DataLocator</code> protocol. The purpose of a <code>DataLocator</code> is to locate data, returning a list of <code>DataTypeAdaptor</code>s, with each <code>DataTypeAdaptor</code> corresponding to one <code>Session</code>. The <code>DataTypeAdaptor</code> should be populated with a <code>name</code> for the eventually created <code>Session</code>, a <code>path</code> to the data, and finally a list of one or more functions implementing the <code>Loader</code> protocol. A <code>Loader</code> recieves a <code>Sesssion</code> and path (from the <code>DataTypeAdaptor</code>) and is responsible for reading data from that path and populating the <code>Session</code> with the loaded data.</p>
+<p>For more advanced use cases, one may supply a function that implements the <code>DataLocator</code> protocol. The purpose of a <code>DataLocator</code> is to locate data, returning a list of <code>DataTypeAdaptor</code>s, with each <code>DataTypeAdaptor</code> corresponding to one <code>Session</code>. The <code>DataTypeAdaptor</code> should be populated with a <code>name</code> for the eventually created <code>Session</code>, a <code>path</code> to the data, and finally a list of one or more functions implementing the <code>Loader</code> protocol. A <code>Loader</code> receives a <code>Session</code> and path (from the <code>DataTypeAdaptor</code>) and is responsible for reading data from that path and populating the <code>Session</code> with the loaded data.</p>
 <h2 id="example">Example<a class="headerlink" href="#example" title="Permanent link">&para;</a></h2>
-<p>See the notebook <code>01_Data_Loading.ipnb</code> for an example of data loading.</p>
+<p>See the notebook <code>01_Data_Loading.ipynb</code> for an example of data loading.</p>
 
 
 

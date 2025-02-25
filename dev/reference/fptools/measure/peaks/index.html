@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -1356,7 +1356,7 @@
 <p><span class="doc-section-title">Classes:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-          <b><code><a class="autorefs autorefs-internal" title="fptools.measure.peaks.PeakFilterProvider" href="#fptools.measure.peaks.PeakFilterProvider">PeakFilterProvider</a></code></b>
+          <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.measure.peaks.PeakFilterProvider&lt;/code&gt;" href="#fptools.measure.peaks.PeakFilterProvider">PeakFilterProvider</a></code></b>
           –
           <div class="doc-md-description">
             
@@ -1370,7 +1370,7 @@
 <p><span class="doc-section-title">Functions:</span></p>
     <ul>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.measure.peaks.measure_peaks" href="#fptools.measure.peaks.measure_peaks">measure_peaks</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.measure.peaks.measure_peaks&lt;/code&gt;" href="#fptools.measure.peaks.measure_peaks">measure_peaks</a></code></b>
             –
             <div class="doc-md-description">
               <p>Measure peaks within a signal.</p>
@@ -1418,7 +1418,7 @@
 <p><span class="doc-section-title">Methods:</span></p>
     <ul>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.measure.peaks.PeakFilterProvider.__call__" href="#fptools.measure.peaks.PeakFilterProvider.__call__">__call__</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.measure.peaks.PeakFilterProvider.__call__&lt;/code&gt;" href="#fptools.measure.peaks.PeakFilterProvider.__call__">__call__</a></code></b>
             –
             <div class="doc-md-description">
               <p>Peak Filter Provider protocol.</p>
@@ -1482,7 +1482,7 @@
     <ul>
         <li class="doc-section-item field-body">
             <b><code>session</code></b>
-              (<code><a class="autorefs autorefs-internal" title="fptools.io.Session" href="../../io/session/#fptools.io.session.Session">Session</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.Session&lt;/code&gt;" href="../../io/session/#fptools.io.session.Session">Session</a></code>)
           –
           <div class="doc-md-description">
             <p>the current <code>Session</code> being operated upon</p>
@@ -1490,7 +1490,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>signal</code></b>
-              (<code><a class="autorefs autorefs-internal" title="fptools.io.Signal" href="../../io/signal/#fptools.io.signal.Signal">Signal</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.Signal&lt;/code&gt;" href="../../io/signal/#fptools.io.signal.Signal">Signal</a></code>)
           –
           <div class="doc-md-description">
             <p>the current <code>Signal</code> being operated upon</p>
@@ -1498,7 +1498,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>trial</code></b>
-              (<code>int</code>)
+              (<code><span title="int">int</span></code>)
           –
           <div class="doc-md-description">
             <p>the current index of signal</p>
@@ -1576,7 +1576,7 @@ Typically, this means one of the following: <code>None</code>, a scalar float, o
 <p>These parameters are designed to not filter any peaks, but also provoke <code>scipy.signal.find_peaks()</code> into returning all peak measurement fields.</p>
 <p>You may override any of these parameters to <code>scipy.signal.find_peaks()</code> via this functions <code>**kwargs</code>.</p>
 <p>Also allowed for any valid detection parameter is a callable (see <code>PeakFilterProvider</code> for signature) that is given the session, signal, trial index and trial
-data, and should return valid detection parameter values (i.e. None, float, or tuple of the preceeding). The callable is evaluated for each observation in the
+data, and should return valid detection parameter values (i.e. None, float, or tuple of the preceding). The callable is evaluated for each observation in the
 signal in a given session.</p>
 <p>The returned dataframe will contain the following information (one row corresponds to one peak)
 - any metadata from the Session, as specified by the <code>include_meta</code> parameter
@@ -1586,7 +1586,7 @@ signal in a given session.</p>
 - peak_time: this is <code>peak_index</code> converted to the time domain (i.e. relative seconds)</p>
 <p>The following measurements are reported by <code>scipy.signal.find_peaks()</code>:
 - peak_heights: this is the height of the peak, as returned by <code>scipy.signal.find_peaks()</code>
-- left_thresholds, right_thresholds: this is the peak vertical distance to its neighbouring samples, as returned by <code>scipy.signal.find_peaks()</code>
+- left_thresholds, right_thresholds: this is the peak vertical distance to its neighboring samples, as returned by <code>scipy.signal.find_peaks()</code>
 - prominences: this is the prominence of the peak, as returned by <code>scipy.signal.find_peaks()</code>
 - left_bases, right_bases: The peak's bases as indices in x to the left and right of each peak, as returned by <code>scipy.signal.find_peaks()</code>. The higher base of each pair is a peak's lowest contour line.
 - widths: the width of the peak, as returned by <code>scipy.signal.find_peaks()</code>.
@@ -1599,7 +1599,7 @@ signal in a given session.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>sessions</code></b>
-              (<code><a class="autorefs autorefs-internal" title="fptools.io.SessionCollection" href="../../io/session/#fptools.io.session.SessionCollection">SessionCollection</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.SessionCollection&lt;/code&gt;" href="../../io/session/#fptools.io.session.SessionCollection">SessionCollection</a></code>)
           –
           <div class="doc-md-description">
             <p>collection of sessions to work on</p>
@@ -1607,7 +1607,7 @@ signal in a given session.</p>
         </li>
         <li class="doc-section-item field-body">
             <b><code>signal</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>name of the signal to measure</p>
@@ -1625,7 +1625,7 @@ signal in a given session.</p>
         </li>
         <li class="doc-section-item field-body">
             <b><code>include_detection_params</code></b>
-              (<code>bool</code>, default:
+              (<code><span title="bool">bool</span></code>, default:
                   <code>False</code>
 )
           –
@@ -1669,7 +1669,7 @@ signal in a given session.</p>
 <a id="__codelineno-0-42" name="__codelineno-0-42"></a><a href="#__codelineno-0-42"><span class="linenos" data-linenos=" 42 "></span></a><span class="sd">    You may override any of these parameters to `scipy.signal.find_peaks()` via this functions `**kwargs`.</span>
 <a id="__codelineno-0-43" name="__codelineno-0-43"></a><a href="#__codelineno-0-43"><span class="linenos" data-linenos=" 43 "></span></a>
 <a id="__codelineno-0-44" name="__codelineno-0-44"></a><a href="#__codelineno-0-44"><span class="linenos" data-linenos=" 44 "></span></a><span class="sd">    Also allowed for any valid detection parameter is a callable (see `PeakFilterProvider` for signature) that is given the session, signal, trial index and trial</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a><a href="#__codelineno-0-45"><span class="linenos" data-linenos=" 45 "></span></a><span class="sd">    data, and should return valid detection parameter values (i.e. None, float, or tuple of the preceeding). The callable is evaluated for each observation in the</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45"></a><a href="#__codelineno-0-45"><span class="linenos" data-linenos=" 45 "></span></a><span class="sd">    data, and should return valid detection parameter values (i.e. None, float, or tuple of the preceding). The callable is evaluated for each observation in the</span>
 <a id="__codelineno-0-46" name="__codelineno-0-46"></a><a href="#__codelineno-0-46"><span class="linenos" data-linenos=" 46 "></span></a><span class="sd">    signal in a given session.</span>
 <a id="__codelineno-0-47" name="__codelineno-0-47"></a><a href="#__codelineno-0-47"><span class="linenos" data-linenos=" 47 "></span></a>
 <a id="__codelineno-0-48" name="__codelineno-0-48"></a><a href="#__codelineno-0-48"><span class="linenos" data-linenos=" 48 "></span></a><span class="sd">    The returned dataframe will contain the following information (one row corresponds to one peak)</span>
@@ -1681,7 +1681,7 @@ signal in a given session.</p>
 <a id="__codelineno-0-54" name="__codelineno-0-54"></a><a href="#__codelineno-0-54"><span class="linenos" data-linenos=" 54 "></span></a>
 <a id="__codelineno-0-55" name="__codelineno-0-55"></a><a href="#__codelineno-0-55"><span class="linenos" data-linenos=" 55 "></span></a><span class="sd">    The following measurements are reported by `scipy.signal.find_peaks()`:</span>
 <a id="__codelineno-0-56" name="__codelineno-0-56"></a><a href="#__codelineno-0-56"><span class="linenos" data-linenos=" 56 "></span></a><span class="sd">    - peak_heights: this is the height of the peak, as returned by `scipy.signal.find_peaks()`</span>
-<a id="__codelineno-0-57" name="__codelineno-0-57"></a><a href="#__codelineno-0-57"><span class="linenos" data-linenos=" 57 "></span></a><span class="sd">    - left_thresholds, right_thresholds: this is the peak vertical distance to its neighbouring samples, as returned by `scipy.signal.find_peaks()`</span>
+<a id="__codelineno-0-57" name="__codelineno-0-57"></a><a href="#__codelineno-0-57"><span class="linenos" data-linenos=" 57 "></span></a><span class="sd">    - left_thresholds, right_thresholds: this is the peak vertical distance to its neighboring samples, as returned by `scipy.signal.find_peaks()`</span>
 <a id="__codelineno-0-58" name="__codelineno-0-58"></a><a href="#__codelineno-0-58"><span class="linenos" data-linenos=" 58 "></span></a><span class="sd">    - prominences: this is the prominence of the peak, as returned by `scipy.signal.find_peaks()`</span>
 <a id="__codelineno-0-59" name="__codelineno-0-59"></a><a href="#__codelineno-0-59"><span class="linenos" data-linenos=" 59 "></span></a><span class="sd">    - left_bases, right_bases: The peak&#39;s bases as indices in x to the left and right of each peak, as returned by `scipy.signal.find_peaks()`. The higher base of each pair is a peak&#39;s lowest contour line.</span>
 <a id="__codelineno-0-60" name="__codelineno-0-60"></a><a href="#__codelineno-0-60"><span class="linenos" data-linenos=" 60 "></span></a><span class="sd">    - widths: the width of the peak, as returned by `scipy.signal.find_peaks()`.</span>
@@ -1713,7 +1713,7 @@ signal in a given session.</p>
 <a id="__codelineno-0-86" name="__codelineno-0-86"></a><a href="#__codelineno-0-86"><span class="linenos" data-linenos=" 86 "></span></a>
 <a id="__codelineno-0-87" name="__codelineno-0-87"></a><a href="#__codelineno-0-87"><span class="linenos" data-linenos=" 87 "></span></a>    <span class="n">peak_data</span> <span class="o">=</span> <span class="p">[]</span>
 <a id="__codelineno-0-88" name="__codelineno-0-88"></a><a href="#__codelineno-0-88"><span class="linenos" data-linenos=" 88 "></span></a>    <span class="k">for</span> <span class="n">session</span> <span class="ow">in</span> <span class="n">sessions</span><span class="p">:</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a><a href="#__codelineno-0-89"><span class="linenos" data-linenos=" 89 "></span></a>        <span class="c1"># determine metadata fileds to include</span>
+<a id="__codelineno-0-89" name="__codelineno-0-89"></a><a href="#__codelineno-0-89"><span class="linenos" data-linenos=" 89 "></span></a>        <span class="c1"># determine metadata fields to include</span>
 <a id="__codelineno-0-90" name="__codelineno-0-90"></a><a href="#__codelineno-0-90"><span class="linenos" data-linenos=" 90 "></span></a>        <span class="k">if</span> <span class="n">include_meta</span> <span class="o">==</span> <span class="s2">&quot;all&quot;</span><span class="p">:</span>
 <a id="__codelineno-0-91" name="__codelineno-0-91"></a><a href="#__codelineno-0-91"><span class="linenos" data-linenos=" 91 "></span></a>            <span class="n">meta</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">metadata</span>
 <a id="__codelineno-0-92" name="__codelineno-0-92"></a><a href="#__codelineno-0-92"><span class="linenos" data-linenos=" 92 "></span></a>        <span class="k">else</span><span class="p">:</span>

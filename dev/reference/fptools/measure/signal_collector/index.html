@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.4">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.5">
     
     
       
@@ -1358,14 +1358,14 @@
 <p><span class="doc-section-title">Functions:</span></p>
     <ul>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.measure.signal_collector.collect_signals" href="#fptools.measure.signal_collector.collect_signals">collect_signals</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.measure.signal_collector.collect_signals&lt;/code&gt;" href="#fptools.measure.signal_collector.collect_signals">collect_signals</a></code></b>
             –
             <div class="doc-md-description">
               <p>Collect a signal from a session around an event.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="fptools.measure.signal_collector.collect_signals_2event" href="#fptools.measure.signal_collector.collect_signals_2event">collect_signals_2event</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.measure.signal_collector.collect_signals_2event&lt;/code&gt;" href="#fptools.measure.signal_collector.collect_signals_2event">collect_signals_2event</a></code></b>
             –
             <div class="doc-md-description">
               <p>Collect a signal from a session around two events.</p>
@@ -1405,7 +1405,7 @@
     <ul>
         <li class="doc-section-item field-body">
             <b><code>session</code></b>
-              (<code><a class="autorefs autorefs-internal" title="fptools.io.Session" href="../../io/session/#fptools.io.session.Session">Session</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.Session&lt;/code&gt;" href="../../io/session/#fptools.io.session.Session">Session</a></code>)
           –
           <div class="doc-md-description">
             <p>the Session to operate on</p>
@@ -1413,7 +1413,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>event</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>the name of the event to use</p>
@@ -1421,7 +1421,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>signal</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>the name of the signal to collect</p>
@@ -1429,7 +1429,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>start</code></b>
-              (<code>float</code>, default:
+              (<code><span title="float">float</span></code>, default:
                   <code>-1.0</code>
 )
           –
@@ -1439,7 +1439,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>stop</code></b>
-              (<code>float</code>, default:
+              (<code><span title="float">float</span></code>, default:
                   <code>3.0</code>
 )
           –
@@ -1449,7 +1449,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>out_name</code></b>
-              (<code><span title="typing.Optional">Optional</span>[str]</code>, default:
+              (<code><span title="typing.Optional">Optional</span>[<span title="str">str</span>]</code>, default:
                   <code>None</code>
 )
           –
@@ -1463,7 +1463,7 @@
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="fptools.io.Signal" href="../../io/signal/#fptools.io.signal.Signal">Signal</a></code>
+              <code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.Signal&lt;/code&gt;" href="../../io/signal/#fptools.io.signal.Signal">Signal</a></code>
           –
           <div class="doc-md-description">
             <p>the collected Signal</p>
@@ -1495,15 +1495,15 @@
 <a id="__codelineno-0-28" name="__codelineno-0-28"></a><a href="#__codelineno-0-28"><span class="linenos" data-linenos="28 "></span></a>    <span class="n">events</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">epocs</span><span class="p">[</span><span class="n">event</span><span class="p">]</span>
 <a id="__codelineno-0-29" name="__codelineno-0-29"></a><a href="#__codelineno-0-29"><span class="linenos" data-linenos="29 "></span></a>
 <a id="__codelineno-0-30" name="__codelineno-0-30"></a><a href="#__codelineno-0-30"><span class="linenos" data-linenos="30 "></span></a>    <span class="n">n_samples</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">((</span><span class="n">stop</span> <span class="o">-</span> <span class="n">start</span><span class="p">)</span> <span class="o">*</span> <span class="n">sig</span><span class="o">.</span><span class="n">fs</span><span class="p">))</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><a href="#__codelineno-0-31"><span class="linenos" data-linenos="31 "></span></a>    <span class="n">offest</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">start</span> <span class="o">*</span> <span class="n">sig</span><span class="o">.</span><span class="n">fs</span><span class="p">))</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31"></a><a href="#__codelineno-0-31"><span class="linenos" data-linenos="31 "></span></a>    <span class="n">offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">rint</span><span class="p">(</span><span class="n">start</span> <span class="o">*</span> <span class="n">sig</span><span class="o">.</span><span class="n">fs</span><span class="p">))</span>
 <a id="__codelineno-0-32" name="__codelineno-0-32"></a><a href="#__codelineno-0-32"><span class="linenos" data-linenos="32 "></span></a>    <span class="n">new_time</span> <span class="o">=</span> <span class="n">fs2t</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">fs</span><span class="p">,</span> <span class="n">n_samples</span><span class="p">)</span> <span class="o">+</span> <span class="n">start</span>
 <a id="__codelineno-0-33" name="__codelineno-0-33"></a><a href="#__codelineno-0-33"><span class="linenos" data-linenos="33 "></span></a>
 <a id="__codelineno-0-34" name="__codelineno-0-34"></a><a href="#__codelineno-0-34"><span class="linenos" data-linenos="34 "></span></a>    <span class="n">accum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="n">events</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n_samples</span><span class="p">))</span>
-<a id="__codelineno-0-35" name="__codelineno-0-35"></a><a href="#__codelineno-0-35"><span class="linenos" data-linenos="35 "></span></a>    <span class="n">padding</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">offest</span><span class="p">)</span> <span class="o">+</span> <span class="n">n_samples</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35"></a><a href="#__codelineno-0-35"><span class="linenos" data-linenos="35 "></span></a>    <span class="n">padding</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">offset</span><span class="p">)</span> <span class="o">+</span> <span class="n">n_samples</span>
 <a id="__codelineno-0-36" name="__codelineno-0-36"></a><a href="#__codelineno-0-36"><span class="linenos" data-linenos="36 "></span></a>    <span class="n">padded_signal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pad</span><span class="p">(</span><span class="n">sig</span><span class="o">.</span><span class="n">signal</span><span class="p">,</span> <span class="p">(</span><span class="n">padding</span><span class="p">,</span> <span class="n">padding</span><span class="p">),</span> <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;constant&quot;</span><span class="p">,</span> <span class="n">constant_values</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <a id="__codelineno-0-37" name="__codelineno-0-37"></a><a href="#__codelineno-0-37"><span class="linenos" data-linenos="37 "></span></a>    <span class="k">for</span> <span class="n">ei</span><span class="p">,</span> <span class="n">evt</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">events</span><span class="p">):</span>
 <a id="__codelineno-0-38" name="__codelineno-0-38"></a><a href="#__codelineno-0-38"><span class="linenos" data-linenos="38 "></span></a>        <span class="n">event_idx</span> <span class="o">=</span> <span class="n">sig</span><span class="o">.</span><span class="n">tindex</span><span class="p">(</span><span class="n">evt</span><span class="p">)</span> <span class="o">+</span> <span class="n">padding</span>  <span class="c1"># add padding</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a><a href="#__codelineno-0-39"><span class="linenos" data-linenos="39 "></span></a>        <span class="n">accum</span><span class="p">[</span><span class="n">ei</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">padded_signal</span><span class="p">[(</span><span class="n">event_idx</span> <span class="o">+</span> <span class="n">offest</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="n">event_idx</span> <span class="o">+</span> <span class="n">offest</span> <span class="o">+</span> <span class="n">n_samples</span><span class="p">)]</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39"></a><a href="#__codelineno-0-39"><span class="linenos" data-linenos="39 "></span></a>        <span class="n">accum</span><span class="p">[</span><span class="n">ei</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">padded_signal</span><span class="p">[(</span><span class="n">event_idx</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span> <span class="p">:</span> <span class="p">(</span><span class="n">event_idx</span> <span class="o">+</span> <span class="n">offset</span> <span class="o">+</span> <span class="n">n_samples</span><span class="p">)]</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40"></a><a href="#__codelineno-0-40"><span class="linenos" data-linenos="40 "></span></a>
 <a id="__codelineno-0-41" name="__codelineno-0-41"></a><a href="#__codelineno-0-41"><span class="linenos" data-linenos="41 "></span></a>    <span class="k">if</span> <span class="n">out_name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
 <a id="__codelineno-0-42" name="__codelineno-0-42"></a><a href="#__codelineno-0-42"><span class="linenos" data-linenos="42 "></span></a>        <span class="n">out_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">signal</span><span class="si">}</span><span class="s2">@</span><span class="si">{</span><span class="n">event</span><span class="si">}</span><span class="s2">&quot;</span>
@@ -1538,7 +1538,7 @@ linear interpolation.</p>
     <ul>
         <li class="doc-section-item field-body">
             <b><code>session</code></b>
-              (<code><a class="autorefs autorefs-internal" title="fptools.io.Session" href="../../io/session/#fptools.io.session.Session">Session</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.Session&lt;/code&gt;" href="../../io/session/#fptools.io.session.Session">Session</a></code>)
           –
           <div class="doc-md-description">
             <p>the Session to operate on</p>
@@ -1546,7 +1546,7 @@ linear interpolation.</p>
         </li>
         <li class="doc-section-item field-body">
             <b><code>event1</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>the name of the first event to use</p>
@@ -1554,7 +1554,7 @@ linear interpolation.</p>
         </li>
         <li class="doc-section-item field-body">
             <b><code>event2</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>the name of the second event to use</p>
@@ -1562,7 +1562,7 @@ linear interpolation.</p>
         </li>
         <li class="doc-section-item field-body">
             <b><code>signal</code></b>
-              (<code>str</code>)
+              (<code><span title="str">str</span></code>)
           –
           <div class="doc-md-description">
             <p>the name of the signal to collect</p>
@@ -1570,7 +1570,7 @@ linear interpolation.</p>
         </li>
         <li class="doc-section-item field-body">
             <b><code>pre</code></b>
-              (<code>float</code>, default:
+              (<code><span title="float">float</span></code>, default:
                   <code>2.0</code>
 )
           –
@@ -1580,17 +1580,17 @@ linear interpolation.</p>
         </li>
         <li class="doc-section-item field-body">
             <b><code>inter</code></b>
-              (<code>float</code>, default:
+              (<code><span title="float">float</span></code>, default:
                   <code>2.0</code>
 )
           –
           <div class="doc-md-description">
-            <p>amouont of "meta" time, in seconds, to collect between events</p>
+            <p>amount of "meta" time, in seconds, to collect between events</p>
           </div>
         </li>
         <li class="doc-section-item field-body">
             <b><code>post</code></b>
-              (<code>float</code>, default:
+              (<code><span title="float">float</span></code>, default:
                   <code>2.0</code>
 )
           –
@@ -1604,7 +1604,7 @@ linear interpolation.</p>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="fptools.io.Signal" href="../../io/signal/#fptools.io.signal.Signal">Signal</a></code>
+              <code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.Signal&lt;/code&gt;" href="../../io/signal/#fptools.io.signal.Signal">Signal</a></code>
           –
           <div class="doc-md-description">
             <p>the collected Signal</p>
@@ -1636,7 +1636,7 @@ linear interpolation.</p>
 <a id="__codelineno-0-68" name="__codelineno-0-68"></a><a href="#__codelineno-0-68"><span class="linenos" data-linenos=" 68 "></span></a><span class="sd">        event2: the name of the second event to use</span>
 <a id="__codelineno-0-69" name="__codelineno-0-69"></a><a href="#__codelineno-0-69"><span class="linenos" data-linenos=" 69 "></span></a><span class="sd">        signal: the name of the signal to collect</span>
 <a id="__codelineno-0-70" name="__codelineno-0-70"></a><a href="#__codelineno-0-70"><span class="linenos" data-linenos=" 70 "></span></a><span class="sd">        pre: amount of time, in seconds, to collect prior to each event</span>
-<a id="__codelineno-0-71" name="__codelineno-0-71"></a><a href="#__codelineno-0-71"><span class="linenos" data-linenos=" 71 "></span></a><span class="sd">        inter: amouont of &quot;meta&quot; time, in seconds, to collect between events</span>
+<a id="__codelineno-0-71" name="__codelineno-0-71"></a><a href="#__codelineno-0-71"><span class="linenos" data-linenos=" 71 "></span></a><span class="sd">        inter: amount of &quot;meta&quot; time, in seconds, to collect between events</span>
 <a id="__codelineno-0-72" name="__codelineno-0-72"></a><a href="#__codelineno-0-72"><span class="linenos" data-linenos=" 72 "></span></a><span class="sd">        post: amount of time, in seconds, to collect after each event</span>
 <a id="__codelineno-0-73" name="__codelineno-0-73"></a><a href="#__codelineno-0-73"><span class="linenos" data-linenos=" 73 "></span></a>
 <a id="__codelineno-0-74" name="__codelineno-0-74"></a><a href="#__codelineno-0-74"><span class="linenos" data-linenos=" 74 "></span></a><span class="sd">    Returns:</span>
