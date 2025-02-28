@@ -6,6 +6,19 @@ import seaborn as sns
 
 from fptools.preprocess.lib import lowpass_filter, t2fs, trim, fs2t, downsample as downsample_fn
 from fptools.io import Session, Signal, SignalMapping
+from fptools.preprocess.steps import Downsample, LowpassDff, TrimSignals
+from ..common import Pipeline, SignalList
+
+
+class LowpassDFFPipeline(Pipeline):
+    def __init__(self, exp_signal: str, ctrl_signal: str, trim_extent, downsample: Optional[int] = None):
+        steps = [
+            TrimSignals([exp_signal, ctrl_signal], extent=trim_extent),
+            LowpassDff(),
+            Downsample(window=downsample, factor=downsample)
+        ]
+
+        super().__init__(steps)
 
 
 def lowpass_dff(
