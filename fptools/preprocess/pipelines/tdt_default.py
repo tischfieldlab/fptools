@@ -5,17 +5,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
-from fptools.preprocess.lib import lowpass_filter, t2fs, trim, fs2t, downsample as downsample_fn
+from fptools.preprocess.lib import trim, downsample as downsample_fn
 from fptools.io import Session, Signal, SignalMapping
 
 
 def tdt_default(
     session: Session,
-    block: Any,
     signal_map: list[SignalMapping],
     show_steps: bool = True,
     plot_dir: str = "",
-    trim_extent: Union[None, Literal["auto"], int, tuple[int, int]] = "auto",
+    trim_extent: Union[None, Literal["auto"], float, tuple[float, float]] = "auto",
     downsample: Optional[int] = None,
 ) -> Session:
     """A preprocess pipeline based on TDT tutorials.
@@ -28,12 +27,10 @@ def tdt_default(
 
     Args:
         session: the session to populate.
-        block: block data struct from `tdt.read_block()`.
         signal_map: mapping of signals to perform
         show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
         plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
-        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single int trims that many samples from the beginning, a tuple of two ints specifies the number of samples from the beginning and end to trim, respectively.
-
+        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.
         downsample: if not `None`, downsample signal by `downsample` factor.
     """
     try:
@@ -43,8 +40,7 @@ def tdt_default(
 
         signals: list[Signal] = []
         for sm in signal_map:
-            stream = block.streams[sm["tdt_name"]]
-            signals.append(Signal(sm["dest_name"], stream.data, fs=stream.fs))
+            signals.append(session.signals[sm["tdt_name"]].copy(new_name=sm["dest_name"]))
 
         if show_steps:
             for i, sig in enumerate(signals):
@@ -54,14 +50,14 @@ def tdt_default(
 
         # trim raw signal start to when the optical system came online
         if trim_extent is not None:
-            if trim_extent == "auto":
-                trim_args = {"begin": int(block.scalars.Fi1i.ts[0] * sig.fs)}
-            elif isinstance(trim_extent, int):
-                trim_args = {"begin": trim_extent}
-            elif len(trim_extent) == 2:
-                trim_args = {"begin": trim_extent[0], "end": trim_extent[1]}
-
             for sig in signals:
+                if trim_extent == "auto":
+                    trim_args = {"begin": int(session.scalars["Fi1i"][0] * sig.fs)}
+                elif isinstance(trim_extent, float):
+                    trim_args = {"begin": int(trim_extent * sig.fs)}
+                elif len(trim_extent) == 2:
+                    trim_args = {"begin": int(trim_extent[0] * sig.fs), "end": int(trim_extent[1] * sig.fs)}
+
                 sig.signal, sig.time = trim(sig.signal, sig.time, **trim_args)
 
             if show_steps:
@@ -102,6 +98,6 @@ def tdt_default(
         raise
     finally:
         if show_steps:
-            fig.savefig(os.path.join(plot_dir, f"{block.info.blockname}.png"), dpi=600)
-            fig.savefig(os.path.join(plot_dir, f"{block.info.blockname}.pdf"))
+            fig.savefig(os.path.join(plot_dir, f"{session.name}.png"), dpi=600)
+            fig.savefig(os.path.join(plot_dir, f"{session.name}.pdf"))
             plt.close(fig)

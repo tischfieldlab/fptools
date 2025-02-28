@@ -1,6 +1,6 @@
 import datetime
 from functools import partial
-from typing import Callable, Optional, Union, cast
+from typing import Any, Callable, Optional, Union, cast
 
 import numpy as np
 import pandas as pd
@@ -52,9 +52,9 @@ class Signal(object):
                 )
 
         elif time is None and fs is not None:
-            # sampleing frequency is provided, infer time from fs
+            # sampling frequency is provided, infer time from fs
             self.fs = fs
-            self.time = np.linspace(1, signal.shape[0], signal.shape[0]) / self.fs
+            self.time = np.linspace(1, signal.shape[-1], signal.shape[-1]) / self.fs
 
         elif fs is None and time is not None:
             # time is provided, so lets estimate the sampling frequency
@@ -102,10 +102,39 @@ class Signal(object):
         s.marks.update(**self.marks)
         return s
 
-    def __check_other_compatible(self, other: "Signal") -> bool:
+    def _check_other_compatible(self, other: "Signal") -> bool:
         return self.nsamples == other.nsamples and self.nobs == self.nobs and self.fs == other.fs
 
-    def __add__(self, other: "Signal") -> "Signal":
+    def __eq__(self, value: object) -> bool:
+        """Test if this Signal is equal to another Signal.
+
+        Args:
+            value: value to test against for equality
+
+        Returns:
+            True if value is equal to self, False otherwise. Equality is checked for FS, units, signal, time, and marks data.
+        """
+        if not isinstance(value, Signal):
+            return False
+
+        if self.fs != value.fs:
+            return False
+
+        if self.units != value.units:
+            return False
+
+        if not np.allclose(self.signal, value.signal, equal_nan=True):
+            return False
+
+        if not np.array_equal(self.time, value.time):
+            return False
+
+        if not self.marks == value.marks:
+            return False
+
+        return True
+
+    def __add__(self, other: Any) -> "Signal":
         """Add another signal to this signal, returning a new signal.
 
         Args:
@@ -114,12 +143,17 @@ class Signal(object):
         Return:
             A new Signal with the addition result.
         """
-        assert self.__check_other_compatible(other)
         s = self.copy()
-        s.signal += other.signal
+        if isinstance(other, Signal):
+            assert self._check_other_compatible(other)
+            s.signal += other.signal
+        elif isinstance(other, (int, float)):
+            s.signal += other
+        else:
+            raise NotImplementedError(f"Add is not defined for type {type(other)}")
         return s
 
-    def __sub__(self, other: "Signal") -> "Signal":
+    def __sub__(self, other: Any) -> "Signal":
         """Subtract another signal from this signal, returning a new signal.
 
         Args:
@@ -128,12 +162,17 @@ class Signal(object):
         Return:
             A new Signal with the subtraction result.
         """
-        assert self.__check_other_compatible(other)
         s = self.copy()
-        s.signal -= other.signal
+        if isinstance(other, Signal):
+            assert self._check_other_compatible(other)
+            s.signal -= other.signal
+        elif isinstance(other, (int, float)):
+            s.signal -= other
+        else:
+            raise NotImplementedError(f"Subtract is not defined for type {type(other)}")
         return s
 
-    def __mul__(self, other: "Signal") -> "Signal":
+    def __mul__(self, other: Any) -> "Signal":
         """Multiply another signal against this signal, returning a new signal.
 
         Args:
@@ -142,12 +181,17 @@ class Signal(object):
         Return:
             A new Signal with the multiplication result.
         """
-        assert self.__check_other_compatible(other)
         s = self.copy()
-        s.signal *= other.signal
+        if isinstance(other, Signal):
+            assert self._check_other_compatible(other)
+            s.signal *= other.signal
+        elif isinstance(other, (int, float)):
+            s.signal *= other
+        else:
+            raise NotImplementedError(f"Multiply is not defined for type {type(other)}")
         return s
 
-    def __div__(self, other: "Signal") -> "Signal":
+    def __truediv__(self, other: Any) -> "Signal":
         """Divide this signal by another signal, returning a new signal.
 
         Args:
@@ -156,9 +200,14 @@ class Signal(object):
         Return:
             A new Signal with the division result.
         """
-        assert self.__check_other_compatible(other)
         s = self.copy()
-        s.signal /= other.signal
+        if isinstance(other, Signal):
+            assert self._check_other_compatible(other)
+            s.signal /= other.signal
+        elif isinstance(other, (int, float)):
+            s.signal /= other
+        else:
+            raise NotImplementedError(f"Division is not defined for type {type(other)}")
         return s
 
     def aggregate(self, func: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]]) -> "Signal":
@@ -167,10 +216,10 @@ class Signal(object):
         If there is only a single observation, that observation is returned unchanged, otherwise  observations will
         be aggregated by `func` along axis=0.
 
-        Marks, units, and time will be propegated. The new signal will be named according to this signal, with `#{func_name}` appended.
+        Marks, units, and time will be propagated. The new signal will be named according to this signal, with `#{func_name}` appended.
 
         Args:
-            func: string or callable that take a (nobs x nsample) array and returns a (nsample,) shaped array. If a string
+            func: string or callable that take a (nobs x nsamples) array and returns a (nsamples,) shaped array. If a string
                 will be interpreted as the name of a numpy function (e.x. mean, median, etc)
 
         Returns:
@@ -200,10 +249,10 @@ class Signal(object):
     def to_dataframe(self) -> pd.DataFrame:
         """Get the signal data as a `pandas.DataFrame`.
 
-        Observations are across rows, and samples are across columns. Each sample colum is named with
+        Observations are across rows, and samples are across columns. Each sample column is named with
         the pattern `Y.{i+1}` where i is the sample index. This also implies 1-based indexing on the output.
         """
-        return pd.DataFrame(self.signal, columns=[f"Y.{i+1}" for i in range(self.nsamples)])
+        return pd.DataFrame(np.atleast_2d(self.signal), columns=[f"Y.{i+1}" for i in range(self.nsamples)])
 
     def describe(self, as_str: bool = False, prefix: str = "") -> Union[str, None]:
         """Describe this Signal.

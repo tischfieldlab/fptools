@@ -1,5 +1,4 @@
 from collections.abc import Mapping
-import matplotlib as mpl
 import matplotlib.pyplot as plt
 from matplotlib.typing import ColorType
 from matplotlib.axes import Axes
@@ -11,7 +10,8 @@ import pandas as pd
 import seaborn as sns
 from typing import Any, Literal, Optional, Union
 
-from fptools.io import Session, Signal, SessionCollection
+from fptools.io import Signal, SessionCollection
+from .common import Palette, get_colormap
 
 
 def plot_signal(
@@ -34,7 +34,7 @@ def plot_signal(
         indv_c: color of individual traces
         indv_alpha: alpha transparency for individual traces
         indv_kwargs: kwargs to pass to `seaborn.lineplot()` for individual traces
-        agg_kwargs: kwarge to pass to `seaborn.lineplot()` for aggregate traces
+        agg_kwargs: kwargs to pass to `seaborn.lineplot()` for aggregate traces
 
     Returns:
         Axes
@@ -63,7 +63,7 @@ def plot_signal(
 
     sns.lineplot(data=df, x=df.index, y="value", ax=ax, **_agg_kwargs)
 
-    ax.set_xlabel("Time, Reletive to Event (s)")
+    ax.set_xlabel("Time, Relative to Event (s)")
     ax.set_ylabel(f"{signal.name} ({signal.units})")
 
     xticks = ax.get_xticks()
@@ -158,7 +158,7 @@ def sig_catplot(
         if col == "signal":
             plot_cols = [s for s in _signals]
         elif col_order is None:
-            if pd.api.types.is_categorical_dtype(metadata[col]):
+            if isinstance(metadata[col].dtype, pd.CategoricalDtype):
                 plot_cols = list(metadata[col].cat.categories.values)
             else:
                 plot_cols = sorted(metadata[col].unique())
@@ -173,7 +173,7 @@ def sig_catplot(
         if row == "signal":
             plot_rows = [s for s in _signals]
         elif row_order is None:
-            if pd.api.types.is_categorical_dtype(metadata[row]):
+            if isinstance(metadata[row].dtype, pd.CategoricalDtype):
                 plot_rows = list(metadata[row].cat.categories.values)
             else:
                 plot_rows = sorted(metadata[row].unique())
@@ -186,7 +186,7 @@ def sig_catplot(
     if hue is not None and hue_order is None:
         if hue == "signal":
             hue_order = [s for s in _signals]
-        elif pd.api.types.is_categorical_dtype(metadata[hue]):
+        elif isinstance(metadata[hue].dtype, pd.CategoricalDtype):
             hue_order = metadata[hue].cat.categories.values
         else:
             hue_order = sorted(metadata[hue].unique())
@@ -307,7 +307,7 @@ def sig_catplot(
 
 
 def plot_heatmap(
-    signal: Signal, ax: Optional[Axes] = None, cmap="viridis", vmin: Optional[float] = None, vmax: Optional[float] = None
+    signal: Signal, ax: Optional[Axes] = None, cmap: Palette = "viridis", vmin: Optional[float] = None, vmax: Optional[float] = None
 ) -> Axes:
     """Plot a signal as a heatmap.
 
@@ -326,7 +326,7 @@ def plot_heatmap(
 
     cbar_kwargs = {"label": f"{signal.name} ({signal.units})"}
 
-    sns.heatmap(data=np.atleast_2d(signal.signal), ax=ax, cmap=cmap, vmin=vmin, vmax=vmax, cbar_kws=cbar_kwargs)
+    sns.heatmap(data=np.atleast_2d(signal.signal), ax=ax, cmap=get_colormap(cmap), vmin=vmin, vmax=vmax, cbar_kws=cbar_kwargs)
 
     xticks = [0, signal.nsamples]
     xticklabels = [f"{signal.time[0]:0.0f}", f"{signal.time[-1]:0.0f}"]
@@ -340,6 +340,6 @@ def plot_heatmap(
     xticklabels = [xticklabels[i] for i in order]
     ax.set_xticks(xticks, labels=xticklabels, rotation=0)
 
-    ax.set_xlabel("Time, Reletive to Event (sec)")
+    ax.set_xlabel("Time, Relative to Event (sec)")
 
     return ax

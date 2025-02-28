@@ -1,5 +1,5 @@
 import os
-from typing import Any, Literal, Optional, Union
+from typing import Literal, Optional, Union
 
 import matplotlib.pyplot as plt
 import seaborn as sns
@@ -10,11 +10,10 @@ from fptools.io import Session, Signal, SignalMapping
 
 def lowpass_dff(
     session: Session,
-    block: Any,
     signal_map: list[SignalMapping],
     show_steps: bool = True,
     plot_dir: str = "",
-    trim_extent: Union[None, Literal["auto"], int, tuple[int, int]] = "auto",
+    trim_extent: Union[None, Literal["auto"], float, tuple[float, float]] = "auto",
     downsample: Optional[int] = None,
 ) -> Session:
     """A "simple" preprocess pipeline based on ultra-lowpass filtering.
@@ -25,17 +24,16 @@ def lowpass_dff(
 
     Pipeline steps:
     1) Signals are trimmed to the optical system start.
-    2) Signals are lowpass filterd at 0.01 Hz (~100 second timescale)
+    2) Signals are lowpass filtered at 0.01 Hz (~100 second timescale)
     3) Signals are converted to dF/F using lowpass filtered signals as F0
     4) Signals are optionally downsampled factor `downsample`
 
     Args:
         session: the session to populate.
-        block: block data struct from `tdt.read_block()`.
         signal_map: mapping of signals to perform
         show_steps: if `True`, produce diagnostic plots of the preprocessing steps.
         plot_dir: path where diagnostic plots of the preprocessing steps should be saved.
-        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single int trims that many samples from the beginning, a tuple of two ints specifies the number of samples from the beginning and end to trim, respectively.
+        trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.
         downsample: if not `None`, downsample signal by `downsample` factor.
     """
     try:
@@ -45,8 +43,7 @@ def lowpass_dff(
 
         signals: list[Signal] = []
         for sm in signal_map:
-            stream = block.streams[sm["tdt_name"]]
-            signals.append(Signal(sm["dest_name"], stream.data, fs=stream.fs))
+            signals.append(session.signals[sm["tdt_name"]].copy(new_name=sm["dest_name"]))
 
         if show_steps:
             for i, sig in enumerate(signals):
@@ -56,14 +53,14 @@ def lowpass_dff(
 
         # trim raw signal start to when the optical system came online
         if trim_extent is not None:
-            if trim_extent == "auto":
-                trim_args = {"begin": int(block.scalars.Fi1i.ts[0] * sig.fs)}
-            elif isinstance(trim_extent, int):
-                trim_args = {"begin": trim_extent}
-            elif len(trim_extent) == 2:
-                trim_args = {"begin": trim_extent[0], "end": trim_extent[1]}
-
             for sig in signals:
+                if trim_extent == "auto":
+                    trim_args = {"begin": int(session.scalars["Fi1i"][0] * sig.fs)}
+                elif isinstance(trim_extent, float):
+                    trim_args = {"begin": int(trim_extent * sig.fs)}
+                elif len(trim_extent) == 2:
+                    trim_args = {"begin": int(trim_extent[0] * sig.fs), "end": int(trim_extent[1] * sig.fs)}
+
                 sig.signal, sig.time = trim(sig.signal, sig.time, **trim_args)
 
             if show_steps:
@@ -84,7 +81,7 @@ def lowpass_dff(
         if show_steps:
             for i, sig in enumerate(lowpass_signals):
                 axs[2].plot(sig.time, sig.signal, label=sig.name, c=palette[i])
-            axs[2].set_title("Lowpasss filtered (0.01 Hz)")
+            axs[2].set_title("Lowpass filtered (0.01 Hz)")
             axs[2].legend()
 
         # calculate dF/F
@@ -113,6 +110,6 @@ def lowpass_dff(
         raise
     finally:
         if show_steps:
-            fig.savefig(os.path.join(plot_dir, f"{block.info.blockname}.png"), dpi=600)
-            fig.savefig(os.path.join(plot_dir, f"{block.info.blockname}.pdf"))
+            fig.savefig(os.path.join(plot_dir, f"{session.name}.png"), dpi=600)
+            fig.savefig(os.path.join(plot_dir, f"{session.name}.pdf"))
             plt.close(fig)

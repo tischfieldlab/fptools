@@ -21,16 +21,15 @@ if GH_TOKEN is None:
 
 
 def fetch_release_notes(owner, repo, github_token=None):
-    """
-    Fetches the release notes for all releases of a GitHub repository.
+    """Fetches the release notes for all releases of a GitHub repository.
 
-    Parameters:
-    - owner (str): The owner of the repository.
-    - repo (str): The name of the repository.
-    - github_token (str, optional): GitHub personal access token for authentication (if required).
+    Args:
+        owner (str): The owner of the repository.
+        repo (str): The name of the repository.
+        github_token (str, optional): GitHub personal access token for authentication (if required).
 
     Returns:
-    - list of dict: A list of releases, each containing "tag_name" and "body" of the release.
+        list of dict: A list of releases, each containing "tag_name" and "body" of the release.
     """
     url = f"https://api.github.com/repos/{owner}/{repo}/releases"
 
