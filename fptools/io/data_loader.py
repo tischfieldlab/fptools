@@ -73,7 +73,7 @@ def load_data(
     is marked with `True` in this column, then the block will not be loaded or returned in the resulting `SessionCollection`.
 
     You can also specify a preprocess routine to be applied to each block prior to being returned via the `preprocess` parameter. This
-    should be a callable taking a `Session` as the first and only parameter. Your callable preprocess routine should attach any data to the passed 
+    should be a callable taking a `Session` as the first and only parameter. Your callable preprocess routine should attach any data to the passed
     `Session` object and return this `Session` object as it's sole return value.
     For example preprocessing routines, please see the implementations in the `tdt.preprocess.pipelines` module.
 
@@ -102,9 +102,8 @@ def load_data(
     futures: dict[concurrent.futures.Future[Session], str] = {}
     sessions = SessionCollection()
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
-        # collect common worker args in one place
-        worker_args = {"preprocess": preprocess, "cache": cache, "cache_dir": cache_dir}
 
+        # iterate over all datasets found by the locator
         for dset in _get_locator(locator)(tank_path):
 
             # check if we were given a manifest. If so, try to load metadata from the manifest
@@ -123,7 +122,7 @@ def load_data(
                     continue
 
             # submit the task to the pool
-            f = executor.submit(_load, dset, **worker_args)
+            f = executor.submit(_load, dset, preprocess=preprocess, cache=cache, cache_dir=cache_dir)
             futures[f] = dset.name
 
         # collect completed tasks
