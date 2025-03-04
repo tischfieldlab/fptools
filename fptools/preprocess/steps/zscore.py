@@ -9,7 +9,7 @@ from ..lib import lowpass_filter
 from ..common import PreprocessorStep, SignalList
 
 
-class Dff(PreprocessorStep):
+class Zscore(PreprocessorStep):
     """A `Preprocessor` that calculates signal z-scores."""
 
     def __init__(self, signals: SignalList):

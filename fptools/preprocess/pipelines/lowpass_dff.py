@@ -29,6 +29,8 @@ class LowpassDFFPipeline(Pipeline):
         signals: SignalList,
         trim_extent: Union[None, Literal["auto"], float, tuple[float, float]] = "auto",
         downsample: Optional[int] = 10,
+        plot: bool = True,
+        plot_dir: Optional[str] = None
     ):
         """Initialize this pipeline.
 
@@ -36,6 +38,8 @@ class LowpassDFFPipeline(Pipeline):
             signals: list of signal names to be processed
             trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.
             downsample: if not `None`, downsample signal by `downsample` factor.
+            plot: whether to plot the results of each step
+            plot_dir: directory to save plots to
         """
         steps = [
             TrimSignals(signals, extent=trim_extent),
@@ -44,7 +48,7 @@ class LowpassDFFPipeline(Pipeline):
             Downsample(signals, window=downsample, factor=downsample),
         ]
 
-        super().__init__(steps)
+        super().__init__(steps=steps, plot=plot, plot_dir=plot_dir)
 
 
 # def lowpass_dff(

@@ -6,7 +6,7 @@ from fptools.preprocess.lib import estimate_motion
 from ..common import PreprocessorStep, PairedSignalList
 
 
-class Dff(PreprocessorStep):
+class MotionCorrect(PreprocessorStep):
     """A `Preprocessor` that estimates and corrects for motion artifacts."""
 
     def __init__(self, signals: PairedSignalList):

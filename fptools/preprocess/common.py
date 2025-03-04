@@ -56,19 +56,22 @@ class PreprocessorStep(Preprocessor):
 
 
 class Pipeline(Preprocessor):
-    def __init__(self, steps: Optional[list[Preprocessor]] = None):
+    def __init__(self, steps: Optional[list[Preprocessor]] = None, plot: bool = True, plot_dir: Optional[str] = None):
         """Initialize this pipeline.
 
         Args:
             steps: list of preprocessors to run on a given Session
+            plot: whether to plot the results of each step
+            plot_dir: directory to save plots to, if None, will save to current working directory
         """
         self.steps: list[Preprocessor]
         if steps is None:
             self.steps = []
         else:
             self.steps = steps
-        self.plot: bool = True
-        self.plot_dir: str = "."
+
+        self.plot: bool = plot
+        self.plot_dir: str = plot_dir or os.getcwd()
 
     def __call__(self, session: Session) -> Session:
         """Run this pipeline on a Session.
@@ -89,6 +92,19 @@ class Pipeline(Preprocessor):
                 session = step(session)
                 if self.plot and hasattr(step, "plot"):
                     step.plot(session, axs[i])
+                else:
+                    if hasattr(step, "__class__"):
+                        step_name = step.__class__.__name__ # this handles the case where the step is a class
+                    elif hasattr(step, "__name__"):
+                        step_name = step.__name__ # this handles the case where the step is a function
+                    elif hasattr(step, "func"):
+                        step_name = step.func.__name__ # this handles the case where the step is a partial
+                    else:
+                        step_name = "Unknown" # this handles the case where we cannot figure out a reasonable name for the step
+
+                    message = f"Step #{i+1} \"{step_name}\" has no plot method, skipping plotting for this step."
+                    axs[i].text(0.5, 0.5, message, ha='center', va='center', transform=axs[i].transAxes)
+                    axs[i].axis("off")
 
             return session
         except:
