@@ -6,9 +6,9 @@ import numpy as np
 import seaborn as sns
 
 from fptools.io import Session, Signal, SignalMapping
-from fptools.preprocess.common import Pipeline, SignalList
-from fptools.preprocess.lib import detrend_double_exponential, estimate_motion, trim
-from fptools.preprocess.steps import Dff, Downsample, TrimSignals, DblExpFit, MotionCorrect
+from ..common import Pipeline, PairedSignalList, Preprocessor, _flatten_paired_signals
+from ..lib import detrend_double_exponential, estimate_motion, trim
+from ..steps import Dff, Downsample, TrimSignals, DblExpFit, MotionCorrect
 
 
 class DxpMotionDffPipeline(Pipeline):
@@ -27,11 +27,11 @@ class DxpMotionDffPipeline(Pipeline):
 
     def __init__(
         self,
-        signals: SignalList,
+        signals: PairedSignalList,
         trim_extent: Union[None, Literal["auto"], float, tuple[float, float]] = "auto",
         downsample: Optional[int] = 10,
         plot: bool = True,
-        plot_dir: Optional[str] = None
+        plot_dir: Optional[str] = None,
     ):
         """Initialize this pipeline.
 
@@ -42,13 +42,14 @@ class DxpMotionDffPipeline(Pipeline):
             plot: whether to plot the results of each step
             plot_dir: directory to save plots to
         """
-        steps = [
-            TrimSignals(signals, extent=trim_extent),
-            DblExpFit(signals),
+        steps: list[Preprocessor] = [
+            TrimSignals(_flatten_paired_signals(signals), extent=trim_extent),
+            DblExpFit(_flatten_paired_signals(signals)),
             MotionCorrect(signals),
             Dff([(s, f"{s}_dxp") for s in signals]),
-            Downsample(signals, window=downsample, factor=downsample),
         ]
+        if downsample is not None:
+            steps.append(Downsample(_flatten_paired_signals(signals), window=downsample, factor=downsample))
 
         super().__init__(steps=steps, plot=plot, plot_dir=plot_dir)
 

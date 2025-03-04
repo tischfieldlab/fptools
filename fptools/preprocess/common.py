@@ -12,6 +12,10 @@ SignalList = Union[Literal["all"], list["str"]]
 PairedSignalList = list[tuple[str, str]]
 
 
+def _flatten_paired_signals(signals: PairedSignalList) -> list[str]:
+    return [s for pair in signals for s in pair]
+
+
 class Preprocessor(ABC):
     """Abstract Preprocessor.
 
@@ -90,27 +94,28 @@ class Pipeline(Preprocessor):
 
             for i, step in enumerate(self.steps):
                 session = step(session)
-                if self.plot and hasattr(step, "plot"):
-                    step.plot(session, axs[i])
-                else:
-                    if hasattr(step, "__class__"):
-                        step_name = step.__class__.__name__ # this handles the case where the step is a class
-                    elif hasattr(step, "__name__"):
-                        step_name = step.__name__ # this handles the case where the step is a function
-                    elif hasattr(step, "func"):
-                        step_name = step.func.__name__ # this handles the case where the step is a partial
+                if self.plot:
+                    if hasattr(step, "plot"):
+                        step.plot(session, axs[i])
                     else:
-                        step_name = "Unknown" # this handles the case where we cannot figure out a reasonable name for the step
+                        if hasattr(step, "__class__"):
+                            step_name = step.__class__.__name__  # this handles the case where the step is a class
+                        elif hasattr(step, "__name__"):
+                            step_name = step.__name__  # this handles the case where the step is a function
+                        elif hasattr(step, "func"):
+                            step_name = step.func.__name__  # this handles the case where the step is a partial
+                        else:
+                            step_name = "Unknown"  # this handles the case where we cannot figure out a reasonable name for the step
 
-                    message = f"Step #{i+1} \"{step_name}\" has no plot method, skipping plotting for this step."
-                    axs[i].text(0.5, 0.5, message, ha='center', va='center', transform=axs[i].transAxes)
-                    axs[i].axis("off")
+                        message = f'Step #{i+1} "{step_name}" has no plot method, skipping plotting for this step.'
+                        axs[i].text(0.5, 0.5, message, ha="center", va="center", transform=axs[i].transAxes)
+                        axs[i].axis("off")
 
             return session
         except:
             raise
         finally:
             if self.plot:
-                fig.savefig(os.path.join(self.plot_dir, f"{session.name}.png"), dpi=600)
+                fig.savefig(os.path.join(self.plot_dir, f"{session.name}.png"), dpi=300)
                 fig.savefig(os.path.join(self.plot_dir, f"{session.name}.pdf"))
                 plt.close(fig)
