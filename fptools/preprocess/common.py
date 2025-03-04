@@ -9,6 +9,7 @@ from fptools.io import Session
 
 
 SignalList = Union[Literal["all"], list["str"]]
+PairedSignalList = list[tuple[str, str]]
 
 
 class Preprocessor(ABC):

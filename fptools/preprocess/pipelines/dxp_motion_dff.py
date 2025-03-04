@@ -1,12 +1,52 @@
 import os
-from typing import Literal, Union
+from typing import Literal, Optional, Union
 
 import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 
 from fptools.io import Session, Signal, SignalMapping
+from fptools.preprocess.common import Pipeline, SignalList
 from fptools.preprocess.lib import detrend_double_exponential, estimate_motion, trim
+from fptools.preprocess.steps import Dff, Downsample, TrimSignals, DblExpFit, MotionCorrect
+
+
+class DxpMotionDffPipeline(Pipeline):
+    """Preprocess using a double exponential fit for detrending, producing df/f values.
+
+    Implemented as described in:
+    TODO: add citation
+
+    Pipeline steps:
+    1) Signals are optionally trimmed to the optical system start.
+    2) Signals are fit with a double exponential to detrend
+    3) Signals are motion corrected using a control signal
+    4) Signals are converted to dF/F
+    5) Signals are optionally downsampled factor `downsample`
+    """
+
+    def __init__(
+        self,
+        signals: SignalList,
+        trim_extent: Union[None, Literal["auto"], float, tuple[float, float]] = "auto",
+        downsample: Optional[int] = 10,
+    ):
+        """Initialize this pipeline.
+
+        Args:
+            signals: list of signal names to be processed
+            trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.
+            downsample: if not `None`, downsample signal by `downsample` factor.
+        """
+        steps = [
+            TrimSignals(signals, extent=trim_extent),
+            DblExpFit(signals),
+            MotionCorrect(signals),
+            Dff([(s, f"{s}_dxp") for s in signals]),
+            Downsample(signals, window=downsample, factor=downsample),
+        ]
+
+        super().__init__(steps)
 
 
 def dxp_motion_dff(

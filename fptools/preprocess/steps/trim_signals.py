@@ -11,12 +11,12 @@ from ..common import PreprocessorStep, SignalList
 class TrimSignals(PreprocessorStep):
     """A `Preprocessor` that trims signals."""
 
-    def __init__(self, signals: SignalList, extent: Union[Literal["auto"], float, tuple[float, float]] = "auto"):
+    def __init__(self, signals: SignalList, extent: Union[None, Literal["auto"], float, tuple[float, float]] = "auto"):
         """Initialize this preprocessor.
 
         Args:
             signals: list of signal names to be trimmed
-            extent: specification for trimming. "auto" uses the offset stored in `scalars['Fi1i']`, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.
+            extent: specification for trimming. "auto" uses the offset stored in `scalars['Fi1i']`, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively. If None, no trimming will be performed.
         """
         self.signals = signals
         self.extent = extent
@@ -32,7 +32,9 @@ class TrimSignals(PreprocessorStep):
         """
         for signame in self._resolve_signal_names(session, self.signals):
             sig = session.signals[signame]
-            if self.extent == "auto":
+            if self.extent is None:
+                continue
+            elif self.extent == "auto":
                 trim_args = {"begin": int(session.scalars["Fi1i"][0] * sig.fs)}
             elif isinstance(self.extent, float):
                 trim_args = {"begin": int(self.extent * sig.fs)}
