@@ -14,7 +14,6 @@ class MotionCorrect(PreprocessorStep):
 
         Args:
             signals: list of signal names to be downsampled
-            frequency: critical frequency used for lowpass filter
         """
         self.signals = signals
 

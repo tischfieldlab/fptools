@@ -1,10 +1,8 @@
-from typing import Literal, Union
-
 from matplotlib.axes import Axes
 import seaborn as sns
 from scipy import stats
 
-from fptools.io import Session, Signal
+from fptools.io import Session
 from ..lib import lowpass_filter
 from ..common import PreprocessorStep, SignalList
 

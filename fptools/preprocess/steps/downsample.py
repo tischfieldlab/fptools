@@ -1,10 +1,8 @@
-from typing import Literal, Union
-
 from matplotlib.axes import Axes
 import seaborn as sns
 
 from fptools.io import Session
-from ..lib import downsample, t2fs, trim
+from ..lib import downsample, t2fs
 from ..common import PreprocessorStep, SignalList
 
 

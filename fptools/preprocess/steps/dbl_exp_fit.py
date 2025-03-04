@@ -3,23 +3,21 @@ from typing import Literal, Union
 from matplotlib.axes import Axes
 import seaborn as sns
 
-from fptools.io import Session, Signal
-from ..lib import detrend_double_exponential, lowpass_filter
+from fptools.io import Session
+from ..lib import detrend_double_exponential
 from ..common import PreprocessorStep, SignalList
 
 
 class DblExpFit(PreprocessorStep):
     """A `Preprocessor` that fits a double exponential function."""
 
-    def __init__(self, signals: SignalList, frequency: float = 0.01):
+    def __init__(self, signals: SignalList):
         """Initialize this preprocessor.
 
         Args:
-            signals: list of signal names to be downsampled
-            frequency: critical frequency used for lowpass filter
+            signals: list of signal names to be fitted
         """
         self.signals = signals
-        self.frequency = frequency
 
     def __call__(self, session: Session) -> Session:
         """Effect this preprocessing step.

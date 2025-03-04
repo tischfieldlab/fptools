@@ -1,6 +1,5 @@
 from typing import Optional
 from matplotlib.axes import Axes
-import seaborn as sns
 
 from fptools.io import Session
 from ..common import PreprocessorStep
@@ -9,7 +8,9 @@ from ..common import PreprocessorStep
 class Rename(PreprocessorStep):
     """A `Preprocessor` that allows you to rename things."""
 
-    def __init__(self, signals: Optional[dict[str, str]] = None, epocs: Optional[dict[str, str]] = None, scalars: Optional[dict[str, str]] = None):
+    def __init__(
+        self, signals: Optional[dict[str, str]] = None, epocs: Optional[dict[str, str]] = None, scalars: Optional[dict[str, str]] = None
+    ):
         """Initialize this preprocessor.
 
         Args:
@@ -67,10 +68,9 @@ class Rename(PreprocessorStep):
 
         table = ax.table(cellText=rows, colLabels=headers, cellLoc="center", loc="upper center")
         # set header cells to have bold text
-        for (row, col) in [(0, i) for i in range(len(headers))]:
+        for row, col in [(0, i) for i in range(len(headers))]:
             table_cell = table[row, col]
-            table_cell.set_text_props(fontweight='bold')
+            table_cell.set_text_props(fontweight="bold")
 
         ax.axis("off")  # turn off axis, not needed since this is a table
         ax.set_title("Renamed Items")
-
