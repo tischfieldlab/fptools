@@ -7,10 +7,10 @@ from fptools.viz import plot_cumulative_events, sig_catplot, plot_event_raster
 
 def test_sig_catplot(tdt_preprocessed_sessions):
     for session in tdt_preprocessed_sessions:
-        session.add_signal(collect_signals(session, 'RNP_', 'Dopamine', start=-1, stop=3))
+        session.add_signal(collect_signals(session, 'RNP', 'Dopamine', start=-1, stop=3))
 
     sig_catplot(tdt_preprocessed_sessions,
-                "Dopamine@RNP_",
+                "Dopamine@RNP",
                 col="paradigm_day",
                 row="cube",
                 hue="genotype")

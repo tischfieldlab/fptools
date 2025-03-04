@@ -6,7 +6,7 @@ import pytest
 from fptools.io.common import Preprocessor, SignalMapping
 from fptools.io.data_loader import load_data, SessionCollection
 from fptools.io.test import download_test_data
-from fptools.preprocess.pipelines import lowpass_dff
+from fptools.preprocess.pipelines import LowpassDFFPipeline
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -77,25 +77,31 @@ def tdt_preprocessed_sessions(tdt_test_data_path) -> SessionCollection:
     Args:
         tdt_test_data_path: fixture that provides a file system path to the TDT test data
     """
-    signal_map: list[SignalMapping] = [{
-        'tdt_name': '_465A',
-        'dest_name': 'Dopamine',
-        'role': 'experimental'
-    }, {
-        'tdt_name': '_415A',
-        'dest_name': 'Isosbestic',
-        'role': 'control'
-    }]
+    rename_map = {
+        "signals": {
+            '_465A': 'Dopamine',
+            '_415A': 'Isosbestic',
+        },
+        "epocs": {
+            "RNP_": "RNP",
+            "RMG_": "RMG",
+            "URM_": "URM",
+        }
+    }
 
     sessions = load_data(tdt_test_data_path,
-                     signal_map,
                      os.path.join(tdt_test_data_path, 'manifest.xlsx'),
                      max_workers=2,
                      locator="tdt",
-                     preprocess=cast(Preprocessor, lowpass_dff),
+                     preprocess=LowpassDFFPipeline(
+                         signals=['_465A', '_415A'],
+                         rename_map=rename_map,
+                         trim_extent="auto",
+                         downsample=10,
+                         plot=False,
+                     ),
                      cache=True,
-                     cache_dir=os.path.join(tdt_test_data_path, 'cache_lowpass_dff'),
-                     show_steps=False)
+                     cache_dir=os.path.join(tdt_test_data_path, 'cache_lowpass_dff'))
 
     return sessions
 
@@ -107,10 +113,7 @@ def ma_preprocessed_sessions(ma_test_data_path) -> SessionCollection:
     Args:
         ma_test_data_path: fixture that provides a file system path to the med associates test data
     """
-    signal_map: list[SignalMapping] = []
-
     sessions = load_data(ma_test_data_path,
-                     signal_map,
                      os.path.join(ma_test_data_path, 'manifest.xlsx'),
                      max_workers=2,
                      locator="ma",
