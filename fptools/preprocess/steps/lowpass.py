@@ -28,7 +28,7 @@ class Lowpass(PreprocessorStep):
         Returns:
             Session with the preprocessing step applied
         """
-        for signame in self._resolve_signal_names(session, self.signals):
+        for signame in self.signals:
             sig = session.signals[signame]
 
             lowpass_sig = sig.copy(f"{signame}_lowpass")
@@ -44,9 +44,8 @@ class Lowpass(PreprocessorStep):
             session: the session being operated upon
             ax: matplotlib Axes for plotting onto
         """
-        signals = self._resolve_signal_names(session, self.signals)
-        palette = sns.color_palette("colorblind", n_colors=len(signals))
-        for i, signame in enumerate(signals):
+        palette = sns.color_palette("colorblind", n_colors=len(self.signals))
+        for i, signame in enumerate(self.signals):
             sig = session.signals[f"{signame}_lowpass"]
             ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i], linestyle="--")
         ax.set_title("Lowpass Filtered Signal")

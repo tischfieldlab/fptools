@@ -1,13 +1,7 @@
-import os
 from typing import Literal, Optional, Union
 
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-from ..lib import lowpass_filter, t2fs, trim, fs2t, downsample as downsample_fn
-from fptools.io import Session, Signal, SignalMapping
 from ..steps import Downsample, Lowpass, TrimSignals, Dff, Rename
-from ..common import Pipeline, Preprocessor, SignalList
+from ..common import Pipeline, Preprocessor, SignalList, _remap_signals
 
 
 class LowpassDFFPipeline(Pipeline):
@@ -44,20 +38,25 @@ class LowpassDFFPipeline(Pipeline):
             plot_dir: directory to save plots to
         """
         steps: list[Preprocessor] = []
+
+        # step to allow user to rename various things
         if rename_map is not None:
             steps.append(
                 Rename(
                     signals=rename_map.get("signals", None), epocs=rename_map.get("epocs", None), scalars=rename_map.get("scalars", None)
                 )
             )
-            signals = [rename_map["signals"].get(s, s) for s in signals]  # remap the signals to the new names for the remaining steps
+            signals = _remap_signals(signals, rename_map.get('signals', {}))  # remap the signals to the new names for the remaining steps
 
+        # step to allow the user to trim the signals
         if trim_extent is not None:
             steps.append(TrimSignals(signals, extent=trim_extent))
 
+        # steps to lowpass filter and calculate dF/F
         steps.append(Lowpass(signals))
         steps.append(Dff([(s, f"{s}_lowpass") for s in signals]))
 
+        # step to downsample the signals
         if downsample is not None:
             steps.append(Downsample(signals, window=downsample, factor=downsample))
 

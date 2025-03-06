@@ -30,7 +30,7 @@ class TrimSignals(PreprocessorStep):
         Returns:
             Session with the preprocessing step applied
         """
-        for signame in self._resolve_signal_names(session, self.signals):
+        for signame in self.signals:
             sig = session.signals[signame]
             if self.extent is None:
                 continue
@@ -51,9 +51,8 @@ class TrimSignals(PreprocessorStep):
             session: the session being operated upon
             ax: matplotlib Axes for plotting onto
         """
-        signals = self._resolve_signal_names(session, self.signals)
-        palette = sns.color_palette("colorblind", n_colors=len(signals))
-        for i, signame in enumerate(signals):
+        palette = sns.color_palette("colorblind", n_colors=len(self.signals))
+        for i, signame in enumerate(self.signals):
             sig = session.signals[signame]
             ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i])
         ax.set_title("Trimmed Signal")

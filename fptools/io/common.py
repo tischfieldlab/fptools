@@ -1,17 +1,6 @@
-from typing import Literal, Protocol, TypedDict
+from typing import Protocol
 
 from .session import Session
-
-
-class SignalMapping(TypedDict):
-    tdt_name: str
-    dest_name: str
-    role: Literal["experimental", "control"]
-
-
-class SignalMapping2(TypedDict):
-    experimental: str
-    control: str
 
 
 class DataTypeAdaptor:
@@ -51,20 +40,5 @@ class Loader(Protocol):
 
         Returns:
             Session object with data added
-        """
-        pass
-
-
-class Preprocessor(Protocol):
-    def __call__(self, session: Session, signal_map: list[SignalMapping], **kwargs) -> Session:
-        """Preprocessor protocol.
-
-        Args:
-            session: the session to operate upon
-            signal_map: mapping of signal information
-            **kwargs: additional kwargs a preprocessor might need
-
-        Returns:
-            Session object with preprocessed data added.
         """
         pass
