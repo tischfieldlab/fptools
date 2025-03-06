@@ -150,8 +150,14 @@ def trim(*signals: np.ndarray, begin: Optional[int] = None, end: Optional[int] =
     assert are_arrays_same_length(*signals)
     if begin is None:
         begin = 0
+
     if end is None:
         end = signals[0].shape[0]
+    else:
+        end = signals[0].shape[0] - end
+
+    assert begin < end
+
     return tuple(sig[begin:end] for sig in signals)
 
 
