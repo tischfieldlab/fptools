@@ -11,13 +11,15 @@ from ..common import PreprocessorStep, SignalList
 class DblExpFit(PreprocessorStep):
     """A `Preprocessor` that fits a double exponential function."""
 
-    def __init__(self, signals: SignalList):
+    def __init__(self, signals: SignalList, apply: bool = True):
         """Initialize this preprocessor.
 
         Args:
             signals: list of signal names to be fitted
+            apply: if True, detrend the signal using the double exponential fit. If False, only calculate the fit.
         """
         self.signals = signals
+        self.apply = apply
 
     def __call__(self, session: Session) -> Session:
         """Effect this preprocessing step.
@@ -31,9 +33,16 @@ class DblExpFit(PreprocessorStep):
         for signame in self.signals:
             sig = session.signals[signame]
 
-            dxp_sig = sig.copy(f"{signame}_dxp")
-            _, dxp_sig.signal = detrend_double_exponential(sig.time, sig.signal)
+            # create a new signal to hold the double exponential fit
+            dxp_sig = sig.copy(f"{signame}_dxpfit")
             session.add_signal(dxp_sig)
+
+            # calculate the fit and the detrended signal
+            detrended, dxp_sig.signal = detrend_double_exponential(sig.time, sig.signal)
+
+            # if the user requested, apply detrending to the signal
+            if self.apply:
+                sig.signal = detrended
 
         return session
 
@@ -48,5 +57,9 @@ class DblExpFit(PreprocessorStep):
         for i, signame in enumerate(self.signals):
             sig = session.signals[f"{signame}_dxp"]
             ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i], linestyle="--")
+
+            if self.apply:
+                sig = session.signals[signame]
+                ax.plot(sig.time, sig.signal, label=f"detrended {sig.name}", c=palette[i], linestyle="-")
         ax.set_title("Double Exponential Fit")
         ax.legend()
