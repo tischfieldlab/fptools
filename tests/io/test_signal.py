@@ -1,11 +1,14 @@
 import datetime
 import numpy as np
 from pytest import approx
+import pytest
 from fptools.io import Signal
 
 
 def test_signal():
     sig = Signal("sig1", np.sin(np.arange(1000)), fs=1)
+    sig.marks['mark1'] = 1.0
+    sig.marks['mark2'] = 2.0
 
     sig.describe()
     sig.to_dataframe()
@@ -32,3 +35,18 @@ def test_signal_math():
     # test Signal-Signal addition, subtraction, multiplication, division
     assert sin_sig == ((sin_sig + sin_sig) - sin_sig)
     assert const_sig == ((const_sig * const_sig) / const_sig)
+
+
+def test_signal_time_init():
+
+    # test that time and fs mismatch raises ValueError
+    with pytest.raises(ValueError):
+        Signal("sig1", np.sin(np.arange(1000)), time=np.arange(1001), fs=0.5)
+
+    # test that time and fs both being None raises ValueError
+    with pytest.raises(ValueError):
+        Signal("sig1", np.sin(np.arange(1000)), time=None, fs=None)
+
+    # test that time signal length mismatch raises ValueError
+    with pytest.raises(ValueError):
+        Signal("sig1", np.sin(np.arange(1000)), time=np.arange(500), fs=None)
