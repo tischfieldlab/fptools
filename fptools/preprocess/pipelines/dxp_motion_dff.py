@@ -8,7 +8,7 @@ class DxpMotionDffPipeline(Pipeline):
     """Preprocess using a double exponential fit for detrending, producing df/f values.
 
     Implemented as described in:
-    TODO: add citation
+    Simpson et al. Neuron, 2024. https://doi.org/10.1016/j.neuron.2023.11.016
 
     Pipeline steps:
     1) Signals are optionally trimmed to the optical system start.
@@ -22,7 +22,8 @@ class DxpMotionDffPipeline(Pipeline):
         self,
         signals: PairedSignalList,
         rename_map: Optional[dict[Literal["signals", "epocs", "scalars"], dict[str, str]]] = None,
-        trim_extent: Union[None, Literal["auto"], float, tuple[float, float]] = "auto",
+        trim_begin: Union[None, Literal["auto"], float, int] = "auto",
+        trim_end: Union[None, float, int] = None,
         downsample: Optional[int] = 10,
         plot: bool = True,
         plot_dir: Optional[str] = None,
@@ -31,7 +32,9 @@ class DxpMotionDffPipeline(Pipeline):
 
         Args:
             signals: list of signal names to be processed
-            trim_extent: specification for trimming. None disables trimming, auto uses the offset stored in `block.scalars.Fi1i.ts`, a single float trims that amount of time (in seconds) from the beginning, a tuple of two floats specifies the amount of time (in seconds) from the beginning and end to trim, respectively.
+            rename_map: dictionary of signal, epoc, and scalar names to be renamed
+            trim_begin: if not None, trim that amount of time (in seconds) from the beginning of the signal. If "auto", use the offset stored in `block.scalars.Fi1i.ts` for trimming
+            trim_end: if not None, trim that amount of time (in seconds) from the end of the signal.
             downsample: if not `None`, downsample signal by `downsample` factor.
             plot: whether to plot the results of each step
             plot_dir: directory to save plots to
@@ -45,17 +48,21 @@ class DxpMotionDffPipeline(Pipeline):
                     signals=rename_map.get("signals", None), epocs=rename_map.get("epocs", None), scalars=rename_map.get("scalars", None)
                 )
             )
-            signals = _remap_paired_signals(signals, rename_map.get('signals', {}))  # remap the signals to the new names for the remaining steps
+            signals = _remap_paired_signals(
+                signals, rename_map.get("signals", {})
+            )  # remap the signals to the new names for the remaining steps
 
         # step to allow the user to trim the signals
-        if trim_extent is not None:
-            steps.append(TrimSignals(_flatten_paired_signals(signals), extent=trim_extent))
+        if trim_begin is not None or trim_end is not None:
+            steps.append(TrimSignals(_flatten_paired_signals(signals), begin=trim_begin, end=trim_end))
 
-        steps.extend([
-            DblExpFit(_flatten_paired_signals(signals)),
-            MotionCorrect(signals),
-            Dff([(s, f"{s}_dxp") for s in signals]),
-        ])
+        steps.extend(
+            [
+                DblExpFit(_flatten_paired_signals(signals), apply=True),
+                MotionCorrect(signals),
+                Dff([(s, f"{s}_dxpfit") for s in _flatten_paired_signals(signals)], center=False),
+            ]
+        )
 
         # step to downsample the signals
         if downsample is not None:
