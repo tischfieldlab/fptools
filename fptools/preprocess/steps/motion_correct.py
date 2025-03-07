@@ -29,11 +29,14 @@ class MotionCorrect(PreprocessorStep):
         for sig1, sig2 in self.signals:
             exp = session.signals[sig1]
             ctr = session.signals[sig2]
+
+            # create a signal to hold the motion estimate data
             est_motion = exp.copy(f"{exp.name}_motion_est")
             est_motion.units = "AU"
-
-            exp.signal, est_motion.signal = estimate_motion(exp.signal, ctr.signal)
             session.add_signal(est_motion)
+
+            # calculate the motion estimate and corrected signal
+            exp.signal, est_motion.signal = estimate_motion(exp.signal, ctr.signal)
 
         return session
 
