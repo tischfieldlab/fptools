@@ -8,14 +8,15 @@ from ..common import PreprocessorStep, PairedSignalList
 class Dff(PreprocessorStep):
     """A `Preprocessor` that calculates signal dF/F."""
 
-    def __init__(self, signals: PairedSignalList):
+    def __init__(self, signals: PairedSignalList, center: bool = True):
         """Initialize this preprocessor.
 
         Args:
             signals: list of signal names to be downsampled
-            frequency: critical frequency used for lowpass filter
+            center: if true, the signal is centered around the control signal, before the ratio is calculated. If False, only the ratio is calculated.
         """
         self.signals = signals
+        self.center = center
 
     def __call__(self, session: Session) -> Session:
         """Effect this preprocessing step.
@@ -30,7 +31,10 @@ class Dff(PreprocessorStep):
             exp = session.signals[sig1]
             ctr = session.signals[sig2]
 
-            exp.signal = (((exp - ctr) / ctr) * 100).signal
+            if self.center:
+                exp.signal = (((exp - ctr) / ctr) * 100).signal
+            else:
+                exp.signal = ((exp / ctr) * 100).signal
             exp.units = "ΔF/F"
 
         return session
