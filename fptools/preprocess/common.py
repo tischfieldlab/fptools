@@ -15,11 +15,14 @@ PairedSignalList = list[tuple[str, str]]
 def _flatten_paired_signals(signals: PairedSignalList) -> list[str]:
     return [s for pair in signals for s in pair]
 
+
 def _remap_signals(signals: SignalList, rename_map: dict[str, str]) -> list[str]:
-    return  [rename_map.get(s, s) for s in signals]
+    return [rename_map.get(s, s) for s in signals]
+
 
 def _remap_paired_signals(signals: PairedSignalList, rename_map: dict[str, str]) -> PairedSignalList:
     return [(rename_map.get(s1, s1), rename_map.get(s2, s2)) for s1, s2 in signals]
+
 
 class Preprocessor(ABC):
     """Abstract Preprocessor.
@@ -59,6 +62,7 @@ class PreprocessorStep(Preprocessor):
 
 class Pipeline(Preprocessor):
     """A pipeline of Preprocessors."""
+
     def __init__(self, steps: Optional[list[Preprocessor]] = None, plot: bool = True, plot_dir: Optional[str] = None):
         """Initialize this pipeline.
 
