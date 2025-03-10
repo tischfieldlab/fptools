@@ -635,7 +635,7 @@ class SessionCollection(list[Session]):
 
         return pd.concat(dfs, ignore_index=True)
 
-    def aggregate_signals(self, name: str, method: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]] = "median") -> Signal:
+    def aggregate_signals(self, name: str, method: Union[None, str, np.ufunc, Callable[[np.ndarray], np.ndarray]] = "median") -> Signal:
         """Aggregate signals across sessions in this collection for the signal name `name`.
 
         Args:
