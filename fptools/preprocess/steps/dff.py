@@ -51,4 +51,5 @@ class Dff(ProcessorThatPlots):
             sig = session.signals[signame]
             ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i], linestyle="-")
         ax.set_title("Calculated dF/F Signal")
-        ax.legend()
+        ax.legend(loc="upper left")
+        sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))

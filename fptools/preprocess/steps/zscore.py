@@ -48,4 +48,5 @@ class Zscore(ProcessorThatPlots):
             sig = session.signals[signame]
             ax.plot(sig.time, sig.signal, label=f"corrected {sig.name}", c=palette[i], linestyle="-")
         ax.set_title("Calculated zscore Signal")
-        ax.legend()
+        ax.legend(loc="upper left")
+        sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))

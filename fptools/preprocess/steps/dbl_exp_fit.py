@@ -62,4 +62,5 @@ class DblExpFit(ProcessorThatPlots):
                 sig = session.signals[signame]
                 ax.plot(sig.time, sig.signal, label=f"detrended {sig.name}", c=palette[i], linestyle="-")
         ax.set_title("Double Exponential Fit")
-        ax.legend()
+        ax.legend(loc="upper left")
+        sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))

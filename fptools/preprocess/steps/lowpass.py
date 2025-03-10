@@ -49,4 +49,5 @@ class Lowpass(ProcessorThatPlots):
             sig = session.signals[f"{signame}_lowpass"]
             ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i], linestyle="--")
         ax.set_title("Lowpass Filtered Signal")
-        ax.legend()
+        ax.legend(loc="upper left")
+        sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))

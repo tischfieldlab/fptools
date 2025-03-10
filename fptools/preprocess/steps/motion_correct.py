@@ -54,4 +54,5 @@ class MotionCorrect(ProcessorThatPlots):
             ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i], linestyle="-")
             ax.plot(mot.time, mot.signal, label=mot.name, c=sns.desaturate(palette[i], 0.3), linestyle="-")
         ax.set_title("Motion Estimation and Correction")
-        ax.legend()
+        ax.legend(loc="upper left")
+        sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
