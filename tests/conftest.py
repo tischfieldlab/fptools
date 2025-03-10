@@ -10,6 +10,10 @@ from fptools.preprocess.pipelines import LowpassDFFPipeline
 
 
 def pytest_configure(config):
+    """This hook is called before running the tests.
+    
+    Here we will tell matplotlib to use the Agg backend so that it doesn't try to open windows during testing.
+    """
     # Force matplotlib to use the Agg backend so that it doesn't try to open windows during testing
     matplotlib.use("Agg")
 
