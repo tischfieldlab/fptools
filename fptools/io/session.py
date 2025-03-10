@@ -113,6 +113,7 @@ class Session(object):
             raise KeyError(f"Key `{new_name}` already exists in data!")
 
         self.signals[new_name] = self.signals[old_name]
+        self.signals[new_name].name = new_name
         self.signals.pop(old_name)
 
     def rename_scalar(self, old_name: str, new_name: str):
