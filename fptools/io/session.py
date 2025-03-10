@@ -571,7 +571,7 @@ class SessionCollection(list[Session]):
         Returns:
             List of Signals, each corresponding to a single session
         """
-        return [item.signals[name] for item in self]
+        return [item.signals[name] for item in self if name in item.signals]
 
     def epoc_dataframe(self, include_epocs: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
         """Produce a dataframe with epoc data and metadata across all the sessions in this collection.
