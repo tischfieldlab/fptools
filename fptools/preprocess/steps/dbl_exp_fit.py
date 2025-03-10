@@ -5,10 +5,10 @@ import seaborn as sns
 
 from fptools.io import Session
 from ..lib import detrend_double_exponential
-from ..common import PreprocessorStep, SignalList
+from ..common import ProcessorThatPlots, SignalList
 
 
-class DblExpFit(PreprocessorStep):
+class DblExpFit(ProcessorThatPlots):
     """A `Preprocessor` that fits a double exponential function."""
 
     def __init__(self, signals: SignalList, apply: bool = True):

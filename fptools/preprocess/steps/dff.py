@@ -2,10 +2,10 @@ from matplotlib.axes import Axes
 import seaborn as sns
 
 from fptools.io import Session
-from ..common import PreprocessorStep, PairedSignalList
+from ..common import ProcessorThatPlots, PairedSignalList
 
 
-class Dff(PreprocessorStep):
+class Dff(ProcessorThatPlots):
     """A `Preprocessor` that calculates signal dF/F."""
 
     def __init__(self, signals: PairedSignalList, center: bool = True):

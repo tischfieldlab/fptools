@@ -3,10 +3,10 @@ import seaborn as sns
 
 from fptools.io import Session
 from ..lib import lowpass_filter
-from ..common import PreprocessorStep, SignalList
+from ..common import ProcessorThatPlots, SignalList
 
 
-class Lowpass(PreprocessorStep):
+class Lowpass(ProcessorThatPlots):
     """A `Preprocessor` that generates a lowpass filtered signal."""
 
     def __init__(self, signals: SignalList, frequency: float = 0.01):

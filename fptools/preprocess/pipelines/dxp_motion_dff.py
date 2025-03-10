@@ -1,6 +1,6 @@
 from typing import Literal, Optional, Union
 
-from ..common import Pipeline, PairedSignalList, Preprocessor, _flatten_paired_signals, _remap_paired_signals
+from ..common import Pipeline, PairedSignalList, Processor, _flatten_paired_signals, _remap_paired_signals
 from ..steps import Dff, Downsample, TrimSignals, DblExpFit, MotionCorrect, Rename
 
 
@@ -39,7 +39,7 @@ class DxpMotionDffPipeline(Pipeline):
             plot: whether to plot the results of each step
             plot_dir: directory to save plots to
         """
-        steps: list[Preprocessor] = []
+        steps: list[Processor] = []
 
         # step to allow user to rename various things
         if rename_map is not None:

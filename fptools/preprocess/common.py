@@ -24,7 +24,7 @@ def _remap_paired_signals(signals: PairedSignalList, rename_map: dict[str, str])
     return [(rename_map.get(s1, s1), rename_map.get(s2, s2)) for s1, s2 in signals]
 
 
-class Preprocessor(ABC):
+class Processor(ABC):
     """Abstract Preprocessor.
 
     Implementors should implement the `__call__` method.
@@ -43,7 +43,7 @@ class Preprocessor(ABC):
         raise NotImplementedError()
 
 
-class PreprocessorStep(Preprocessor):
+class ProcessorThatPlots(Processor):
     """Abstract Preprocessor.
 
     Implementors should implement the `__call__` and `plot` methods.
@@ -60,10 +60,10 @@ class PreprocessorStep(Preprocessor):
         raise NotImplementedError()
 
 
-class Pipeline(Preprocessor):
+class Pipeline(Processor):
     """A pipeline of Preprocessors."""
 
-    def __init__(self, steps: Optional[list[Preprocessor]] = None, plot: bool = True, plot_dir: Optional[str] = None):
+    def __init__(self, steps: Optional[list[Processor]] = None, plot: bool = True, plot_dir: Optional[str] = None):
         """Initialize this pipeline.
 
         Args:
@@ -71,7 +71,7 @@ class Pipeline(Preprocessor):
             plot: whether to plot the results of each step
             plot_dir: directory to save plots to, if None, will save to current working directory
         """
-        self.steps: list[Preprocessor]
+        self.steps: list[Processor]
         if steps is None:
             self.steps = []
         else:

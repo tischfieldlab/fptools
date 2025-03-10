@@ -5,10 +5,10 @@ import seaborn as sns
 
 from fptools.io import Session
 from ..lib import trim
-from ..common import PreprocessorStep, SignalList
+from ..common import ProcessorThatPlots, SignalList
 
 
-class TrimSignals(PreprocessorStep):
+class TrimSignals(ProcessorThatPlots):
     """A `Preprocessor` that trims signals."""
 
     def __init__(self, signals: SignalList, begin: Union[None, Literal["auto"], int, float] = None, end: Union[None, int, float] = None):

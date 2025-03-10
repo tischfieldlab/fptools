@@ -1,7 +1,7 @@
 from typing import Literal, Optional, Union
 
 from ..steps import Downsample, Lowpass, TrimSignals, Dff, Rename
-from ..common import Pipeline, Preprocessor, SignalList, _remap_signals
+from ..common import Pipeline, Processor, SignalList, _remap_signals
 
 
 class LowpassDFFPipeline(Pipeline):
@@ -39,7 +39,7 @@ class LowpassDFFPipeline(Pipeline):
             plot: whether to plot the results of each step
             plot_dir: directory to save plots to
         """
-        steps: list[Preprocessor] = []
+        steps: list[Processor] = []
 
         # step to allow user to rename various things
         if rename_map is not None:

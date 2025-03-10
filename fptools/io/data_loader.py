@@ -4,7 +4,7 @@ from typing import Literal, Optional, Union
 import concurrent
 import pandas as pd
 
-from fptools.preprocess.common import Preprocessor
+from fptools.preprocess.common import Processor
 
 from .common import DataLocator, DataTypeAdaptor
 from .med_associates import find_ma_blocks
@@ -56,7 +56,7 @@ def load_data(
     manifest_index: str = "blockname",
     max_workers: Optional[int] = None,
     locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "auto",
-    preprocess: Optional[Preprocessor] = None,
+    preprocess: Optional[Processor] = None,
     cache: bool = True,
     cache_dir: str = "cache",
 ) -> SessionCollection:
@@ -143,7 +143,7 @@ def load_data(
 
 def _load(
     dset: DataTypeAdaptor,
-    preprocess: Optional[Preprocessor] = None,
+    preprocess: Optional[Processor] = None,
     cache: bool = True,
     cache_dir: str = "cache",
 ) -> Session:

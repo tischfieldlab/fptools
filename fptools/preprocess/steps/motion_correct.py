@@ -3,10 +3,10 @@ import seaborn as sns
 
 from fptools.io import Session
 from fptools.preprocess.lib import estimate_motion
-from ..common import PreprocessorStep, PairedSignalList
+from ..common import ProcessorThatPlots, PairedSignalList
 
 
-class MotionCorrect(PreprocessorStep):
+class MotionCorrect(ProcessorThatPlots):
     """A `Preprocessor` that estimates and corrects for motion artifacts."""
 
     def __init__(self, signals: PairedSignalList):

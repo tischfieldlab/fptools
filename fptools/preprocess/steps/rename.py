@@ -2,10 +2,10 @@ from typing import Optional
 from matplotlib.axes import Axes
 
 from fptools.io import Session
-from ..common import PreprocessorStep
+from ..common import ProcessorThatPlots
 
 
-class Rename(PreprocessorStep):
+class Rename(ProcessorThatPlots):
     """A `Preprocessor` that allows you to rename things."""
 
     def __init__(

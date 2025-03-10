@@ -1,7 +1,7 @@
 from typing import Any, Literal, Optional, Union
 
 from ..steps import Downsample, Rename, TrimSignals, MotionCorrect, Dff
-from ..common import Pipeline, PairedSignalList, Preprocessor, _flatten_paired_signals, _remap_paired_signals
+from ..common import Pipeline, PairedSignalList, Processor, _flatten_paired_signals, _remap_paired_signals
 
 
 class TdtDefaultPipeline(Pipeline):
@@ -38,7 +38,7 @@ class TdtDefaultPipeline(Pipeline):
             plot: whether to plot the results of each step
             plot_dir: directory to save plots to
         """
-        steps: list[Preprocessor] = []
+        steps: list[Processor] = []
 
         # step to allow user to rename various things
         if rename_map is not None:
@@ -56,7 +56,7 @@ class TdtDefaultPipeline(Pipeline):
             steps.append(TrimSignals(_flatten_paired_signals(signals), begin=trim_begin, end=trim_end))
 
         steps.append(MotionCorrect(signals))
-        steps.append(Dff([(s, f"{s}_motion_est") for s in _flatten_paired_signals(signals)], center=False))
+        steps.append(Dff([(s, f"{s}_motion_est") for s, _ in signals], center=False))
 
         if downsample is not None:
             steps.append(Downsample(_flatten_paired_signals(signals), window=downsample, factor=downsample))

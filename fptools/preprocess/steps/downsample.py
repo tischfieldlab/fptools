@@ -3,10 +3,10 @@ import seaborn as sns
 
 from fptools.io import Session
 from ..lib import downsample, t2fs
-from ..common import PreprocessorStep, SignalList
+from ..common import ProcessorThatPlots, SignalList
 
 
-class Downsample(PreprocessorStep):
+class Downsample(ProcessorThatPlots):
     """A `Preprocessor` that downsamples signals."""
 
     def __init__(self, signals: SignalList, window: int = 10, factor: int = 10):

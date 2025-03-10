@@ -4,10 +4,10 @@ from scipy import stats
 
 from fptools.io import Session
 from ..lib import lowpass_filter
-from ..common import PreprocessorStep, SignalList
+from ..common import ProcessorThatPlots, SignalList
 
 
-class Zscore(PreprocessorStep):
+class Zscore(ProcessorThatPlots):
     """A `Preprocessor` that calculates signal z-scores."""
 
     def __init__(self, signals: SignalList):
