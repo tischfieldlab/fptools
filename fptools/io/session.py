@@ -645,7 +645,7 @@ class SessionCollection(list[Session]):
         Returns:
             Aggregated `Signal`
         """
-        signals = self.get_signal(name)
+        signals = [s for s in self.get_signal(name) if s.nobs > 0]
         if len(signals) <= 0:
             raise ValueError("No signals were passed!")
 
