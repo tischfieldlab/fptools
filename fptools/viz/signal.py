@@ -270,7 +270,7 @@ def sig_catplot(
                         agg_kwargs=agg_kwargs,
                     )
                 except:
-                    pass
+                    raise
 
             elif hue_order is not None:
                 legend_items = []
