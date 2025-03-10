@@ -1,8 +1,10 @@
+import multiprocessing
 import os
 import traceback
 from typing import Literal, Optional, Union
 import concurrent
 import pandas as pd
+from concurrent.futures import ProcessPoolExecutor, as_completed
 
 from fptools.preprocess.common import Processor
 
@@ -99,9 +101,15 @@ def load_data(
     if cache:
         os.makedirs(cache_dir, exist_ok=True)
 
-    futures: dict[concurrent.futures.Future[Session], str] = {}
+    # create a collection to hold the loaded sessions
     sessions = SessionCollection()
-    with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
+
+    futures: dict[concurrent.futures.Future[Session], str] = {}
+    context = multiprocessing.get_context("spawn")
+    max_tasks_per_child = 1
+    with ProcessPoolExecutor(max_workers=max_workers, mp_context=context, max_tasks_per_child=max_tasks_per_child) as executor:
+        # collect common worker args in one place
+        worker_args = {"preprocess": preprocess, "cache": cache, "cache_dir": cache_dir}
 
         # iterate over all datasets found by the locator
         for dset in _get_locator(locator)(tank_path):
@@ -126,7 +134,7 @@ def load_data(
             futures[f] = dset.name
 
         # collect completed tasks
-        for f in tqdm(concurrent.futures.as_completed(futures), total=len(futures)):
+        for f in tqdm(as_completed(futures), total=len(futures)):
             try:
                 s = f.result()
                 if has_manifest:
