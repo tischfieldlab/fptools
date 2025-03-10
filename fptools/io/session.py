@@ -54,7 +54,8 @@ class Session(object):
                 # buffer += f'    "{k}" with shape {v.shape}:\n    {np.array2string(v, prefix="    ")}\n\n'
                 buffer += f"    {k}:\n"
                 buffer += f"        num_events = {v.shape}\n"
-                buffer += f"        avg_rate = {datetime.timedelta(seconds=np.diff(v)[0])}\n"
+                if len(v) >= 2:
+                    buffer += f"        avg_rate = {datetime.timedelta(seconds=np.diff(v)[0])}\n"
                 buffer += f"        earliest = {datetime.timedelta(seconds=v[0])}\n"
                 buffer += f"        latest = {datetime.timedelta(seconds=v[-1])}\n"
         else:
