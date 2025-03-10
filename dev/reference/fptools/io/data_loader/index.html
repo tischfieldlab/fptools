@@ -1610,14 +1610,14 @@
 <p><span class="doc-section-title">Functions:</span></p>
     <ul>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.data_loader.load_data&lt;/code&gt;" href="#fptools.io.data_loader.load_data">load_data</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;highlight language-python&quot;&gt;&lt;span class=&quot;n&quot;&gt;load_data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tank_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;manifest_path&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;manifest_index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;blockname&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;max_workers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;locator&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;auto&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;preprocess&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cache_dir&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;cache&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt; (&lt;code&gt;fptools.io.data_loader.load_data&lt;/code&gt;)" href="#fptools.io.data_loader.load_data">load_data</a></code></b>
             –
             <div class="doc-md-description">
               <p>Load blocks from <code>tank_path</code> and return a <code>SessionCollection</code>.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
-            <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.data_loader.load_manifest&lt;/code&gt;" href="#fptools.io.data_loader.load_manifest">load_manifest</a></code></b>
+            <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;highlight language-python&quot;&gt;&lt;span class=&quot;n&quot;&gt;load_manifest&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;index&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt; (&lt;code&gt;fptools.io.data_loader.load_manifest&lt;/code&gt;)" href="#fptools.io.data_loader.load_manifest">load_manifest</a></code></b>
             –
             <div class="doc-md-description">
               <p>Load a manifest file, accepting most common tabular formats.</p>
@@ -1670,7 +1670,7 @@
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><span title="list">list</span>[<a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.common.DataTypeAdaptor&lt;/code&gt;" href="../common/#fptools.io.common.DataTypeAdaptor">DataTypeAdaptor</a>]</code>
+              <code><span title="list">list</span>[<a class="autorefs autorefs-internal" title="&lt;code&gt;DataTypeAdaptor&lt;/code&gt; (&lt;code&gt;fptools.io.common.DataTypeAdaptor&lt;/code&gt;)" href="../common/#fptools.io.common.DataTypeAdaptor">DataTypeAdaptor</a>]</code>
           –
           <div class="doc-md-description">
             <p>list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded</p>
@@ -1716,7 +1716,7 @@
     <ul>
         <li class="doc-section-item field-body">
             <b><code>locator</code></b>
-              (<code><span title="typing.Union">Union</span>[<span title="typing.Literal">Literal</span>[&#39;auto&#39;, &#39;tdt&#39;, &#39;ma&#39;], <a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.common.DataLocator&lt;/code&gt;" href="../common/#fptools.io.common.DataLocator">DataLocator</a>]</code>, default:
+              (<code><span title="typing.Union">Union</span>[<span title="typing.Literal">Literal</span>[&#39;auto&#39;, &#39;tdt&#39;, &#39;ma&#39;], <a class="autorefs autorefs-internal" title="&lt;code&gt;DataLocator&lt;/code&gt; (&lt;code&gt;fptools.io.common.DataLocator&lt;/code&gt;)" href="../common/#fptools.io.common.DataLocator">DataLocator</a>]</code>, default:
                   <code>&#39;auto&#39;</code>
 )
           –
@@ -1730,7 +1730,7 @@
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.common.DataLocator&lt;/code&gt;" href="../common/#fptools.io.common.DataLocator">DataLocator</a></code>
+              <code><a class="autorefs autorefs-internal" title="&lt;code&gt;DataLocator&lt;/code&gt; (&lt;code&gt;fptools.io.common.DataLocator&lt;/code&gt;)" href="../common/#fptools.io.common.DataLocator">DataLocator</a></code>
           –
           <div class="doc-md-description">
             <p>A concrete DataLoader</p>
@@ -1782,7 +1782,7 @@
     <ul>
         <li class="doc-section-item field-body">
             <b><code>dset</code></b>
-              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.common.DataTypeAdaptor&lt;/code&gt;" href="../common/#fptools.io.common.DataTypeAdaptor">DataTypeAdaptor</a></code>)
+              (<code><a class="autorefs autorefs-internal" title="&lt;code&gt;DataTypeAdaptor&lt;/code&gt; (&lt;code&gt;fptools.io.common.DataTypeAdaptor&lt;/code&gt;)" href="../common/#fptools.io.common.DataTypeAdaptor">DataTypeAdaptor</a></code>)
           –
           <div class="doc-md-description">
             <p>a DataTypeAdaptor instance describing what data and how to load it</p>
@@ -1797,7 +1797,7 @@
         </li>
         <li class="doc-section-item field-body">
             <b><code>preprocess</code></b>
-              (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.preprocess.common.Preprocessor&lt;/code&gt;" href="../../preprocess/common/#fptools.preprocess.common.Preprocessor">Preprocessor</a>]</code>, default:
+              (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" title="&lt;code&gt;Processor&lt;/code&gt; (&lt;code&gt;fptools.preprocess.common.Processor&lt;/code&gt;)" href="../../preprocess/common/#fptools.preprocess.common.Processor">Processor</a>]</code>, default:
                   <code>None</code>
 )
           –
@@ -1838,7 +1838,7 @@
               <summary>Source code in <code>fptools/io/data_loader.py</code></summary>
               <div class="highlight"><pre><span></span><code><a id="__codelineno-0-144" name="__codelineno-0-144"></a><a href="#__codelineno-0-144"><span class="linenos" data-linenos="144 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">_load</span><span class="p">(</span>
 <a id="__codelineno-0-145" name="__codelineno-0-145"></a><a href="#__codelineno-0-145"><span class="linenos" data-linenos="145 "></span></a>    <span class="n">dset</span><span class="p">:</span> <span class="n">DataTypeAdaptor</span><span class="p">,</span>
-<a id="__codelineno-0-146" name="__codelineno-0-146"></a><a href="#__codelineno-0-146"><span class="linenos" data-linenos="146 "></span></a>    <span class="n">preprocess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Preprocessor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-146" name="__codelineno-0-146"></a><a href="#__codelineno-0-146"><span class="linenos" data-linenos="146 "></span></a>    <span class="n">preprocess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Processor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-147" name="__codelineno-0-147"></a><a href="#__codelineno-0-147"><span class="linenos" data-linenos="147 "></span></a>    <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <a id="__codelineno-0-148" name="__codelineno-0-148"></a><a href="#__codelineno-0-148"><span class="linenos" data-linenos="148 "></span></a>    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cache&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-149" name="__codelineno-0-149"></a><a href="#__codelineno-0-149"><span class="linenos" data-linenos="149 "></span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Session</span><span class="p">:</span>
@@ -1952,7 +1952,7 @@ For example preprocessing routines, please see the implementations in the <code>
         </li>
         <li class="doc-section-item field-body">
             <b><code>locator</code></b>
-              (<code><span title="typing.Union">Union</span>[<span title="typing.Literal">Literal</span>[&#39;auto&#39;, &#39;tdt&#39;, &#39;ma&#39;], <a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.common.DataLocator&lt;/code&gt;" href="../common/#fptools.io.common.DataLocator">DataLocator</a>]</code>, default:
+              (<code><span title="typing.Union">Union</span>[<span title="typing.Literal">Literal</span>[&#39;auto&#39;, &#39;tdt&#39;, &#39;ma&#39;], <a class="autorefs autorefs-internal" title="&lt;code&gt;DataLocator&lt;/code&gt; (&lt;code&gt;fptools.io.common.DataLocator&lt;/code&gt;)" href="../common/#fptools.io.common.DataLocator">DataLocator</a>]</code>, default:
                   <code>&#39;auto&#39;</code>
 )
           –
@@ -1962,7 +1962,7 @@ For example preprocessing routines, please see the implementations in the <code>
         </li>
         <li class="doc-section-item field-body">
             <b><code>preprocess</code></b>
-              (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.preprocess.common.Preprocessor&lt;/code&gt;" href="../../preprocess/common/#fptools.preprocess.common.Preprocessor">Preprocessor</a>]</code>, default:
+              (<code><span title="typing.Optional">Optional</span>[<a class="autorefs autorefs-internal" title="&lt;code&gt;Processor&lt;/code&gt; (&lt;code&gt;fptools.preprocess.common.Processor&lt;/code&gt;)" href="../../preprocess/common/#fptools.preprocess.common.Processor">Processor</a>]</code>, default:
                   <code>None</code>
 )
           –
@@ -1996,7 +1996,7 @@ For example preprocessing routines, please see the implementations in the <code>
 <p><span class="doc-section-title">Returns:</span></p>
     <ul>
         <li class="doc-section-item field-body">
-              <code><a class="autorefs autorefs-internal" title="&lt;code&gt;fptools.io.session.SessionCollection&lt;/code&gt;" href="../session/#fptools.io.session.SessionCollection">SessionCollection</a></code>
+              <code><a class="autorefs autorefs-internal" title="&lt;code&gt;SessionCollection&lt;/code&gt; (&lt;code&gt;fptools.io.session.SessionCollection&lt;/code&gt;)" href="../session/#fptools.io.session.SessionCollection">SessionCollection</a></code>
           –
           <div class="doc-md-description">
             <p><code>SessionCollection</code> containing loaded data</p>
@@ -2012,7 +2012,7 @@ For example preprocessing routines, please see the implementations in the <code>
 <a id="__codelineno-0-56" name="__codelineno-0-56"></a><a href="#__codelineno-0-56"><span class="linenos" data-linenos=" 56 "></span></a>    <span class="n">manifest_index</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;blockname&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-57" name="__codelineno-0-57"></a><a href="#__codelineno-0-57"><span class="linenos" data-linenos=" 57 "></span></a>    <span class="n">max_workers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-58" name="__codelineno-0-58"></a><a href="#__codelineno-0-58"><span class="linenos" data-linenos=" 58 "></span></a>    <span class="n">locator</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span> <span class="s2">&quot;tdt&quot;</span><span class="p">,</span> <span class="s2">&quot;ma&quot;</span><span class="p">],</span> <span class="n">DataLocator</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;auto&quot;</span><span class="p">,</span>
-<a id="__codelineno-0-59" name="__codelineno-0-59"></a><a href="#__codelineno-0-59"><span class="linenos" data-linenos=" 59 "></span></a>    <span class="n">preprocess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Preprocessor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-59" name="__codelineno-0-59"></a><a href="#__codelineno-0-59"><span class="linenos" data-linenos=" 59 "></span></a>    <span class="n">preprocess</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Processor</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-60" name="__codelineno-0-60"></a><a href="#__codelineno-0-60"><span class="linenos" data-linenos=" 60 "></span></a>    <span class="n">cache</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <a id="__codelineno-0-61" name="__codelineno-0-61"></a><a href="#__codelineno-0-61"><span class="linenos" data-linenos=" 61 "></span></a>    <span class="n">cache_dir</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;cache&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-62" name="__codelineno-0-62"></a><a href="#__codelineno-0-62"><span class="linenos" data-linenos=" 62 "></span></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SessionCollection</span><span class="p">:</span>
