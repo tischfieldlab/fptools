@@ -101,6 +101,17 @@ class Session(object):
 
         self.signals[signal.name] = signal
 
+    def remove_signal(self, name: str) -> Signal:
+        """Remove a signal from this Session.
+
+        Args:
+            name: the name of the signal to remove
+
+        Returns:
+            the signal that was removed
+        """
+        return self.signals.pop(name)
+
     def rename_signal(self, old_name: str, new_name: str) -> None:
         """Rename a signal, from `old_name` to `new_name`.
 
