@@ -3,7 +3,6 @@ import seaborn as sns
 from scipy import stats
 
 from fptools.io import Session
-from ..lib import lowpass_filter
 from ..common import ProcessorThatPlots, SignalList
 
 
@@ -32,7 +31,7 @@ class Zscore(ProcessorThatPlots):
             sig = session.signals[signame]
 
             sig.signal = stats.zscore(sig.signal)
-            sig.units = "AU"
+            sig.units = "SDs"
 
         return session
 
