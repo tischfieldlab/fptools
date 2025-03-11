@@ -173,3 +173,15 @@ def zscore_signals(*signals: np.ndarray) -> tuple[np.ndarray, ...]:
         tuple of z-scored signals
     """
     return tuple(scipy.stats.zscore(sig) for sig in signals)
+
+
+def mad(data: np.ndarray) -> float:
+    """Calculate the Median Absolute Deviation (MAD) of a dataset.
+
+    Args:
+        data: A list or NumPy array of numerical data.
+
+    Returns:
+        The MAD of the data.
+    """
+    return np.median(np.abs(data - np.median(data)))
