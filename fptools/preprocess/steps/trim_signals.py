@@ -4,6 +4,7 @@ from matplotlib.axes import Axes
 import seaborn as sns
 
 from fptools.io import Session
+from fptools.viz import plot_signal
 from ..lib import trim
 from ..common import ProcessorThatPlots, SignalList
 
@@ -11,7 +12,7 @@ from ..common import ProcessorThatPlots, SignalList
 class TrimSignals(ProcessorThatPlots):
     """A `Preprocessor` that trims signals."""
 
-    def __init__(self, signals: SignalList, begin: Union[None, Literal["auto"], int, float] = None, end: Union[None, int, float] = None):
+    def __init__(self, signals: SignalList, begin: Union[None, Literal["auto"], int, float] = None, end: Union[None, int, float] = None, scalar_name: str = "Fi1i"):
         """Initialize this preprocessor.
 
         Args:
@@ -22,6 +23,7 @@ class TrimSignals(ProcessorThatPlots):
         self.signals = signals
         self.begin = begin
         self.end = end
+        self.scalar = scalar_name
 
     def __call__(self, session: Session) -> Session:
         """Effect this preprocessing step.
@@ -37,7 +39,7 @@ class TrimSignals(ProcessorThatPlots):
 
             begin: Union[int, None]
             if self.begin == "auto":
-                begin = int(session.scalars["Fi1i"][0] * sig.fs)
+                begin = int(session.scalars[self.scalar][0] * sig.fs)
             elif isinstance(self.begin, (float, int)):
                 begin = int(self.begin * sig.fs)
             elif self.begin is None:
@@ -66,7 +68,7 @@ class TrimSignals(ProcessorThatPlots):
         palette = sns.color_palette("colorblind", n_colors=len(self.signals))
         for i, signame in enumerate(self.signals):
             sig = session.signals[signame]
-            ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i])
+            plot_signal(sig, ax=ax, show_indv=True, color=palette[i], indv_c=palette[i], agg_kwargs={"label": sig.name})
         ax.set_title("Trimmed Signal")
         ax.legend(loc="upper left")
         sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))

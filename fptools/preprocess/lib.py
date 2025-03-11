@@ -113,8 +113,8 @@ def estimate_motion(signal: np.ndarray, control: np.ndarray) -> tuple[np.ndarray
 
 
 def are_arrays_same_length(*arrays: np.ndarray) -> bool:
-    """Check if all arrays are the same shape in the first axis."""
-    lengths = [arr.shape[0] for arr in arrays]
+    """Check if all arrays are the same shape in the last axis."""
+    lengths = [arr.shape[-1] for arr in arrays]
     return bool(np.all(np.array(lengths) == lengths[0]))
 
 
@@ -152,13 +152,13 @@ def trim(*signals: np.ndarray, begin: Optional[int] = None, end: Optional[int] =
         begin = 0
 
     if end is None:
-        end = int(signals[0].shape[0])
+        end = int(signals[0].shape[-1])
     else:
-        end = int(signals[0].shape[0] - end)
+        end = int(signals[0].shape[-1] - end)
 
     assert begin < end
 
-    return tuple(sig[begin:end] for sig in signals)
+    return tuple(sig[..., begin:end] for sig in signals)
 
 
 def zscore_signals(*signals: np.ndarray) -> tuple[np.ndarray, ...]:
