@@ -29,6 +29,12 @@ def find_tdt_blocks(path: str) -> list[DataTypeAdaptor]:
     return items_out
 
 
+TDT_EXCLUDE_STREAMS = ["Fi1d", "Fi1r"]
+"""List of stream names to exclude from loading.
+Used by load_tdt_block().
+"""
+
+
 def load_tdt_block(session: Session, path: str) -> Session:
     """Data Loader for TDT blocks.
 
@@ -47,6 +53,8 @@ def load_tdt_block(session: Session, path: str) -> Session:
 
     # add streams (as signals)
     for k in block.streams.keys():
+        if k in TDT_EXCLUDE_STREAMS:
+            continue
         stream = block.streams[k]
         session.add_signal(Signal(k, stream.data, fs=stream.fs, units="mV"))
 
