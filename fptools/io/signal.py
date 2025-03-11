@@ -1,5 +1,6 @@
 import datetime
 from functools import partial
+import sys
 from typing import Any, Callable, Optional, Union, cast
 
 import numpy as np
@@ -281,3 +282,19 @@ class Signal(object):
         else:
             print(buffer)
             return None
+
+    def _estimate_memory_use_itemized(self) -> dict[str, int]:
+        """Estimate the memory use of this Signal in bytes."""
+        return {
+            "self": sys.getsizeof(self),
+            "name": sys.getsizeof(self.name),
+            "signal": self.signal.nbytes,
+            "time": self.time.nbytes,
+            "fs": sys.getsizeof(self.fs),
+            "units": sys.getsizeof(self.units),
+            "marks": sum([sys.getsizeof(k) + sys.getsizeof(v) for k, v in self.marks.items()]),
+        }
+
+    def _estimate_memory_use(self) -> int:
+        """Estimate the memory use of this Signal in bytes."""
+        return sum(self._estimate_memory_use_itemized().values())

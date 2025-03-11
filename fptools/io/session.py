@@ -4,6 +4,7 @@ import datetime
 from functools import partial
 import math
 import os
+import sys
 from typing import Any, Callable, Literal, Optional, Union
 
 import h5py
@@ -261,6 +262,20 @@ class Session(object):
                 return False
 
         return True
+
+    def _estimate_memory_use_itemized(self) -> dict[str, int]:
+        return {
+            "self": sys.getsizeof(self),
+            "name": sys.getsizeof(self.name),
+            "metadata": sum(map(sys.getsizeof, self.metadata.values())) + sum(map(sys.getsizeof, self.metadata.keys())),
+            **{f"signal.{sig.name}": sig._estimate_memory_use() for sig in self.signals.values()},
+            **{f"epocs.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.epocs.items()},
+            **{f"scalars.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.scalars.items()},
+        }
+
+    def _estimate_memory_use(self) -> int:
+        """Estimate the memory use of this Signal in bytes."""
+        return sum(self._estimate_memory_use_itemized().values())
 
     def save(self, path: str):
         """Save this Session to and HDF5 file.
@@ -693,6 +708,13 @@ class SessionCollection(list[Session]):
         else:
             print(buffer)
             return None
+
+    def _estimate_memory_use_itemized(self) -> dict[str, int]:
+        return {s.name: s._estimate_memory_use() for s in self}
+
+    def _estimate_memory_use(self) -> int:
+        """Estimate the memory use of this Signal in bytes."""
+        return sum(self._estimate_memory_use_itemized().values())
 
     def save(self, path: str):
         """Save each Session in this SessionCollection to an hdf5 file.
