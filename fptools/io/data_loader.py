@@ -207,7 +207,7 @@ def _get_locator(locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "au
         A concrete DataLoader
     """
     if locator == "auto":
-        return _find_data
+        return _find_any_data
     elif locator == "tdt":
         return find_tdt_blocks
     elif locator == "ma":
@@ -216,7 +216,7 @@ def _get_locator(locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "au
         return locator
 
 
-def _find_data(path: str) -> list[DataTypeAdaptor]:
+def _find_any_data(path: str) -> list[DataTypeAdaptor]:
     """Data locator for type "auto".
 
     Tries to find any type of data (TDT and med-associates currently supported)
