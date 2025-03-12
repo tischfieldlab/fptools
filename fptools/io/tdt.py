@@ -37,12 +37,16 @@ def find_tdt_blocks(path: str) -> list[DataTypeAdaptor]:
 
 
 class TDTLoader:
-    def __init__(self, exclude_streams: Optional[list[str]] = None, exclude_epocs: Optional[list[str]] = None, exclude_scalars: Optional[list[str]] = None) -> None:
+    def __init__(
+        self,
+        exclude_streams: Optional[list[str]] = None,
+        exclude_epocs: Optional[list[str]] = None,
+        exclude_scalars: Optional[list[str]] = None,
+    ) -> None:
         """Initialize this TDTLoader."""
         self.exclude_streams = exclude_streams or []
         self.exclude_epocs = exclude_epocs or []
         self.exclude_scalars = exclude_scalars or []
-
 
     def __call__(self, session: Session, path: str) -> Session:
         """Data Loader for TDT blocks.
