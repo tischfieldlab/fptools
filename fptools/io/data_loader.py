@@ -1,10 +1,9 @@
 import multiprocessing
 import os
 import traceback
-from typing import Literal, Optional, Union
-import concurrent
+from typing import Literal, Optional, Union, cast
 import pandas as pd
-from concurrent.futures import ProcessPoolExecutor, as_completed
+from concurrent.futures import ProcessPoolExecutor, as_completed, Future
 
 from .common import DataLocator, SignalMapping, DataTypeAdaptor, Preprocessor
 from .med_associates import find_ma_blocks
@@ -106,7 +105,7 @@ def load_data(
     # create a collection to hold the loaded sessions
     sessions = SessionCollection()
 
-    futures: dict[concurrent.futures.Future[Session], str] = {}
+    futures: dict[Future[Session], str] = {}
     context = multiprocessing.get_context("spawn")
     max_tasks_per_child = 1
     with ProcessPoolExecutor(max_workers=max_workers, mp_context=context, max_tasks_per_child=max_tasks_per_child) as executor:
@@ -119,7 +118,8 @@ def load_data(
             # also perform some sanity checks along the way, and check some special flags (ex `exclude`)
             if has_manifest:
                 try:
-                    block_meta = manifest.loc[dset.name]
+                    block_meta = manifest.loc[dset.name].to_dict()
+                    dset.metadata.update(block_meta)
                 except KeyError:
                     # this block is not listed in the manifest! Err on the side of caution and exclude the block
                     tqdm.write(f'WARNING: Excluding block "{dset.name}" because it is not listed in the manifest!!')
@@ -137,10 +137,7 @@ def load_data(
         # collect completed tasks
         for f in tqdm(as_completed(futures), total=len(futures)):
             try:
-                s = f.result()
-                if has_manifest:
-                    s.metadata.update(manifest.loc[futures[f]].to_dict())
-                sessions.append(s)
+                sessions.append(f.result())
             except Exception as e:
                 tqdm.write(
                     f'Encountered problem loading data at "{futures[f]}":\n{traceback.format_exc()}\nData will be omitted from the final collection!\n'
@@ -180,9 +177,12 @@ def _load(
     else:
         # otherwise, we need to load the data from scratch
 
-        # load the data
+        # create the session and attach a name and metadata
         session = Session()
         session.name = dset.name
+        session.metadata.update(dset.metadata)
+
+        # effect the loading routines
         for loader in dset.loaders:
             session = loader(session, dset.path)
 
