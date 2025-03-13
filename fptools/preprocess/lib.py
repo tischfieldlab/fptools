@@ -152,9 +152,9 @@ def trim(*signals: np.ndarray, begin: Optional[int] = None, end: Optional[int] =
         begin = 0
 
     if end is None:
-        end = signals[0].shape[0]
+        end = int(signals[0].shape[0])
     else:
-        end = signals[0].shape[0] - end
+        end = int(signals[0].shape[0] - end)
 
     assert begin < end
 
