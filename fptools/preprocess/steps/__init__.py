@@ -6,3 +6,4 @@ from .zscore import Zscore
 from .dbl_exp_fit import DblExpFit
 from .motion_correct import MotionCorrect
 from .rename import Rename
+from .remove import Remove
