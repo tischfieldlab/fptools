@@ -5,7 +5,7 @@ from ..common import Pipeline, PairedSignalList, Processor, _flatten_paired_sign
 
 
 class TdtDefaultPipeline(Pipeline):
-    """Preprocess using a the pipeline described by TDT.
+    """Process using a the pipeline described by TDT.
 
     Implemented as described in:
     https://www.tdt.com/docs/sdk/offline-data-analysis/offline-data-python/examples/

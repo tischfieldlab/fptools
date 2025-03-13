@@ -10,7 +10,7 @@ from ..common import ProcessorThatPlots, SignalList
 
 
 class TrimSignals(ProcessorThatPlots):
-    """A `Preprocessor` that trims signals."""
+    """A `Processor` that trims signals."""
 
     def __init__(
         self,
@@ -19,7 +19,7 @@ class TrimSignals(ProcessorThatPlots):
         end: Union[None, int, float] = None,
         scalar_name: str = "Fi1i",
     ):
-        """Initialize this preprocessor.
+        """Initialize this processor.
 
         Args:
             signals: list of signal names to be trimmed
@@ -33,13 +33,13 @@ class TrimSignals(ProcessorThatPlots):
         self.scalar = scalar_name
 
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this processing step.
 
         Args:
             session: the session to operate upon
 
         Returns:
-            Session with the preprocessing step applied
+            Session with the processing step applied
         """
         for signame in self.signals:
             sig = session.signals[signame]
@@ -66,7 +66,7 @@ class TrimSignals(ProcessorThatPlots):
         return session
 
     def plot(self, session: Session, ax: Axes):
-        """Plot the effects of this preprocessing step. Will show trimmed signals.
+        """Plot the effects of this processing step. Will show trimmed signals.
 
         Args:
             session: the session being operated upon

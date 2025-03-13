@@ -7,10 +7,10 @@ from ..common import ProcessorThatPlots, SignalList
 
 
 class Zscore(ProcessorThatPlots):
-    """A `Preprocessor` that calculates signal z-scores."""
+    """A `Processor` that calculates signal z-scores."""
 
     def __init__(self, signals: SignalList):
-        """Initialize this preprocessor.
+        """Initialize this Processor.
 
         Args:
             signals: list of signal names to be downsampled
@@ -19,7 +19,7 @@ class Zscore(ProcessorThatPlots):
         self.signals = signals
 
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this Processing step.
 
         Args:
             session: the session to operate upon

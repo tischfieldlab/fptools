@@ -7,10 +7,10 @@ from ..common import ProcessorThatPlots, PairedSignalList
 
 
 class MotionCorrect(ProcessorThatPlots):
-    """A `Preprocessor` that estimates and corrects for motion artifacts."""
+    """A `Processor` that estimates and corrects for motion artifacts."""
 
     def __init__(self, signals: PairedSignalList):
-        """Initialize this preprocessor.
+        """Initialize this processor.
 
         Args:
             signals: list of signal names to be downsampled
@@ -18,13 +18,13 @@ class MotionCorrect(ProcessorThatPlots):
         self.signals = signals
 
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this processing step.
 
         Args:
             session: the session to operate upon
 
         Returns:
-            Session with the preprocessing step applied
+            Session with the processing step applied
         """
         for sig1, sig2 in self.signals:
             exp = session.signals[sig1]
@@ -41,7 +41,7 @@ class MotionCorrect(ProcessorThatPlots):
         return session
 
     def plot(self, session: Session, ax: Axes):
-        """Plot the effects of this preprocessing step. Will show the motion estimate and the corrected signal.
+        """Plot the effects of this processing step. Will show the motion estimate and the corrected signal.
 
         Args:
             session: the session being operated upon

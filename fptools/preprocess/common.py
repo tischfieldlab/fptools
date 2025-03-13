@@ -25,33 +25,33 @@ def _remap_paired_signals(signals: PairedSignalList, rename_map: dict[str, str])
 
 
 class Processor(ABC):
-    """Abstract Preprocessor.
+    """Abstract Processor.
 
     Implementors should implement the `__call__` method.
     """
 
     @abstractmethod
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this processing step.
 
         Args:
             session: the session to operate upon
 
         Returns:
-            Session with the preprocessing step applied
+            Session with the processing step applied
         """
         raise NotImplementedError()
 
 
 class ProcessorThatPlots(Processor):
-    """Abstract Preprocessor.
+    """Abstract Processor which has the ability to plot.
 
     Implementors should implement the `__call__` and `plot` methods.
     """
 
     @abstractmethod
     def plot(self, session: Session, ax: Axes) -> None:
-        """Plot the effects of this preprocessing step.
+        """Plot the effects of this processing step.
 
         Args:
             session: the session being operated upon
@@ -61,13 +61,13 @@ class ProcessorThatPlots(Processor):
 
 
 class Pipeline(Processor):
-    """A pipeline of Preprocessors."""
+    """A pipeline of Processors, and is itself a Processor."""
 
     def __init__(self, steps: Optional[list[Processor]] = None, plot: bool = True, plot_dir: Optional[str] = None):
         """Initialize this pipeline.
 
         Args:
-            steps: list of preprocessors to run on a given Session
+            steps: list of Processors to run on a given Session
             plot: whether to plot the results of each step
             plot_dir: directory to save plots to, if None, will save to current working directory
         """
@@ -87,7 +87,7 @@ class Pipeline(Processor):
             session: the session to operate on
 
         Returns:
-            Session with Preprocessors applied
+            Session with Processors applied
         """
         try:
             if self.plot:

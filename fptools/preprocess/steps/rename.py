@@ -6,12 +6,12 @@ from ..common import ProcessorThatPlots
 
 
 class Rename(ProcessorThatPlots):
-    """A `Preprocessor` that allows you to rename things."""
+    """A `Processor` that allows you to rename things."""
 
     def __init__(
         self, signals: Optional[dict[str, str]] = None, epocs: Optional[dict[str, str]] = None, scalars: Optional[dict[str, str]] = None
     ):
-        """Initialize this preprocessor.
+        """Initialize this processor.
 
         Args:
             signals: dictionary of signal names to be renamed
@@ -23,13 +23,13 @@ class Rename(ProcessorThatPlots):
         self.scalars = scalars
 
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this processing step.
 
         Args:
             session: the session to operate upon
 
         Returns:
-            Session with the preprocessing step applied
+            Session with the processing step applied
         """
         if self.signals is not None:
             for k, v in self.signals.items():
@@ -46,7 +46,7 @@ class Rename(ProcessorThatPlots):
         return session
 
     def plot(self, session: Session, ax: Axes):
-        """Plot the effects of this preprocessing step. Will show the computed dF/F signal.
+        """Plot the effects of this processing step. Will show the computed dF/F signal.
 
         Args:
             session: the session being operated upon

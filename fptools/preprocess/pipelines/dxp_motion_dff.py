@@ -5,7 +5,7 @@ from ..steps import Dff, Downsample, TrimSignals, DblExpFit, MotionCorrect, Rena
 
 
 class DxpMotionDffPipeline(Pipeline):
-    """Preprocess using a double exponential fit for detrending, producing df/f values.
+    """Process using a double exponential fit for detrending, producing df/f values.
 
     Implemented as described in:
     Simpson et al. Neuron, 2024. https://doi.org/10.1016/j.neuron.2023.11.016

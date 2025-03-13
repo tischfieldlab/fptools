@@ -9,10 +9,10 @@ from ..common import ProcessorThatPlots, SignalList
 
 
 class DblExpFit(ProcessorThatPlots):
-    """A `Preprocessor` that fits a double exponential function."""
+    """A `Processor` that fits a double exponential function."""
 
     def __init__(self, signals: SignalList, apply: bool = True):
-        """Initialize this preprocessor.
+        """Initialize this processor.
 
         Args:
             signals: list of signal names to be fitted
@@ -22,13 +22,13 @@ class DblExpFit(ProcessorThatPlots):
         self.apply = apply
 
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this processing step.
 
         Args:
             session: the session to operate upon
 
         Returns:
-            Session with the preprocessing step applied
+            Session with the processing step applied
         """
         for signame in self.signals:
             sig = session.signals[signame]
@@ -47,7 +47,7 @@ class DblExpFit(ProcessorThatPlots):
         return session
 
     def plot(self, session: Session, ax: Axes):
-        """Plot the effects of this preprocessing step. Will show the double exponential fit.
+        """Plot the effects of this processing step. Will show the double exponential fit.
 
         Args:
             session: the session being operated upon

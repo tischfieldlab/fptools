@@ -6,10 +6,10 @@ from ..common import ProcessorThatPlots, SignalList
 
 
 class RemoveSignals(ProcessorThatPlots):
-    """A `Preprocessor` that allows you to rename things."""
+    """A `Processor` that allows you to rename things."""
 
     def __init__(self, signals: SignalList):
-        """Initialize this preprocessor.
+        """Initialize this processor.
 
         Args:
             signals: signals to be removed
@@ -17,13 +17,13 @@ class RemoveSignals(ProcessorThatPlots):
         self.signals = signals
 
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this processing step.
 
         Args:
             session: the session to operate upon
 
         Returns:
-            Session with the preprocessing step applied
+            Session with the processing step applied
         """
         for signame in self.signals:
             session.remove_signal(signame)
@@ -31,7 +31,7 @@ class RemoveSignals(ProcessorThatPlots):
         return session
 
     def plot(self, session: Session, ax: Axes):
-        """Plot the effects of this preprocessing step. Will show the computed dF/F signal.
+        """Plot the effects of this processing step. Will show the computed dF/F signal.
 
         Args:
             session: the session being operated upon

@@ -7,10 +7,10 @@ from ..common import ProcessorThatPlots, SignalList
 
 
 class Lowpass(ProcessorThatPlots):
-    """A `Preprocessor` that generates a lowpass filtered signal."""
+    """A `Processor` that generates a lowpass filtered signal."""
 
     def __init__(self, signals: SignalList, frequency: float = 0.01):
-        """Initialize this preprocessor.
+        """Initialize this processor.
 
         Args:
             signals: list of signal names to be downsampled
@@ -20,13 +20,13 @@ class Lowpass(ProcessorThatPlots):
         self.frequency = frequency
 
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this processing step.
 
         Args:
             session: the session to operate upon
 
         Returns:
-            Session with the preprocessing step applied
+            Session with the processing step applied
         """
         for signame in self.signals:
             sig = session.signals[signame]
@@ -38,7 +38,7 @@ class Lowpass(ProcessorThatPlots):
         return session
 
     def plot(self, session: Session, ax: Axes):
-        """Plot the effects of this preprocessing step. Will show the lowpass filtered signal.
+        """Plot the effects of this processing step. Will show the lowpass filtered signal.
 
         Args:
             session: the session being operated upon

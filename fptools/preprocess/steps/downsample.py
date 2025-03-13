@@ -8,10 +8,10 @@ from ..common import ProcessorThatPlots, SignalList
 
 
 class Downsample(ProcessorThatPlots):
-    """A `Preprocessor` that downsamples signals."""
+    """A `Processor` that downsamples signals."""
 
     def __init__(self, signals: SignalList, window: int = 10, factor: int = 10):
-        """Initialize this preprocessor.
+        """Initialize this processor.
 
         Downsampling performs a moving average convolution, with window size `window`, and then samples every `factor` steps.
 
@@ -25,13 +25,13 @@ class Downsample(ProcessorThatPlots):
         self.factor = factor
 
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this processing step.
 
         Args:
             session: the session to operate upon
 
         Returns:
-            Session with the preprocessing step applied
+            Session with the processing step applied
         """
         for signame in self.signals:
             sig = session.signals[signame]
@@ -41,7 +41,7 @@ class Downsample(ProcessorThatPlots):
         return session
 
     def plot(self, session: Session, ax: Axes):
-        """Plot the effects of the preprocessing step. Will show the downsampled signals.
+        """Plot the effects of the processing step. Will show the downsampled signals.
 
         Args:
             session: the session being operated upon

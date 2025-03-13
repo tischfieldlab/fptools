@@ -6,10 +6,10 @@ from ..common import ProcessorThatPlots, PairedSignalList
 
 
 class Dff(ProcessorThatPlots):
-    """A `Preprocessor` that calculates signal dF/F."""
+    """A `Processor` that calculates signal dF/F."""
 
     def __init__(self, signals: PairedSignalList, center: bool = True):
-        """Initialize this preprocessor.
+        """Initialize this processor.
 
         Args:
             signals: list of signal names to be downsampled
@@ -19,13 +19,13 @@ class Dff(ProcessorThatPlots):
         self.center = center
 
     def __call__(self, session: Session) -> Session:
-        """Effect this preprocessing step.
+        """Effect this processing step.
 
         Args:
             session: the session to operate upon
 
         Returns:
-            Session with the preprocessing step applied
+            Session with the processing step applied
         """
         for sig1, sig2 in self.signals:
             exp = session.signals[sig1]
@@ -40,7 +40,7 @@ class Dff(ProcessorThatPlots):
         return session
 
     def plot(self, session: Session, ax: Axes):
-        """Plot the effects of this preprocessing step. Will show the computed dF/F signal.
+        """Plot the effects of this processing step. Will show the computed dF/F signal.
 
         Args:
             session: the session being operated upon

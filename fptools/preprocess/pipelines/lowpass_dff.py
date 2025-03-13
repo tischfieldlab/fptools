@@ -5,7 +5,7 @@ from ..common import Pipeline, Processor, SignalList, _remap_signals
 
 
 class LowpassDFFPipeline(Pipeline):
-    """A "simple" preprocess pipeline based on ultra-lowpass filtering.
+    """A "simple" Processor pipeline based on ultra-lowpass filtering.
 
     Implemented as described in:
     Cai, Kaeser, et al. Dopamine dynamics are dispensable for movement but promote reward responses.
