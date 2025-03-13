@@ -2,6 +2,7 @@ from matplotlib.axes import Axes
 import seaborn as sns
 
 from fptools.io import Session
+from fptools.viz import plot_signal
 from ..lib import lowpass_filter
 from ..common import ProcessorThatPlots, SignalList
 
@@ -47,7 +48,7 @@ class Lowpass(ProcessorThatPlots):
         palette = sns.color_palette("colorblind", n_colors=len(self.signals))
         for i, signame in enumerate(self.signals):
             sig = session.signals[f"{signame}_lowpass"]
-            ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i], linestyle="--")
+            plot_signal(sig, ax=ax, show_indv=True, color=palette[i], indv_c=palette[i], agg_kwargs={"label": sig.name})
         ax.set_title("Lowpass Filtered Signal")
         ax.legend(loc="upper left")
         sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))

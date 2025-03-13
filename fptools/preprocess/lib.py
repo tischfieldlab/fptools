@@ -2,6 +2,7 @@ from typing import Optional
 import numpy as np
 import scipy
 import scipy.stats
+import scipy.signal
 
 
 def fs2t(fs: float, length: int) -> np.ndarray:
@@ -41,7 +42,7 @@ def lowpass_filter(signal: np.ndarray, fs: float, Wn: float = 10) -> np.ndarray:
         lowpass filtered signal
     """
     b, a = scipy.signal.butter(2, Wn, btype="lowpass", fs=fs)
-    return scipy.signal.filtfilt(b, a, signal)
+    return scipy.signal.filtfilt(b, a, signal, axis=-1)
 
 
 def double_exponential(t: np.ndarray, const: float, amp_fast: float, amp_slow: float, tau_slow: float, tau_multiplier: float) -> np.ndarray:
