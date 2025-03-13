@@ -1,22 +1,30 @@
+from typing import Literal, Optional
 from matplotlib.axes import Axes
+import numpy as np
 import seaborn as sns
-from scipy import stats
 
 from fptools.io import Session
+from fptools.viz import plot_signal
+from ..lib import mad
 from ..common import ProcessorThatPlots, SignalList
 
 
 class Zscore(ProcessorThatPlots):
     """A `Processor` that calculates signal z-scores."""
 
-    def __init__(self, signals: SignalList):
+    def __init__(
+        self, signals: SignalList, mode: Literal["zscore", "modified_zscore"] = "zscore", baseline: Optional[tuple[float, float]] = None
+    ):
         """Initialize this Processor.
 
         Args:
             signals: list of signal names to be downsampled
-            frequency: critical frequency used for lowpass filter
+            mode: the type of z-score to calculate, either "zscore", which uses traditional z-scoring, or "modified_zscore", which uses the median absolute deviation
+            baseline: the time window to use for the baseline calculation, in seconds. If None, the entire signal is used.
         """
         self.signals = signals
+        self.mode = mode
+        self.baseline = baseline
 
     def __call__(self, session: Session) -> Session:
         """Effect this Processing step.
@@ -30,13 +38,27 @@ class Zscore(ProcessorThatPlots):
         for signame in self.signals:
             sig = session.signals[signame]
 
-            sig.signal = stats.zscore(sig.signal)
-            sig.units = "SDs"
+            if self.baseline is not None:
+                baseline_data = sig.signal[..., sig.tindex(self.baseline[0]) : sig.tindex(self.baseline[1])]
+            else:
+                baseline_data = sig.signal
+
+            if self.mode == "zscore":
+                mean = baseline_data.mean(axis=-1, keepdims=True)
+                std = baseline_data.std(axis=-1, keepdims=True)
+                sig.signal = (sig.signal - mean) / std
+                sig.units = "Z-score"
+
+            elif self.mode == "modified_zscore":
+                median = np.median(baseline_data, axis=-1, keepdims=True)
+                mad_val = mad(baseline_data)
+                sig.signal = (0.6745 * (sig.signal - median)) / mad_val
+                sig.units = "mZ-score"
 
         return session
 
     def plot(self, session: Session, ax: Axes):
-        """Plot the effects of this preprocessing step. Will show the computed zscore signal.
+        """Plot the effects of this processing step. Will show the computed zscore signal.
 
         Args:
             session: the session being operated upon
@@ -45,7 +67,7 @@ class Zscore(ProcessorThatPlots):
         palette = sns.color_palette("colorblind", n_colors=len(self.signals))
         for i, signame in enumerate(self.signals):
             sig = session.signals[signame]
-            ax.plot(sig.time, sig.signal, label=f"corrected {sig.name}", c=palette[i], linestyle="-")
-        ax.set_title("Calculated zscore Signal")
+            plot_signal(sig, ax=ax, show_indv=True, color=palette[i], indv_c=palette[i], agg_kwargs={"label": sig.name})
+        ax.set_title("Calculated z-scored Signal")
         ax.legend(loc="upper left")
         sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))

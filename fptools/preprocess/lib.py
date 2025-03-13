@@ -132,7 +132,9 @@ def downsample(*signals: np.ndarray, window: int = 10, factor: int = 10) -> tupl
     Returns:
         downsampled signal(s)
     """
-    return tuple(np.apply_along_axis(np.convolve, axis=-1, arr=sig, v=np.ones(window) / window, mode="valid")[..., ::factor] for sig in signals)
+    return tuple(
+        np.apply_along_axis(np.convolve, axis=-1, arr=sig, v=np.ones(window) / window, mode="valid")[..., ::factor] for sig in signals
+    )
 
 
 def trim(*signals: np.ndarray, begin: Optional[int] = None, end: Optional[int] = None) -> tuple[np.ndarray, ...]:
@@ -183,4 +185,4 @@ def mad(data: np.ndarray) -> float:
     Returns:
         The MAD of the data.
     """
-    return np.median(np.abs(data - np.median(data)))
+    return np.median(np.abs(data - np.median(data, axis=-1, keepdims=True)), axis=-1, keepdims=True)
