@@ -2,6 +2,7 @@ from matplotlib.axes import Axes
 import seaborn as sns
 
 from fptools.io import Session
+from fptools.viz.signal import plot_signal
 from ..lib import downsample, t2fs
 from ..common import ProcessorThatPlots, SignalList
 
@@ -49,7 +50,7 @@ class Downsample(ProcessorThatPlots):
         palette = sns.color_palette("colorblind", n_colors=len(self.signals))
         for i, signame in enumerate(self.signals):
             sig = session.signals[signame]
-            ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i])
+            plot_signal(sig, ax=ax, show_indv=True, color=palette[i], indv_c=palette[i], agg_kwargs={"label": sig.name})
         ax.set_title("Downsampled Signal")
         ax.legend(loc="upper left")
         sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
