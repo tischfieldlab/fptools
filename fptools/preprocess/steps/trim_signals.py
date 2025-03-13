@@ -12,13 +12,20 @@ from ..common import ProcessorThatPlots, SignalList
 class TrimSignals(ProcessorThatPlots):
     """A `Preprocessor` that trims signals."""
 
-    def __init__(self, signals: SignalList, begin: Union[None, Literal["auto"], int, float] = None, end: Union[None, int, float] = None, scalar_name: str = "Fi1i"):
+    def __init__(
+        self,
+        signals: SignalList,
+        begin: Union[None, Literal["auto"], int, float] = None,
+        end: Union[None, int, float] = None,
+        scalar_name: str = "Fi1i",
+    ):
         """Initialize this preprocessor.
 
         Args:
             signals: list of signal names to be trimmed
             begin: if not None, trim that amount of time (in seconds) from the beginning of the signal. If "auto", use the offset stored in `block.scalars.Fi1i.ts` for trimming
             end: if not None, trim that amount of time (in seconds) from the end of the signal.
+            scalar_name: name of the scalar to use for trimming when begin is "auto". Default is "Fi1i".
         """
         self.signals = signals
         self.begin = begin

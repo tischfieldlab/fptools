@@ -14,7 +14,8 @@ class BaselineZscore(ProcessorThatPlots):
 
         Args:
             signals: list of signal names to be downsampled
-            frequency: critical frequency used for lowpass filter
+            start: start of the baseline period (in seconds)
+            stop: end of the baseline period (in seconds)
         """
         self.signals = signals
         self.start = start
@@ -36,7 +37,7 @@ class BaselineZscore(ProcessorThatPlots):
             stop = int(self.stop * sig.fs)
 
             mean = sig.signal[:, start:stop].mean(axis=-1, keepdims=True)
-            std  = sig.signal[:, start:stop].std(axis=-1, keepdims=True)
+            std = sig.signal[:, start:stop].std(axis=-1, keepdims=True)
             sig.signal = (sig.signal - mean) / std
             sig.units = "SDs"
 

@@ -1,4 +1,4 @@
-from typing import Protocol
+from typing import Any, Protocol
 
 from .session import Session
 
@@ -8,6 +8,7 @@ class DataTypeAdaptor:
         """Initialize this DataTypeAdaptor."""
         self.name: str
         self.path: str
+        self.metadata: dict[str, Any] = {}
         self.loaders: list[Loader] = []
 
 
