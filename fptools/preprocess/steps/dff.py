@@ -2,6 +2,7 @@ from matplotlib.axes import Axes
 import seaborn as sns
 
 from fptools.io import Session
+from fptools.viz import plot_signal
 from ..common import ProcessorThatPlots, PairedSignalList
 
 
@@ -49,7 +50,7 @@ class Dff(ProcessorThatPlots):
         palette = sns.color_palette("colorblind", n_colors=len(self.signals))
         for i, (signame, _) in enumerate(self.signals):
             sig = session.signals[signame]
-            ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i], linestyle="-")
+            plot_signal(sig, ax=ax, show_indv=True, color=palette[i], indv_c=palette[i], agg_kwargs={"label": sig.name})
         ax.set_title("Calculated dF/F Signal")
         ax.legend(loc="upper left")
         sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
