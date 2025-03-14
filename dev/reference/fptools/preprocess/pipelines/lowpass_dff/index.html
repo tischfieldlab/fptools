@@ -1139,28 +1139,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../../steps/baseline_zscore/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    baseline_zscore
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../../steps/dbl_exp_fit/" class="md-nav__link">
         
   
@@ -1271,11 +1249,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../steps/remove_signals/" class="md-nav__link">
+      <a href="../../steps/remove/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    remove_signals
+    remove
     
   </span>
   
@@ -1658,7 +1636,7 @@
           <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;LowpassDFFPipeline&lt;/code&gt; (&lt;code&gt;fptools.preprocess.pipelines.lowpass_dff.LowpassDFFPipeline&lt;/code&gt;)" href="#fptools.preprocess.pipelines.lowpass_dff.LowpassDFFPipeline">LowpassDFFPipeline</a></code></b>
           –
           <div class="doc-md-description">
-            <p>A "simple" preprocess pipeline based on ultra-lowpass filtering.</p>
+            <p>A "simple" Processor pipeline based on ultra-lowpass filtering.</p>
           </div>
         </li>
     </ul>
@@ -1694,7 +1672,7 @@
               Bases: <code><a class="autorefs autorefs-internal" title="&lt;code&gt;Pipeline&lt;/code&gt; (&lt;code&gt;fptools.preprocess.common.Pipeline&lt;/code&gt;)" href="../../common/#fptools.preprocess.common.Pipeline">Pipeline</a></code></p>
 
 
-        <p>A "simple" preprocess pipeline based on ultra-lowpass filtering.</p>
+        <p>A "simple" Processor pipeline based on ultra-lowpass filtering.</p>
 <p>Implemented as described in:
 Cai, Kaeser, et al. Dopamine dynamics are dispensable for movement but promote reward responses.
 Nature, 2024. https://doi.org/10.1038/s41586-024-08038-z</p>
@@ -1729,7 +1707,7 @@ Nature, 2024. https://doi.org/10.1038/s41586-024-08038-z</p>
               <details class="quote">
                 <summary>Source code in <code>fptools/preprocess/pipelines/lowpass_dff.py</code></summary>
                 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-7" name="__codelineno-0-7"></a><a href="#__codelineno-0-7"><span class="linenos" data-linenos=" 7 "></span></a><span class="k">class</span><span class="w"> </span><span class="nc">LowpassDFFPipeline</span><span class="p">(</span><span class="n">Pipeline</span><span class="p">):</span>
-<a id="__codelineno-0-8" name="__codelineno-0-8"></a><a href="#__codelineno-0-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A &quot;simple&quot; preprocess pipeline based on ultra-lowpass filtering.</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8"></a><a href="#__codelineno-0-8"><span class="linenos" data-linenos=" 8 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A &quot;simple&quot; Processor pipeline based on ultra-lowpass filtering.</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9"></a><a href="#__codelineno-0-9"><span class="linenos" data-linenos=" 9 "></span></a>
 <a id="__codelineno-0-10" name="__codelineno-0-10"></a><a href="#__codelineno-0-10"><span class="linenos" data-linenos="10 "></span></a><span class="sd">    Implemented as described in:</span>
 <a id="__codelineno-0-11" name="__codelineno-0-11"></a><a href="#__codelineno-0-11"><span class="linenos" data-linenos="11 "></span></a><span class="sd">    Cai, Kaeser, et al. Dopamine dynamics are dispensable for movement but promote reward responses.</span>

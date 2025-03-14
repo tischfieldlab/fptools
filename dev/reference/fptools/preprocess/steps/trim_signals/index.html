@@ -1093,28 +1093,6 @@
   
   
     <li class="md-nav__item">
-      <a href="../baseline_zscore/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    baseline_zscore
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
       <a href="../dbl_exp_fit/" class="md-nav__link">
         
   
@@ -1225,11 +1203,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../remove_signals/" class="md-nav__link">
+      <a href="../remove/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    remove_signals
+    remove
     
   </span>
   
@@ -1658,7 +1636,7 @@
           <b><code><a class="autorefs autorefs-internal" title="&lt;code&gt;TrimSignals&lt;/code&gt; (&lt;code&gt;fptools.preprocess.steps.trim_signals.TrimSignals&lt;/code&gt;)" href="#fptools.preprocess.steps.trim_signals.TrimSignals">TrimSignals</a></code></b>
           –
           <div class="doc-md-description">
-            <p>A <code>Preprocessor</code> that trims signals.</p>
+            <p>A <code>Processor</code> that trims signals.</p>
           </div>
         </li>
     </ul>
@@ -1694,7 +1672,7 @@
               Bases: <code><a class="autorefs autorefs-internal" title="&lt;code&gt;ProcessorThatPlots&lt;/code&gt; (&lt;code&gt;fptools.preprocess.common.ProcessorThatPlots&lt;/code&gt;)" href="../../common/#fptools.preprocess.common.ProcessorThatPlots">ProcessorThatPlots</a></code></p>
 
 
-        <p>A <code>Preprocessor</code> that trims signals.</p>
+        <p>A <code>Processor</code> that trims signals.</p>
 
 
 
@@ -1711,21 +1689,21 @@
             <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;highlight language-python&quot;&gt;&lt;span class=&quot;fm&quot;&gt;__call__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt; (&lt;code&gt;fptools.preprocess.steps.trim_signals.TrimSignals.__call__&lt;/code&gt;)" href="#fptools.preprocess.steps.trim_signals.TrimSignals.__call__">__call__</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Effect this preprocessing step.</p>
+              <p>Effect this processing step.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
             <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;highlight language-python&quot;&gt;&lt;span class=&quot;fm&quot;&gt;__init__&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;signals&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;begin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;end&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;kc&quot;&gt;None&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;scalar_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&amp;#39;Fi1i&amp;#39;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt; (&lt;code&gt;fptools.preprocess.steps.trim_signals.TrimSignals.__init__&lt;/code&gt;)" href="#fptools.preprocess.steps.trim_signals.TrimSignals.__init__">__init__</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Initialize this preprocessor.</p>
+              <p>Initialize this processor.</p>
             </div>
           </li>
           <li class="doc-section-item field-body">
             <b><code><a class="autorefs autorefs-internal" title="&lt;code class=&quot;highlight language-python&quot;&gt;&lt;span class=&quot;n&quot;&gt;plot&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;session&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ax&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;/code&gt; (&lt;code&gt;fptools.preprocess.steps.trim_signals.TrimSignals.plot&lt;/code&gt;)" href="#fptools.preprocess.steps.trim_signals.TrimSignals.plot">plot</a></code></b>
             –
             <div class="doc-md-description">
-              <p>Plot the effects of this preprocessing step. Will show trimmed signals.</p>
+              <p>Plot the effects of this processing step. Will show trimmed signals.</p>
             </div>
           </li>
     </ul>
@@ -1735,7 +1713,7 @@
               <details class="quote">
                 <summary>Source code in <code>fptools/preprocess/steps/trim_signals.py</code></summary>
                 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-12" name="__codelineno-0-12"></a><a href="#__codelineno-0-12"><span class="linenos" data-linenos="12 "></span></a><span class="k">class</span><span class="w"> </span><span class="nc">TrimSignals</span><span class="p">(</span><span class="n">ProcessorThatPlots</span><span class="p">):</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a><a href="#__codelineno-0-13"><span class="linenos" data-linenos="13 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A `Preprocessor` that trims signals.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13"></a><a href="#__codelineno-0-13"><span class="linenos" data-linenos="13 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;A `Processor` that trims signals.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-14" name="__codelineno-0-14"></a><a href="#__codelineno-0-14"><span class="linenos" data-linenos="14 "></span></a>
 <a id="__codelineno-0-15" name="__codelineno-0-15"></a><a href="#__codelineno-0-15"><span class="linenos" data-linenos="15 "></span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
 <a id="__codelineno-0-16" name="__codelineno-0-16"></a><a href="#__codelineno-0-16"><span class="linenos" data-linenos="16 "></span></a>        <span class="bp">self</span><span class="p">,</span>
@@ -1744,7 +1722,7 @@
 <a id="__codelineno-0-19" name="__codelineno-0-19"></a><a href="#__codelineno-0-19"><span class="linenos" data-linenos="19 "></span></a>        <span class="n">end</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-20" name="__codelineno-0-20"></a><a href="#__codelineno-0-20"><span class="linenos" data-linenos="20 "></span></a>        <span class="n">scalar_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Fi1i&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><a href="#__codelineno-0-21"><span class="linenos" data-linenos="21 "></span></a>    <span class="p">):</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a><a href="#__codelineno-0-22"><span class="linenos" data-linenos="22 "></span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize this preprocessor.</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a><a href="#__codelineno-0-22"><span class="linenos" data-linenos="22 "></span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize this processor.</span>
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a><a href="#__codelineno-0-23"><span class="linenos" data-linenos="23 "></span></a>
 <a id="__codelineno-0-24" name="__codelineno-0-24"></a><a href="#__codelineno-0-24"><span class="linenos" data-linenos="24 "></span></a><span class="sd">        Args:</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a><a href="#__codelineno-0-25"><span class="linenos" data-linenos="25 "></span></a><span class="sd">            signals: list of signal names to be trimmed</span>
@@ -1758,13 +1736,13 @@
 <a id="__codelineno-0-33" name="__codelineno-0-33"></a><a href="#__codelineno-0-33"><span class="linenos" data-linenos="33 "></span></a>        <span class="bp">self</span><span class="o">.</span><span class="n">scalar</span> <span class="o">=</span> <span class="n">scalar_name</span>
 <a id="__codelineno-0-34" name="__codelineno-0-34"></a><a href="#__codelineno-0-34"><span class="linenos" data-linenos="34 "></span></a>
 <a id="__codelineno-0-35" name="__codelineno-0-35"></a><a href="#__codelineno-0-35"><span class="linenos" data-linenos="35 "></span></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Session</span><span class="p">:</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><a href="#__codelineno-0-36"><span class="linenos" data-linenos="36 "></span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Effect this preprocessing step.</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><a href="#__codelineno-0-36"><span class="linenos" data-linenos="36 "></span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Effect this processing step.</span>
 <a id="__codelineno-0-37" name="__codelineno-0-37"></a><a href="#__codelineno-0-37"><span class="linenos" data-linenos="37 "></span></a>
 <a id="__codelineno-0-38" name="__codelineno-0-38"></a><a href="#__codelineno-0-38"><span class="linenos" data-linenos="38 "></span></a><span class="sd">        Args:</span>
 <a id="__codelineno-0-39" name="__codelineno-0-39"></a><a href="#__codelineno-0-39"><span class="linenos" data-linenos="39 "></span></a><span class="sd">            session: the session to operate upon</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40"></a><a href="#__codelineno-0-40"><span class="linenos" data-linenos="40 "></span></a>
 <a id="__codelineno-0-41" name="__codelineno-0-41"></a><a href="#__codelineno-0-41"><span class="linenos" data-linenos="41 "></span></a><span class="sd">        Returns:</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><a href="#__codelineno-0-42"><span class="linenos" data-linenos="42 "></span></a><span class="sd">            Session with the preprocessing step applied</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><a href="#__codelineno-0-42"><span class="linenos" data-linenos="42 "></span></a><span class="sd">            Session with the processing step applied</span>
 <a id="__codelineno-0-43" name="__codelineno-0-43"></a><a href="#__codelineno-0-43"><span class="linenos" data-linenos="43 "></span></a><span class="sd">        &quot;&quot;&quot;</span>
 <a id="__codelineno-0-44" name="__codelineno-0-44"></a><a href="#__codelineno-0-44"><span class="linenos" data-linenos="44 "></span></a>        <span class="k">for</span> <span class="n">signame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">:</span>
 <a id="__codelineno-0-45" name="__codelineno-0-45"></a><a href="#__codelineno-0-45"><span class="linenos" data-linenos="45 "></span></a>            <span class="n">sig</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="n">signame</span><span class="p">]</span>
@@ -1791,7 +1769,7 @@
 <a id="__codelineno-0-66" name="__codelineno-0-66"></a><a href="#__codelineno-0-66"><span class="linenos" data-linenos="66 "></span></a>        <span class="k">return</span> <span class="n">session</span>
 <a id="__codelineno-0-67" name="__codelineno-0-67"></a><a href="#__codelineno-0-67"><span class="linenos" data-linenos="67 "></span></a>
 <a id="__codelineno-0-68" name="__codelineno-0-68"></a><a href="#__codelineno-0-68"><span class="linenos" data-linenos="68 "></span></a>    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">):</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a><a href="#__codelineno-0-69"><span class="linenos" data-linenos="69 "></span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the effects of this preprocessing step. Will show trimmed signals.</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a><a href="#__codelineno-0-69"><span class="linenos" data-linenos="69 "></span></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Plot the effects of this processing step. Will show trimmed signals.</span>
 <a id="__codelineno-0-70" name="__codelineno-0-70"></a><a href="#__codelineno-0-70"><span class="linenos" data-linenos="70 "></span></a>
 <a id="__codelineno-0-71" name="__codelineno-0-71"></a><a href="#__codelineno-0-71"><span class="linenos" data-linenos="71 "></span></a><span class="sd">        Args:</span>
 <a id="__codelineno-0-72" name="__codelineno-0-72"></a><a href="#__codelineno-0-72"><span class="linenos" data-linenos="72 "></span></a><span class="sd">            session: the session being operated upon</span>
@@ -1830,7 +1808,7 @@
 
     <div class="doc doc-contents ">
 
-        <p>Effect this preprocessing step.</p>
+        <p>Effect this processing step.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1852,7 +1830,7 @@
               <code><a class="autorefs autorefs-internal" title="&lt;code&gt;Session&lt;/code&gt; (&lt;code&gt;fptools.io.Session&lt;/code&gt;)" href="../../../io/session/#fptools.io.session.Session">Session</a></code>
           –
           <div class="doc-md-description">
-            <p>Session with the preprocessing step applied</p>
+            <p>Session with the processing step applied</p>
           </div>
         </li>
     </ul>
@@ -1861,13 +1839,13 @@
             <details class="quote">
               <summary>Source code in <code>fptools/preprocess/steps/trim_signals.py</code></summary>
               <div class="highlight"><pre><span></span><code><a id="__codelineno-0-35" name="__codelineno-0-35"></a><a href="#__codelineno-0-35"><span class="linenos" data-linenos="35 "></span></a><span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Session</span><span class="p">:</span>
-<a id="__codelineno-0-36" name="__codelineno-0-36"></a><a href="#__codelineno-0-36"><span class="linenos" data-linenos="36 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Effect this preprocessing step.</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36"></a><a href="#__codelineno-0-36"><span class="linenos" data-linenos="36 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Effect this processing step.</span>
 <a id="__codelineno-0-37" name="__codelineno-0-37"></a><a href="#__codelineno-0-37"><span class="linenos" data-linenos="37 "></span></a>
 <a id="__codelineno-0-38" name="__codelineno-0-38"></a><a href="#__codelineno-0-38"><span class="linenos" data-linenos="38 "></span></a><span class="sd">    Args:</span>
 <a id="__codelineno-0-39" name="__codelineno-0-39"></a><a href="#__codelineno-0-39"><span class="linenos" data-linenos="39 "></span></a><span class="sd">        session: the session to operate upon</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40"></a><a href="#__codelineno-0-40"><span class="linenos" data-linenos="40 "></span></a>
 <a id="__codelineno-0-41" name="__codelineno-0-41"></a><a href="#__codelineno-0-41"><span class="linenos" data-linenos="41 "></span></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a><a href="#__codelineno-0-42"><span class="linenos" data-linenos="42 "></span></a><span class="sd">        Session with the preprocessing step applied</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42"></a><a href="#__codelineno-0-42"><span class="linenos" data-linenos="42 "></span></a><span class="sd">        Session with the processing step applied</span>
 <a id="__codelineno-0-43" name="__codelineno-0-43"></a><a href="#__codelineno-0-43"><span class="linenos" data-linenos="43 "></span></a><span class="sd">    &quot;&quot;&quot;</span>
 <a id="__codelineno-0-44" name="__codelineno-0-44"></a><a href="#__codelineno-0-44"><span class="linenos" data-linenos="44 "></span></a>    <span class="k">for</span> <span class="n">signame</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">signals</span><span class="p">:</span>
 <a id="__codelineno-0-45" name="__codelineno-0-45"></a><a href="#__codelineno-0-45"><span class="linenos" data-linenos="45 "></span></a>        <span class="n">sig</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">signals</span><span class="p">[</span><span class="n">signame</span><span class="p">]</span>
@@ -1909,7 +1887,7 @@
 
     <div class="doc doc-contents ">
 
-        <p>Initialize this preprocessor.</p>
+        <p>Initialize this processor.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -1964,7 +1942,7 @@
 <a id="__codelineno-0-19" name="__codelineno-0-19"></a><a href="#__codelineno-0-19"><span class="linenos" data-linenos="19 "></span></a>    <span class="n">end</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-20" name="__codelineno-0-20"></a><a href="#__codelineno-0-20"><span class="linenos" data-linenos="20 "></span></a>    <span class="n">scalar_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;Fi1i&quot;</span><span class="p">,</span>
 <a id="__codelineno-0-21" name="__codelineno-0-21"></a><a href="#__codelineno-0-21"><span class="linenos" data-linenos="21 "></span></a><span class="p">):</span>
-<a id="__codelineno-0-22" name="__codelineno-0-22"></a><a href="#__codelineno-0-22"><span class="linenos" data-linenos="22 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize this preprocessor.</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22"></a><a href="#__codelineno-0-22"><span class="linenos" data-linenos="22 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize this processor.</span>
 <a id="__codelineno-0-23" name="__codelineno-0-23"></a><a href="#__codelineno-0-23"><span class="linenos" data-linenos="23 "></span></a>
 <a id="__codelineno-0-24" name="__codelineno-0-24"></a><a href="#__codelineno-0-24"><span class="linenos" data-linenos="24 "></span></a><span class="sd">    Args:</span>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a><a href="#__codelineno-0-25"><span class="linenos" data-linenos="25 "></span></a><span class="sd">        signals: list of signal names to be trimmed</span>
@@ -1993,7 +1971,7 @@
 
     <div class="doc doc-contents ">
 
-        <p>Plot the effects of this preprocessing step. Will show trimmed signals.</p>
+        <p>Plot the effects of this processing step. Will show trimmed signals.</p>
 
 
 <p><span class="doc-section-title">Parameters:</span></p>
@@ -2020,7 +1998,7 @@
             <details class="quote">
               <summary>Source code in <code>fptools/preprocess/steps/trim_signals.py</code></summary>
               <div class="highlight"><pre><span></span><code><a id="__codelineno-0-68" name="__codelineno-0-68"></a><a href="#__codelineno-0-68"><span class="linenos" data-linenos="68 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">session</span><span class="p">:</span> <span class="n">Session</span><span class="p">,</span> <span class="n">ax</span><span class="p">:</span> <span class="n">Axes</span><span class="p">):</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a><a href="#__codelineno-0-69"><span class="linenos" data-linenos="69 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the effects of this preprocessing step. Will show trimmed signals.</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a><a href="#__codelineno-0-69"><span class="linenos" data-linenos="69 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Plot the effects of this processing step. Will show trimmed signals.</span>
 <a id="__codelineno-0-70" name="__codelineno-0-70"></a><a href="#__codelineno-0-70"><span class="linenos" data-linenos="70 "></span></a>
 <a id="__codelineno-0-71" name="__codelineno-0-71"></a><a href="#__codelineno-0-71"><span class="linenos" data-linenos="71 "></span></a><span class="sd">    Args:</span>
 <a id="__codelineno-0-72" name="__codelineno-0-72"></a><a href="#__codelineno-0-72"><span class="linenos" data-linenos="72 "></span></a><span class="sd">        session: the session being operated upon</span>
