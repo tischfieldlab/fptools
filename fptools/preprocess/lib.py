@@ -108,9 +108,23 @@ def estimate_motion(signal: np.ndarray, control: np.ndarray) -> tuple[np.ndarray
     Returns:
         tuple of (corrected_signal, estimated_motion)
     """
-    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x=control, y=signal)
-    est_motion = intercept + slope * (control)
-    return signal - est_motion, est_motion
+    assert signal.shape == control.shape, "signal and control must have same shapes"
+    if signal.ndim == 2:
+        slopes = np.zeros_like(signal, shape=(signal.shape[0], 1))
+        intercepts = np.zeros_like(signal, shape=(signal.shape[0], 1))
+        for i, (signal_row, control_row) in enumerate(zip(signal, control)):
+            slopes[i], intercepts[i], _, _, _ = scipy.stats.linregress(x=control_row, y=signal_row)
+
+        est_motion =  slopes * (control) + intercepts
+        return signal - est_motion, est_motion
+
+    elif signal.ndim == 1:
+        slope, intercept, _, _, _ = scipy.stats.linregress(x=control, y=signal)
+        est_motion = slope * control + intercept
+        return signal - est_motion, est_motion
+
+    else:
+        raise ValueError("signal must be 1D or 2D")
 
 
 def are_arrays_same_length(*arrays: np.ndarray) -> bool:

@@ -2,7 +2,8 @@ from matplotlib.axes import Axes
 import seaborn as sns
 
 from fptools.io import Session
-from fptools.preprocess.lib import estimate_motion
+from ..lib import estimate_motion
+from fptools.viz import plot_signal
 from ..common import ProcessorThatPlots, PairedSignalList
 
 
@@ -51,8 +52,8 @@ class MotionCorrect(ProcessorThatPlots):
         for i, (signame, _) in enumerate(self.signals):
             sig = session.signals[signame]
             mot = session.signals[f"{signame}_motion_est"]
-            ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i], linestyle="-")
-            ax.plot(mot.time, mot.signal, label=mot.name, c=sns.desaturate(palette[i], 0.3), linestyle="-")
+            plot_signal(sig, ax=ax, show_indv=True, color=palette[i], indv_c=palette[i], agg_kwargs={"label": sig.name})
+            plot_signal(mot, ax=ax, show_indv=True, color=sns.desaturate(palette[i], 0.3), indv_c=sns.desaturate(palette[i], 0.3), agg_kwargs={"label": mot.name})
         ax.set_title("Motion Estimation and Correction")
         ax.legend(loc="upper left")
         sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
