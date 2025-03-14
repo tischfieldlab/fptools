@@ -73,11 +73,25 @@ def fit_double_exponential(time: np.ndarray, signal: np.ndarray) -> np.ndarray:
     Returns:
         array of values from the fitted double exponential curve, samples at the times in `time`.
     """
-    max_sig = np.max(signal)
-    initial_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
-    bounds = ([0, 0, 0, 600, 0], [max_sig, max_sig, max_sig, 36000, 1])
-    parm_opt, parm_cov = scipy.optimize.curve_fit(double_exponential, time, signal, p0=initial_params, bounds=bounds, maxfev=1000)
-    return double_exponential(time, *parm_opt)
+    if signal.ndim == 2:
+        max_sig = np.max(signal)
+        initial_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
+        bounds = ([0, 0, 0, 600, 0], [max_sig, max_sig, max_sig, 36000, 1])
+
+        parm_opt = np.zeros_like(signal, shape=(signal.shape[0], len(initial_params)))
+        for i, sig_row in enumerate(signal):
+            parm_opt[i], _ = scipy.optimize.curve_fit(double_exponential, time, sig_row, p0=initial_params, bounds=bounds, maxfev=1000)
+        return np.array([double_exponential(time, *p) for p in parm_opt])
+    
+    elif signal.ndim == 1:
+        max_sig = np.max(signal)
+        initial_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
+        bounds = ([0, 0, 0, 600, 0], [max_sig, max_sig, max_sig, 36000, 1])
+        parm_opt, _ = scipy.optimize.curve_fit(double_exponential, time, signal, p0=initial_params, bounds=bounds, maxfev=1000)
+        return double_exponential(time, *parm_opt)
+
+    else:
+        raise ValueError("signal must be 1D or 2D")
 
 
 def detrend_double_exponential(time: np.ndarray, signal: np.ndarray) -> tuple[np.ndarray, np.ndarray]:

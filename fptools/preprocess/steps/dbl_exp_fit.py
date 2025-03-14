@@ -1,9 +1,8 @@
-from typing import Literal, Union
-
 from matplotlib.axes import Axes
 import seaborn as sns
 
 from fptools.io import Session
+from fptools.viz import plot_signal
 from ..lib import detrend_double_exponential
 from ..common import ProcessorThatPlots, SignalList
 
@@ -55,12 +54,13 @@ class DblExpFit(ProcessorThatPlots):
         """
         palette = sns.color_palette("colorblind", n_colors=len(self.signals))
         for i, signame in enumerate(self.signals):
-            sig = session.signals[f"{signame}_dxp"]
-            ax.plot(sig.time, sig.signal, label=sig.name, c=palette[i], linestyle="--")
+            sig = session.signals[f"{signame}_dxpfit"]
+            plot_signal(sig, ax=ax, show_indv=True, color=palette[i], indv_c=palette[i], agg_kwargs={"label": sig.name})
 
             if self.apply:
                 sig = session.signals[signame]
-                ax.plot(sig.time, sig.signal, label=f"detrended {sig.name}", c=palette[i], linestyle="-")
+                plot_signal(sig, ax=ax, show_indv=True, color=sns.desaturate(palette[i], 0.3), indv_c=sns.desaturate(palette[i], 0.3), agg_kwargs={"label": f"detrended {sig.name}"})
+
         ax.set_title("Double Exponential Fit")
         ax.legend(loc="upper left")
         sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
