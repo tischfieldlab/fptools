@@ -53,7 +53,14 @@ class MotionCorrect(ProcessorThatPlots):
             sig = session.signals[signame]
             mot = session.signals[f"{signame}_motion_est"]
             plot_signal(sig, ax=ax, show_indv=True, color=palette[i], indv_c=palette[i], agg_kwargs={"label": sig.name})
-            plot_signal(mot, ax=ax, show_indv=True, color=sns.desaturate(palette[i], 0.3), indv_c=sns.desaturate(palette[i], 0.3), agg_kwargs={"label": mot.name})
+            plot_signal(
+                mot,
+                ax=ax,
+                show_indv=True,
+                color=sns.desaturate(palette[i], 0.3),
+                indv_c=sns.desaturate(palette[i], 0.3),
+                agg_kwargs={"label": mot.name},
+            )
         ax.set_title("Motion Estimation and Correction")
         ax.legend(loc="upper left")
         sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))

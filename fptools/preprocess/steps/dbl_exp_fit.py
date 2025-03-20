@@ -59,7 +59,14 @@ class DblExpFit(ProcessorThatPlots):
 
             if self.apply:
                 sig = session.signals[signame]
-                plot_signal(sig, ax=ax, show_indv=True, color=sns.desaturate(palette[i], 0.3), indv_c=sns.desaturate(palette[i], 0.3), agg_kwargs={"label": f"detrended {sig.name}"})
+                plot_signal(
+                    sig,
+                    ax=ax,
+                    show_indv=True,
+                    color=sns.desaturate(palette[i], 0.3),
+                    indv_c=sns.desaturate(palette[i], 0.3),
+                    agg_kwargs={"label": f"detrended {sig.name}"},
+                )
 
         ax.set_title("Double Exponential Fit")
         ax.legend(loc="upper left")
