@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 import numpy as np
 import scipy
 import scipy.stats
@@ -82,7 +82,7 @@ def fit_double_exponential(time: np.ndarray, signal: np.ndarray) -> np.ndarray:
         for i, sig_row in enumerate(signal):
             parm_opt[i], _ = scipy.optimize.curve_fit(double_exponential, time, sig_row, p0=initial_params, bounds=bounds, maxfev=1000)
         return np.array([double_exponential(time, *p) for p in parm_opt])
-    
+
     elif signal.ndim == 1:
         max_sig = np.max(signal)
         initial_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
@@ -129,7 +129,7 @@ def estimate_motion(signal: np.ndarray, control: np.ndarray) -> tuple[np.ndarray
         for i, (signal_row, control_row) in enumerate(zip(signal, control)):
             slopes[i], intercepts[i], _, _, _ = scipy.stats.linregress(x=control_row, y=signal_row)
 
-        est_motion =  slopes * (control) + intercepts
+        est_motion = slopes * (control) + intercepts
         return signal - est_motion, est_motion
 
     elif signal.ndim == 1:
@@ -191,21 +191,29 @@ def trim(*signals: np.ndarray, begin: Optional[int] = None, end: Optional[int] =
     return tuple(sig[..., begin:end] for sig in signals)
 
 
-def zscore_signals(*signals: np.ndarray) -> tuple[np.ndarray, ...]:
-    """Z-score one or more signals.
+def zscore(data: np.ndarray, mu: Optional[Union[float, np.ndarray]] = None, sigma: Optional[Union[float, np.ndarray]] = None) -> np.ndarray:
+    """Z-score some data.
 
-    see: scipy.stats.zscore()
+    Z-scores are calculated as (x - mean) / std.
 
     Args:
-        signals: one or more signals to be z-scores
+        data: data to transform into z-scores
+        mu: mean to use for z-scoring. If None, the mean of the data is used.
+        sigma: standard deviation to use for z-scoring. If None, the standard deviation of the data is used.
 
     Returns:
-        tuple of z-scored signals
+        z-scored data
     """
-    return tuple(scipy.stats.zscore(sig) for sig in signals)
+    if mu is None:
+        mu = data.mean(axis=-1, keepdims=True)
+
+    if sigma is None:
+        sigma = data.std(axis=-1, keepdims=True)
+
+    return (data - mu) / sigma
 
 
-def mad(data: np.ndarray) -> float:
+def mad(data: np.ndarray) -> np.ndarray:
     """Calculate the Median Absolute Deviation (MAD) of a dataset.
 
     Args:
@@ -214,4 +222,48 @@ def mad(data: np.ndarray) -> float:
     Returns:
         The MAD of the data.
     """
-    return np.median(np.abs(data - np.median(data, axis=-1, keepdims=True)), axis=-1, keepdims=True)
+    return np.median(np.absolute(data - np.median(data, axis=-1, keepdims=True)), axis=-1, keepdims=True)
+
+
+def madscore(
+    data: np.ndarray, mu: Optional[Union[float, np.ndarray]] = None, sigma: Optional[Union[float, np.ndarray]] = None
+) -> np.ndarray:
+    """Calculate the MAD score of a dataset.
+
+    Args:
+        data: data to transform into MAD-scores.
+        mu: central value to use for MAD scoring. If None, the median of the data is used.
+        sigma: scale value to use for MAD scoring. If None, the MAD of the data is used.
+
+    Returns:
+        The MAD score of the data.
+    """
+    if mu is None:
+        mu = np.median(data, axis=-1, keepdims=True)
+
+    if sigma is None:
+        sigma = mad(data)
+
+    return (data - mu) / sigma
+
+
+def modified_zscore(
+    data: np.ndarray, mu: Optional[Union[float, np.ndarray]] = None, sigma: Optional[Union[float, np.ndarray]] = None
+) -> np.ndarray:
+    """Calculate the modified z-score of a dataset.
+
+    Args:
+        data: data to transform into modified z-scores
+        mu: central value to use for z-scoring. If None, the median of the data is used.
+        sigma: scale value to use for z-scoring. If None, the MAD of the data is used.
+
+    Returns:
+        The modified z-score of the data.
+    """
+    if mu is None:
+        mu = np.median(data, axis=-1, keepdims=True)
+
+    if sigma is None:
+        sigma = mad(data)
+
+    return 0.6745 * (data - mu) / sigma
