@@ -130,3 +130,62 @@ def measure_peaks(
     # convert results to a dataframe and return
     peak_data = pd.DataFrame(peak_data)
     return peak_data
+
+
+def detect_naive_peaks(
+    sessions: SessionCollection,
+    signal: str,
+    include_meta: FieldList = "all",
+    window: Union[None, tuple[Union[float, None], Union[float, None]]] = None,
+) -> pd.DataFrame:
+    """Detect peaks in a signal by simply finding the maximum value in a given window.
+
+    This function is a naive peak detection method that simply finds the maximum value in a given window. The window can be specified in terms of time (seconds).
+
+    Args:
+        sessions: collection of sessions to work on
+        signal: name of the signal to measure
+        include_meta: metadata fields to include in the final output. Special string "all" will include all metadata fields
+        window: tuple of two floats, representing the start and end time (in seconds) of the window to search for peaks. If None, the entire signal is searched, if any elements of the tuple are None, that edge of the window is expanded to the start or end, respectively.
+
+    Returns:
+        pandas `DataFrame` with peak measurements.
+    """
+    peak_data = []
+    for session in sessions:
+        # determine metadata fields to include
+        if include_meta == "all":
+            meta = session.metadata
+        else:
+            meta = {k: v for k, v in session.metadata.items() if k in include_meta}
+
+        # fetch time and signal data
+        sig = session.signals[signal]
+        _window: tuple[int, int]
+        if window is None:
+            _window = (0, sig.nsamples)
+        elif window[0] is None and window[1] is not None:
+            _window = (0, sig.tindex(window[1]))
+        elif window[0] is not None and window[1] is None:
+            _window = (sig.tindex(window[0]), sig.nsamples)
+        elif window[0] is None and window[1] is None:
+            _window = (0, sig.nsamples)
+        elif window[0] is not None and window[1] is not None:
+            _window = (sig.tindex(window[0]), sig.tindex(window[1]))
+        else:
+            raise ValueError("Invalid window specification")
+
+        for i in range(sig.nobs):
+            peak = np.argmax(sig.signal[i, _window[0] : _window[1]]) + _window[0]
+            result = {
+                **meta,
+                "trial": i,
+                "peak_index": peak,
+                "peak_time": sig.time[peak],
+                "peak_height": sig.signal[i, peak],
+            }
+            peak_data.append(result)
+
+    # convert results to a dataframe and return
+    peak_data = pd.DataFrame(peak_data)
+    return peak_data
