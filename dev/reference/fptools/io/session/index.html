@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.8">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.8608ea7d.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
@@ -2310,31 +2310,6 @@
 <div class="doc doc-object doc-function">
 
 
-<h4 id="fptools.io.session.Session._estimate_memory_use" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">_estimate_memory_use</span><span class="p">()</span></code>
-
-<a href="#fptools.io.session.Session._estimate_memory_use" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Estimate the memory use of this Signal in bytes.</p>
-
-
-            <details class="quote">
-              <summary>Source code in <code>fptools/io/session.py</code></summary>
-              <div class="highlight"><pre><span></span><code><a id="__codelineno-0-289" name="__codelineno-0-289"></a><a href="#__codelineno-0-289"><span class="linenos" data-linenos="289 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">_estimate_memory_use</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a><a href="#__codelineno-0-290"><span class="linenos" data-linenos="290 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate the memory use of this Signal in bytes.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-291" name="__codelineno-0-291"></a><a href="#__codelineno-0-291"><span class="linenos" data-linenos="291 "></span></a>    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimate_memory_use_itemized</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-</code></pre></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
 <h4 id="fptools.io.session.Session.add_signal" class="doc doc-heading">
             <code class="highlight language-python"><span class="n">add_signal</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">overwrite</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></code>
 
@@ -3753,31 +3728,6 @@ new_name: the new name for the scalar</p>
 <a id="__codelineno-0-408" name="__codelineno-0-408"></a><a href="#__codelineno-0-408"><span class="linenos" data-linenos="408 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Initialize this `SessionCollection`.&quot;&quot;&quot;</span>
 <a id="__codelineno-0-409" name="__codelineno-0-409"></a><a href="#__codelineno-0-409"><span class="linenos" data-linenos="409 "></span></a>    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
 <a id="__codelineno-0-410" name="__codelineno-0-410"></a><a href="#__codelineno-0-410"><span class="linenos" data-linenos="410 "></span></a>    <span class="bp">self</span><span class="o">.</span><span class="n">__meta_meta</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">dict</span><span class="p">[</span><span class="n">Literal</span><span class="p">[</span><span class="s2">&quot;order&quot;</span><span class="p">],</span> <span class="n">Any</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
-</code></pre></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h4 id="fptools.io.session.SessionCollection._estimate_memory_use" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">_estimate_memory_use</span><span class="p">()</span></code>
-
-<a href="#fptools.io.session.SessionCollection._estimate_memory_use" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Estimate the memory use of this Signal in bytes.</p>
-
-
-            <details class="quote">
-              <summary>Source code in <code>fptools/io/session.py</code></summary>
-              <div class="highlight"><pre><span></span><code><a id="__codelineno-0-728" name="__codelineno-0-728"></a><a href="#__codelineno-0-728"><span class="linenos" data-linenos="728 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">_estimate_memory_use</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-729" name="__codelineno-0-729"></a><a href="#__codelineno-0-729"><span class="linenos" data-linenos="729 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate the memory use of this Signal in bytes.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-730" name="__codelineno-0-730"></a><a href="#__codelineno-0-730"><span class="linenos" data-linenos="730 "></span></a>    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimate_memory_use_itemized</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
 </code></pre></div>
             </details>
     </div>

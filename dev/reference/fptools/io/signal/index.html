@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.8">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.8608ea7d.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
@@ -2617,64 +2617,6 @@ will be checked against one another, and if they do not match, a ValueError will
 <a id="__codelineno-0-210" name="__codelineno-0-210"></a><a href="#__codelineno-0-210"><span class="linenos" data-linenos="210 "></span></a>    <span class="k">else</span><span class="p">:</span>
 <a id="__codelineno-0-211" name="__codelineno-0-211"></a><a href="#__codelineno-0-211"><span class="linenos" data-linenos="211 "></span></a>        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Division is not defined for type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">other</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 <a id="__codelineno-0-212" name="__codelineno-0-212"></a><a href="#__codelineno-0-212"><span class="linenos" data-linenos="212 "></span></a>    <span class="k">return</span> <span class="n">s</span>
-</code></pre></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h4 id="fptools.io.signal.Signal._estimate_memory_use" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">_estimate_memory_use</span><span class="p">()</span></code>
-
-<a href="#fptools.io.signal.Signal._estimate_memory_use" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Estimate the memory use of this Signal in bytes.</p>
-
-
-            <details class="quote">
-              <summary>Source code in <code>fptools/io/signal.py</code></summary>
-              <div class="highlight"><pre><span></span><code><a id="__codelineno-0-298" name="__codelineno-0-298"></a><a href="#__codelineno-0-298"><span class="linenos" data-linenos="298 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">_estimate_memory_use</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<a id="__codelineno-0-299" name="__codelineno-0-299"></a><a href="#__codelineno-0-299"><span class="linenos" data-linenos="299 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate the memory use of this Signal in bytes.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-300" name="__codelineno-0-300"></a><a href="#__codelineno-0-300"><span class="linenos" data-linenos="300 "></span></a>    <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_estimate_memory_use_itemized</span><span class="p">()</span><span class="o">.</span><span class="n">values</span><span class="p">())</span>
-</code></pre></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h4 id="fptools.io.signal.Signal._estimate_memory_use_itemized" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">_estimate_memory_use_itemized</span><span class="p">()</span></code>
-
-<a href="#fptools.io.signal.Signal._estimate_memory_use_itemized" class="headerlink" title="Permanent link">&para;</a></h4>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Estimate the memory use of this Signal in bytes.</p>
-
-
-            <details class="quote">
-              <summary>Source code in <code>fptools/io/signal.py</code></summary>
-              <div class="highlight"><pre><span></span><code><a id="__codelineno-0-286" name="__codelineno-0-286"></a><a href="#__codelineno-0-286"><span class="linenos" data-linenos="286 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">_estimate_memory_use_itemized</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
-<a id="__codelineno-0-287" name="__codelineno-0-287"></a><a href="#__codelineno-0-287"><span class="linenos" data-linenos="287 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Estimate the memory use of this Signal in bytes.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-288" name="__codelineno-0-288"></a><a href="#__codelineno-0-288"><span class="linenos" data-linenos="288 "></span></a>    <span class="k">return</span> <span class="p">{</span>
-<a id="__codelineno-0-289" name="__codelineno-0-289"></a><a href="#__codelineno-0-289"><span class="linenos" data-linenos="289 "></span></a>        <span class="s2">&quot;self&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="p">),</span>
-<a id="__codelineno-0-290" name="__codelineno-0-290"></a><a href="#__codelineno-0-290"><span class="linenos" data-linenos="290 "></span></a>        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">),</span>
-<a id="__codelineno-0-291" name="__codelineno-0-291"></a><a href="#__codelineno-0-291"><span class="linenos" data-linenos="291 "></span></a>        <span class="s2">&quot;signal&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">signal</span><span class="o">.</span><span class="n">nbytes</span><span class="p">,</span>
-<a id="__codelineno-0-292" name="__codelineno-0-292"></a><a href="#__codelineno-0-292"><span class="linenos" data-linenos="292 "></span></a>        <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">time</span><span class="o">.</span><span class="n">nbytes</span><span class="p">,</span>
-<a id="__codelineno-0-293" name="__codelineno-0-293"></a><a href="#__codelineno-0-293"><span class="linenos" data-linenos="293 "></span></a>        <span class="s2">&quot;fs&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fs</span><span class="p">),</span>
-<a id="__codelineno-0-294" name="__codelineno-0-294"></a><a href="#__codelineno-0-294"><span class="linenos" data-linenos="294 "></span></a>        <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">),</span>
-<a id="__codelineno-0-295" name="__codelineno-0-295"></a><a href="#__codelineno-0-295"><span class="linenos" data-linenos="295 "></span></a>        <span class="s2">&quot;marks&quot;</span><span class="p">:</span> <span class="nb">sum</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">k</span><span class="p">)</span> <span class="o">+</span> <span class="n">sys</span><span class="o">.</span><span class="n">getsizeof</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">marks</span><span class="o">.</span><span class="n">items</span><span class="p">()]),</span>
-<a id="__codelineno-0-296" name="__codelineno-0-296"></a><a href="#__codelineno-0-296"><span class="linenos" data-linenos="296 "></span></a>    <span class="p">}</span>
 </code></pre></div>
             </details>
     </div>

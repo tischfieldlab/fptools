@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.8">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.8608ea7d.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
@@ -1668,72 +1668,6 @@
 
 
 
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="fptools.io.med_associates._parse_line" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">_parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">)</span></code>
-
-<a href="#fptools.io.med_associates._parse_line" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Parse a single session data file line.</p>
-<p>Do a regex search against all defined regexes and
-return the key and match result of the first matching regex</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-            <b><code>line</code></b>
-              (<code><span title="str">str</span></code>)
-          –
-          <div class="doc-md-description">
-            <p>the line to parse</p>
-          </div>
-        </li>
-    </ul>
-
-
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-          –
-          <div class="doc-md-description">
-            <p>(None, None) if no match was found, otherwise the key and match object</p>
-          </div>
-        </li>
-    </ul>
-
-
-            <details class="quote">
-              <summary>Source code in <code>fptools/io/med_associates.py</code></summary>
-              <div class="highlight"><pre><span></span><code><a id="__codelineno-0-84" name="__codelineno-0-84"></a><a href="#__codelineno-0-84"><span class="linenos" data-linenos=" 84 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">_parse_line</span><span class="p">(</span><span class="n">line</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<a id="__codelineno-0-85" name="__codelineno-0-85"></a><a href="#__codelineno-0-85"><span class="linenos" data-linenos=" 85 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Parse a single session data file line.</span>
-<a id="__codelineno-0-86" name="__codelineno-0-86"></a><a href="#__codelineno-0-86"><span class="linenos" data-linenos=" 86 "></span></a>
-<a id="__codelineno-0-87" name="__codelineno-0-87"></a><a href="#__codelineno-0-87"><span class="linenos" data-linenos=" 87 "></span></a><span class="sd">    Do a regex search against all defined regexes and</span>
-<a id="__codelineno-0-88" name="__codelineno-0-88"></a><a href="#__codelineno-0-88"><span class="linenos" data-linenos=" 88 "></span></a><span class="sd">    return the key and match result of the first matching regex</span>
-<a id="__codelineno-0-89" name="__codelineno-0-89"></a><a href="#__codelineno-0-89"><span class="linenos" data-linenos=" 89 "></span></a>
-<a id="__codelineno-0-90" name="__codelineno-0-90"></a><a href="#__codelineno-0-90"><span class="linenos" data-linenos=" 90 "></span></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-91" name="__codelineno-0-91"></a><a href="#__codelineno-0-91"><span class="linenos" data-linenos=" 91 "></span></a><span class="sd">        line: the line to parse</span>
-<a id="__codelineno-0-92" name="__codelineno-0-92"></a><a href="#__codelineno-0-92"><span class="linenos" data-linenos=" 92 "></span></a>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a><a href="#__codelineno-0-93"><span class="linenos" data-linenos=" 93 "></span></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-94" name="__codelineno-0-94"></a><a href="#__codelineno-0-94"><span class="linenos" data-linenos=" 94 "></span></a><span class="sd">        (None, None) if no match was found, otherwise the key and match object</span>
-<a id="__codelineno-0-95" name="__codelineno-0-95"></a><a href="#__codelineno-0-95"><span class="linenos" data-linenos=" 95 "></span></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-96" name="__codelineno-0-96"></a><a href="#__codelineno-0-96"><span class="linenos" data-linenos=" 96 "></span></a>    <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">rx</span> <span class="ow">in</span> <span class="n">_rx_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-<a id="__codelineno-0-97" name="__codelineno-0-97"></a><a href="#__codelineno-0-97"><span class="linenos" data-linenos=" 97 "></span></a>        <span class="n">match</span> <span class="o">=</span> <span class="n">rx</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
-<a id="__codelineno-0-98" name="__codelineno-0-98"></a><a href="#__codelineno-0-98"><span class="linenos" data-linenos=" 98 "></span></a>        <span class="k">if</span> <span class="n">match</span><span class="p">:</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a><a href="#__codelineno-0-99"><span class="linenos" data-linenos=" 99 "></span></a>            <span class="k">return</span> <span class="n">key</span><span class="p">,</span> <span class="n">match</span>
-<a id="__codelineno-0-100" name="__codelineno-0-100"></a><a href="#__codelineno-0-100"><span class="linenos" data-linenos="100 "></span></a>    <span class="c1"># if there are no matches</span>
-<a id="__codelineno-0-101" name="__codelineno-0-101"></a><a href="#__codelineno-0-101"><span class="linenos" data-linenos="101 "></span></a>    <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
-</code></pre></div>
-            </details>
-    </div>
-
-</div>
 
 <div class="doc doc-object doc-function">
 

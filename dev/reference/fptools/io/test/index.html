@@ -18,7 +18,7 @@
       
       
       <link rel="icon" href="../../../../assets/favicon.ico">
-      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.8">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.9">
     
     
       
@@ -26,7 +26,7 @@
       
     
     
-      <link rel="stylesheet" href="../../../../assets/stylesheets/main.8608ea7d.min.css">
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.4af4bdda.min.css">
       
         
         <link rel="stylesheet" href="../../../../assets/stylesheets/palette.06af60db.min.css">
@@ -1661,47 +1661,6 @@
 
 
 
-
-<div class="doc doc-object doc-function">
-
-
-<h3 id="fptools.io.test._get_default_test_data_location" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">_get_default_test_data_location</span><span class="p">()</span></code>
-
-<a href="#fptools.io.test._get_default_test_data_location" class="headerlink" title="Permanent link">&para;</a></h3>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Get the default user test data location, in the users home directory.</p>
-
-
-<p><span class="doc-section-title">Returns:</span></p>
-    <ul>
-        <li class="doc-section-item field-body">
-              <code><span title="str">str</span></code>
-          –
-          <div class="doc-md-description">
-            <p>string path to the default user test data location.</p>
-          </div>
-        </li>
-    </ul>
-
-
-            <details class="quote">
-              <summary>Source code in <code>fptools/io/test.py</code></summary>
-              <div class="highlight"><pre><span></span><code><a id="__codelineno-0-9" name="__codelineno-0-9"></a><a href="#__codelineno-0-9"><span class="linenos" data-linenos=" 9 "></span></a><span class="k">def</span><span class="w"> </span><span class="nf">_get_default_test_data_location</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-0-10" name="__codelineno-0-10"></a><a href="#__codelineno-0-10"><span class="linenos" data-linenos="10 "></span></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the default user test data location, in the users home directory.</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11"></a><a href="#__codelineno-0-11"><span class="linenos" data-linenos="11 "></span></a>
-<a id="__codelineno-0-12" name="__codelineno-0-12"></a><a href="#__codelineno-0-12"><span class="linenos" data-linenos="12 "></span></a><span class="sd">    Returns:</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13"></a><a href="#__codelineno-0-13"><span class="linenos" data-linenos="13 "></span></a><span class="sd">        string path to the default user test data location.</span>
-<a id="__codelineno-0-14" name="__codelineno-0-14"></a><a href="#__codelineno-0-14"><span class="linenos" data-linenos="14 "></span></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-15" name="__codelineno-0-15"></a><a href="#__codelineno-0-15"><span class="linenos" data-linenos="15 "></span></a>    <span class="k">return</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">expanduser</span><span class="p">(</span><span class="s2">&quot;~&quot;</span><span class="p">),</span> <span class="s2">&quot;fptools_test_data&quot;</span><span class="p">)</span>
-</code></pre></div>
-            </details>
-    </div>
-
-</div>
 
 <div class="doc doc-object doc-function">
 
