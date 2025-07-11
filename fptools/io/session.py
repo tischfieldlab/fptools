@@ -278,6 +278,11 @@ class Session(object):
         return True
 
     def _estimate_memory_use_itemized(self) -> dict[str, int]:
+        """Estimate the memory use of this Session in bytes, itemized by component.
+
+        Returns:
+            Dictionary with keys as component names and values as their estimated memory use in bytes.
+        """
         return {
             "self": sys.getsizeof(self),
             "name": sys.getsizeof(self.name),
@@ -288,7 +293,7 @@ class Session(object):
         }
 
     def _estimate_memory_use(self) -> int:
-        """Estimate the memory use of this Signal in bytes."""
+        """Estimate the total memory use of this Session in bytes."""
         return sum(self._estimate_memory_use_itemized().values())
 
     def save(self, path: str):
@@ -750,10 +755,15 @@ class SessionCollection(list[Session]):
             return None
 
     def _estimate_memory_use_itemized(self) -> dict[str, int]:
+        """Estimate the memory use of this SessionCollection in bytes, itemized by component.
+
+        Returns:
+            Dictionary with keys as component names and values as their estimated memory use in bytes.
+        """
         return {s.name: s._estimate_memory_use() for s in self}
 
     def _estimate_memory_use(self) -> int:
-        """Estimate the memory use of this Signal in bytes."""
+        """Estimate the memory use of this SessionCollection in bytes."""
         return sum(self._estimate_memory_use_itemized().values())
 
     def save(self, path: str):
