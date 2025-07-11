@@ -1,7 +1,8 @@
 import multiprocessing
 import os
 import traceback
-from typing import Literal, Optional, Union, cast
+from typing import Literal, Optional, Union
+import joblib
 import pandas as pd
 from concurrent.futures import ProcessPoolExecutor, as_completed, Future
 
@@ -166,32 +167,52 @@ def _load(
     """
     cache_path = os.path.join(cache_dir, f"{dset.name}.h5")
 
+    sigs = {
+        "loaders": joblib.hash(dset.loaders, hash_name="md5"),
+        "preprocess": joblib.hash(preprocess, hash_name="md5"),
+    }
+
     if cache and os.path.exists(cache_path):
-        # check if the cached version exists, if so, load and return that
-        print(f'loading cache: "{cache_path}"')
-        return Session.load(cache_path)
+        # check the signature of the cached file, and compare to the signature for the current operation
+        # if the signatures match, we can load the cached version
 
-    else:
-        # otherwise, we need to load the data from scratch
+        cache_sig = Session.read_signature(cache_path)
+        sigs_ok = True
+        for k, v in sigs.items():
+            if k not in cache_sig or cache_sig[k] != v:
+                tqdm.write(f'cache signature mismatch for "{k}" in dataset "{dset.name}", reloading from scratch')
+                sigs_ok = False
+                break
 
-        # create the session and attach a name and metadata
-        session = Session()
-        session.name = dset.name
-        session.metadata.update(dset.metadata)
+        if sigs_ok:
+            # the cached version exists and the signatures match, so load and return that
+            tqdm.write(f'loading cache: "{cache_path}"')
+            return Session.load(cache_path)
 
-        # effect the loading routines
-        for loader in dset.loaders:
-            session = loader(session, dset.path)
 
-        # preprocess data if preprocessor is specified
-        if preprocess is not None:
-            session = preprocess(session)
+    # proper cached version does not exist, we need to load the data from scratch
 
-        # cache the session, if requested
-        if cache:
-            session.save(cache_path)
+    # create the session and attach a name and metadata
+    session = Session()
+    session.name = dset.name
+    session.metadata.update(dset.metadata)
 
-        return session
+    # effect the loading routines
+    for loader in dset.loaders:
+        session = loader(session, dset.path)
+
+    # preprocess data if preprocessor is specified
+    if preprocess is not None:
+        session = preprocess(session)
+
+    # attach the signature to the session
+    session._signatures.update(sigs)
+
+    # cache the session, if requested
+    if cache:
+        session.save(cache_path)
+
+    return session
 
 
 def _get_locator(locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "auto") -> DataLocator:

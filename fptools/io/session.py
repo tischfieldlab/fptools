@@ -22,6 +22,7 @@ class Session(object):
 
     def __init__(self) -> None:
         """Initialize this Session object."""
+        self._signatures: dict[str, str] = {}
         self.name: str = ""
         self.metadata: dict[str, Any] = {}
         self.signals: dict[str, Signal] = {}
@@ -291,7 +292,7 @@ class Session(object):
         return sum(self._estimate_memory_use_itemized().values())
 
     def save(self, path: str):
-        """Save this Session to and HDF5 file.
+        """Save this Session to a HDF5 file.
 
         Args:
             path: path where the data should be saved
@@ -299,6 +300,11 @@ class Session(object):
         with h5py.File(path, mode="w") as h5:
             # save name
             h5.create_dataset("/name", data=self.name)
+
+            # save signatures
+            sig_group = h5.create_group("/signatures")
+            for k, v in self._signatures.items():
+                sig_group.create_dataset(k, data=v)
 
             # save signals
             for k, sig in self.signals.items():
@@ -344,6 +350,23 @@ class Session(object):
                     meta_group[k] = v
 
     @classmethod
+    def read_signature(cls, path: str) -> dict[str, str]:
+        """Read the signature of a session from an HDF5 file.
+
+        Args:
+            path: path to the hdf5 file to read.
+
+        Returns:
+            dictionary with the signature of the session.
+        """
+        signatures = {}
+        with h5py.File(path, mode="r") as h5:
+            if "/signatures" in h5:
+                for sig_name in h5["/signatures"].keys():
+                    signatures[sig_name] = h5[f"/signatures/{sig_name}"][()].decode("utf-8")
+        return signatures
+
+    @classmethod
     def load(cls, path: str) -> "Session":
         """Load a Session from an HDF5 file.
 
@@ -357,6 +380,10 @@ class Session(object):
         with h5py.File(path, mode="r") as h5:
             # read name
             session.name = h5["/name"][()].decode("utf-8")
+
+            # read signatures
+            for sig_name in h5["/signatures"].keys():
+                session._signatures[sig_name] = h5[f"/signatures/{sig_name}"][()].decode("utf-8")
 
             # read signals
             for signame in h5["/signals"].keys():
