@@ -1,7 +1,7 @@
 import datetime
 from functools import partial
 import sys
-from typing import Any, Callable, Optional, Union, cast
+from typing import Any, Callable, Literal, Optional, Union, cast, overload
 
 import numpy as np
 import pandas as pd
@@ -254,6 +254,12 @@ class Signal(object):
         the pattern `Y.{i+1}` where i is the sample index. This also implies 1-based indexing on the output.
         """
         return pd.DataFrame(np.atleast_2d(self.signal), columns=[f"Y.{i+1}" for i in range(self.nsamples)])
+
+    @overload
+    def describe(self, as_str: Literal[True], prefix: str = "") -> str: ...
+
+    @overload
+    def describe(self, as_str: Literal[False], prefix: str = "") -> None: ...
 
     def describe(self, as_str: bool = False, prefix: str = "") -> Union[str, None]:
         """Describe this Signal.
