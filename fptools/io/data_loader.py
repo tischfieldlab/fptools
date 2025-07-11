@@ -189,7 +189,6 @@ def _load(
             tqdm.write(f'loading cache: "{cache_path}"')
             return Session.load(cache_path)
 
-
     # proper cached version does not exist, we need to load the data from scratch
 
     # create the session and attach a name and metadata
