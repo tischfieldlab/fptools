@@ -16,6 +16,7 @@ from .signal import Signal
 
 FieldList = Union[Literal["all"], list[str]]
 
+
 def empty_array() -> np.ndarray:
     """Create an empty numpy array.
 
@@ -23,6 +24,7 @@ def empty_array() -> np.ndarray:
         empty numpy array
     """
     return np.ndarray([])
+
 
 class Session(object):
     """Holds data and metadata for a single session."""
