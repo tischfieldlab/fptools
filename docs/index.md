@@ -2,14 +2,16 @@
 ### Tools for Fiber Photometry Analysis
 Codes/Notebooks to analyze Fiber Photometry and behavioral data
 
-See also related package for analyzing event data from TDT and MedAssociate systems: [med-associates-utils](https://github.com/tischfieldlab/med-associates-utils)
+~~See also related package for analyzing event data from TDT and MedAssociate systems: [med-associates-utils](https://github.com/tischfieldlab/med-associates-utils)~~ The `med-associates-utils` package functionality has now largely been incorporated into `fptools`.
 
 ## About
-This package allows you to load data produced by TDT Synapse software, and eases working with the resulting data. Also includes a growing library of analysis routines.
+This package allows you to load fiber photometry and behavioral data, with first-class support for data produced by TDT Synapse software and Med-Associates systems. The package eases working with the resulting data via a unified interface. Also includes a growing library of analysis routines.
 
 ## Features
-- read TDT tank files
+- built-in support for TDT tanks and Med-Associates files
+- interfaces to customize loading of arbitrary data
 - metadata management and propagation
+- powerful visualizations with only a few lines of code
 - more being added with time
 
 ## Installation
