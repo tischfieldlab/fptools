@@ -270,7 +270,7 @@ def sig_catplot(
                         agg_kwargs=agg_kwargs,
                     )
                 except:
-                    pass
+                    raise
 
             elif hue_order is not None:
                 legend_items = []
@@ -303,6 +303,7 @@ def sig_catplot(
 
                 ax.legend(legend_items, legend_labels, loc="upper right")
                 # sns.move_legend(ax, loc="upper left", bbox_to_anchor=(1, 1))
+    fig.tight_layout()
     return fig, axs
 
 

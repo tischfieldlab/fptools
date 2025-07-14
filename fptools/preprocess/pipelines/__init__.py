@@ -1,3 +1,3 @@
-from .dxp_motion_dff import dxp_motion_dff
-from .lowpass_dff import lowpass_dff
-from .tdt_default import tdt_default
+from .dxp_motion_dff import DxpMotionDffPipeline
+from .lowpass_dff import LowpassDFFPipeline
+from .tdt_default import TdtDefaultPipeline

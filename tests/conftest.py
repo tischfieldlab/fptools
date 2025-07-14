@@ -1,12 +1,21 @@
 import multiprocessing
+import matplotlib
 import os
-from typing import cast
+from typing import Literal, cast
 import pytest
 
-from fptools.io.common import Preprocessor, SignalMapping
 from fptools.io.data_loader import load_data, SessionCollection
 from fptools.io.test import download_test_data
-from fptools.preprocess.pipelines import lowpass_dff
+from fptools.preprocess.pipelines import LowpassDFFPipeline
+
+
+def pytest_configure(config):
+    """This hook is called before running the tests.
+    
+    Here we will tell matplotlib to use the Agg backend so that it doesn't try to open windows during testing.
+    """
+    # Force matplotlib to use the Agg backend so that it doesn't try to open windows during testing
+    matplotlib.use("Agg")
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -28,19 +37,19 @@ def _get_test_data_location() -> str:
     """
     return os.path.join(os.getcwd(), 'test_data')
 
-def list_files(startpath) -> None:
+def list_files(start_path) -> None:
     """Helper method to print a directory tree with formatting.
 
     Args:
-        startpath: root path to traverse
+        start_path: root path to traverse
     """
-    for root, dirs, files in os.walk(startpath):
-        level = root.replace(startpath, '').count(os.sep)
+    for root, dirs, files in os.walk(start_path):
+        level = root.replace(start_path, '').count(os.sep)
         indent = ' ' * 4 * (level)
         print('{}{}/'.format(indent, os.path.basename(root)))
-        subindent = ' ' * 4 * (level + 1)
+        sub_indent = ' ' * 4 * (level + 1)
         for f in files:
-            print('{}{}'.format(subindent, f))
+            print('{}{}'.format(sub_indent, f))
 
 def pytest_sessionstart(session) -> None:
     """Ensure test data is downloaded and extracted at the start of testing.
@@ -77,25 +86,31 @@ def tdt_preprocessed_sessions(tdt_test_data_path) -> SessionCollection:
     Args:
         tdt_test_data_path: fixture that provides a file system path to the TDT test data
     """
-    signal_map: list[SignalMapping] = [{
-        'tdt_name': '_465A',
-        'dest_name': 'Dopamine',
-        'role': 'experimental'
-    }, {
-        'tdt_name': '_415A',
-        'dest_name': 'Isosbestic',
-        'role': 'control'
-    }]
+    rename_map: dict[Literal["signals", "epocs", "scalars"], dict[str, str]] = {
+        "signals": {
+            '_465A': 'Dopamine',
+            '_415A': 'Isosbestic',
+        },
+        "epocs": {
+            "RNP_": "RNP",
+            "RMG_": "RMG",
+            "URM_": "URM",
+        }
+    }
 
     sessions = load_data(tdt_test_data_path,
-                     signal_map,
-                     os.path.join(tdt_test_data_path, 'manifest.xlsx'),
+                     manifest_path=os.path.join(tdt_test_data_path, 'manifest.xlsx'),
                      max_workers=2,
                      locator="tdt",
-                     preprocess=cast(Preprocessor, lowpass_dff),
+                     preprocess=LowpassDFFPipeline(
+                         signals=['_465A', '_415A'],
+                         rename_map=rename_map,
+                         trim_begin="auto",
+                         downsample=10,
+                         plot=False,
+                     ),
                      cache=True,
-                     cache_dir=os.path.join(tdt_test_data_path, 'cache_lowpass_dff'),
-                     show_steps=False)
+                     cache_dir=os.path.join(tdt_test_data_path, 'cache_lowpass_dff'))
 
     return sessions
 
@@ -107,11 +122,8 @@ def ma_preprocessed_sessions(ma_test_data_path) -> SessionCollection:
     Args:
         ma_test_data_path: fixture that provides a file system path to the med associates test data
     """
-    signal_map: list[SignalMapping] = []
-
     sessions = load_data(ma_test_data_path,
-                     signal_map,
-                     os.path.join(ma_test_data_path, 'manifest.xlsx'),
+                     manifest_path=os.path.join(ma_test_data_path, 'manifest.xlsx'),
                      max_workers=2,
                      locator="ma",
                      preprocess=None,

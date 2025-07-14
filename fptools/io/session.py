@@ -17,16 +17,26 @@ from .signal import Signal
 FieldList = Union[Literal["all"], list[str]]
 
 
+def empty_array() -> np.ndarray:
+    """Create an empty numpy array.
+
+    Returns:
+        empty numpy array
+    """
+    return np.ndarray([])
+
+
 class Session(object):
     """Holds data and metadata for a single session."""
 
     def __init__(self) -> None:
         """Initialize this Session object."""
+        self._signatures: dict[str, str] = {}
         self.name: str = ""
         self.metadata: dict[str, Any] = {}
         self.signals: dict[str, Signal] = {}
-        self.epocs: dict[str, np.ndarray] = defaultdict(partial(np.ndarray, 0))
-        self.scalars: dict[str, np.ndarray] = defaultdict()
+        self.epocs: dict[str, np.ndarray] = defaultdict(empty_array)  # epocs are numpy arrays, default to empty array
+        self.scalars: dict[str, np.ndarray] = defaultdict(empty_array)  # scalars are numpy arrays, default to empty array
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
         """Describe this session.
@@ -55,7 +65,8 @@ class Session(object):
                 # buffer += f'    "{k}" with shape {v.shape}:\n    {np.array2string(v, prefix="    ")}\n\n'
                 buffer += f"    {k}:\n"
                 buffer += f"        num_events = {v.shape}\n"
-                buffer += f"        avg_rate = {datetime.timedelta(seconds=np.diff(v)[0])}\n"
+                if len(v) >= 2:
+                    buffer += f"        avg_rate = {datetime.timedelta(seconds=np.diff(v)[0])}\n"
                 buffer += f"        earliest = {datetime.timedelta(seconds=v[0])}\n"
                 buffer += f"        latest = {datetime.timedelta(seconds=v[-1])}\n"
         else:
@@ -101,6 +112,17 @@ class Session(object):
 
         self.signals[signal.name] = signal
 
+    def remove_signal(self, name: str) -> Signal:
+        """Remove a signal from this Session.
+
+        Args:
+            name: the name of the signal to remove
+
+        Returns:
+            the signal that was removed
+        """
+        return self.signals.pop(name)
+
     def rename_signal(self, old_name: str, new_name: str) -> None:
         """Rename a signal, from `old_name` to `new_name`.
 
@@ -114,6 +136,7 @@ class Session(object):
             raise KeyError(f"Key `{new_name}` already exists in data!")
 
         self.signals[new_name] = self.signals[old_name]
+        self.signals[new_name].name = new_name
         self.signals.pop(old_name)
 
     def rename_scalar(self, old_name: str, new_name: str):
@@ -264,6 +287,11 @@ class Session(object):
         return True
 
     def _estimate_memory_use_itemized(self) -> dict[str, int]:
+        """Estimate the memory use of this Session in bytes, itemized by component.
+
+        Returns:
+            Dictionary with keys as component names and values as their estimated memory use in bytes.
+        """
         return {
             "self": sys.getsizeof(self),
             "name": sys.getsizeof(self.name),
@@ -274,11 +302,11 @@ class Session(object):
         }
 
     def _estimate_memory_use(self) -> int:
-        """Estimate the memory use of this Signal in bytes."""
+        """Estimate the total memory use of this Session in bytes."""
         return sum(self._estimate_memory_use_itemized().values())
 
     def save(self, path: str):
-        """Save this Session to and HDF5 file.
+        """Save this Session to a HDF5 file.
 
         Args:
             path: path where the data should be saved
@@ -286,6 +314,11 @@ class Session(object):
         with h5py.File(path, mode="w") as h5:
             # save name
             h5.create_dataset("/name", data=self.name)
+
+            # save signatures
+            sig_group = h5.create_group("/signatures")
+            for k, v in self._signatures.items():
+                sig_group.create_dataset(k, data=v)
 
             # save signals
             for k, sig in self.signals.items():
@@ -331,6 +364,23 @@ class Session(object):
                     meta_group[k] = v
 
     @classmethod
+    def read_signature(cls, path: str) -> dict[str, str]:
+        """Read the signature of a session from an HDF5 file.
+
+        Args:
+            path: path to the hdf5 file to read.
+
+        Returns:
+            dictionary with the signature of the session.
+        """
+        signatures = {}
+        with h5py.File(path, mode="r") as h5:
+            if "/signatures" in h5:
+                for sig_name in h5["/signatures"].keys():
+                    signatures[sig_name] = h5[f"/signatures/{sig_name}"][()].decode("utf-8")
+        return signatures
+
+    @classmethod
     def load(cls, path: str) -> "Session":
         """Load a Session from an HDF5 file.
 
@@ -344,6 +394,10 @@ class Session(object):
         with h5py.File(path, mode="r") as h5:
             # read name
             session.name = h5["/name"][()].decode("utf-8")
+
+            # read signatures
+            for sig_name in h5["/signatures"].keys():
+                session._signatures[sig_name] = h5[f"/signatures/{sig_name}"][()].decode("utf-8")
 
             # read signals
             for signame in h5["/signals"].keys():
@@ -584,7 +638,7 @@ class SessionCollection(list[Session]):
         Returns:
             List of Signals, each corresponding to a single session
         """
-        return [item.signals[name] for item in self]
+        return [item.signals[name] for item in self if name in item.signals]
 
     def epoc_dataframe(self, include_epocs: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
         """Produce a dataframe with epoc data and metadata across all the sessions in this collection.
@@ -648,7 +702,7 @@ class SessionCollection(list[Session]):
 
         return pd.concat(dfs, ignore_index=True)
 
-    def aggregate_signals(self, name: str, method: Union[str, np.ufunc, Callable[[np.ndarray], np.ndarray]] = "median") -> Signal:
+    def aggregate_signals(self, name: str, method: Union[None, str, np.ufunc, Callable[[np.ndarray], np.ndarray]] = "median") -> Signal:
         """Aggregate signals across sessions in this collection for the signal name `name`.
 
         Args:
@@ -658,7 +712,7 @@ class SessionCollection(list[Session]):
         Returns:
             Aggregated `Signal`
         """
-        signals = self.get_signal(name)
+        signals = [s for s in self.get_signal(name) if s.nobs > 0]
         if len(signals) <= 0:
             raise ValueError("No signals were passed!")
 
@@ -710,10 +764,15 @@ class SessionCollection(list[Session]):
             return None
 
     def _estimate_memory_use_itemized(self) -> dict[str, int]:
+        """Estimate the memory use of this SessionCollection in bytes, itemized by component.
+
+        Returns:
+            Dictionary with keys as component names and values as their estimated memory use in bytes.
+        """
         return {s.name: s._estimate_memory_use() for s in self}
 
     def _estimate_memory_use(self) -> int:
-        """Estimate the memory use of this Signal in bytes."""
+        """Estimate the memory use of this SessionCollection in bytes."""
         return sum(self._estimate_memory_use_itemized().values())
 
     def save(self, path: str):

@@ -1,7 +1,8 @@
-from typing import Optional
+from typing import Optional, Union
 import numpy as np
 import scipy
 import scipy.stats
+import scipy.signal
 
 
 def fs2t(fs: float, length: int) -> np.ndarray:
@@ -41,7 +42,7 @@ def lowpass_filter(signal: np.ndarray, fs: float, Wn: float = 10) -> np.ndarray:
         lowpass filtered signal
     """
     b, a = scipy.signal.butter(2, Wn, btype="lowpass", fs=fs)
-    return scipy.signal.filtfilt(b, a, signal)
+    return scipy.signal.filtfilt(b, a, signal, axis=-1)
 
 
 def double_exponential(t: np.ndarray, const: float, amp_fast: float, amp_slow: float, tau_slow: float, tau_multiplier: float) -> np.ndarray:
@@ -72,11 +73,25 @@ def fit_double_exponential(time: np.ndarray, signal: np.ndarray) -> np.ndarray:
     Returns:
         array of values from the fitted double exponential curve, samples at the times in `time`.
     """
-    max_sig = np.max(signal)
-    initial_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
-    bounds = ([0, 0, 0, 600, 0], [max_sig, max_sig, max_sig, 36000, 1])
-    parm_opt, parm_cov = scipy.optimize.curve_fit(double_exponential, time, signal, p0=initial_params, bounds=bounds, maxfev=1000)
-    return double_exponential(time, *parm_opt)
+    if signal.ndim == 2:
+        max_sig = np.max(signal)
+        initial_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
+        bounds = ([0, 0, 0, 600, 0], [max_sig, max_sig, max_sig, 36000, 1])
+
+        parm_opt = np.zeros_like(signal, shape=(signal.shape[0], len(initial_params)))
+        for i, sig_row in enumerate(signal):
+            parm_opt[i], _ = scipy.optimize.curve_fit(double_exponential, time, sig_row, p0=initial_params, bounds=bounds, maxfev=1000)
+        return np.array([double_exponential(time, *p) for p in parm_opt])
+
+    elif signal.ndim == 1:
+        max_sig = np.max(signal)
+        initial_params = [max_sig / 2, max_sig / 4, max_sig / 4, 3600, 0.1]
+        bounds = ([0, 0, 0, 600, 0], [max_sig, max_sig, max_sig, 36000, 1])
+        parm_opt, _ = scipy.optimize.curve_fit(double_exponential, time, signal, p0=initial_params, bounds=bounds, maxfev=1000)
+        return double_exponential(time, *parm_opt)
+
+    else:
+        raise ValueError("signal must be 1D or 2D")
 
 
 def detrend_double_exponential(time: np.ndarray, signal: np.ndarray) -> tuple[np.ndarray, np.ndarray]:
@@ -107,14 +122,28 @@ def estimate_motion(signal: np.ndarray, control: np.ndarray) -> tuple[np.ndarray
     Returns:
         tuple of (corrected_signal, estimated_motion)
     """
-    slope, intercept, r_value, p_value, std_err = scipy.stats.linregress(x=control, y=signal)
-    est_motion = intercept + slope * (control)
-    return signal - est_motion, est_motion
+    assert signal.shape == control.shape, "signal and control must have same shapes"
+    if signal.ndim == 2:
+        slopes = np.zeros_like(signal, shape=(signal.shape[0], 1))
+        intercepts = np.zeros_like(signal, shape=(signal.shape[0], 1))
+        for i, (signal_row, control_row) in enumerate(zip(signal, control)):
+            slopes[i], intercepts[i], _, _, _ = scipy.stats.linregress(x=control_row, y=signal_row)
+
+        est_motion = slopes * (control) + intercepts
+        return signal - est_motion, est_motion
+
+    elif signal.ndim == 1:
+        slope, intercept, _, _, _ = scipy.stats.linregress(x=control, y=signal)
+        est_motion = slope * control + intercept
+        return signal - est_motion, est_motion
+
+    else:
+        raise ValueError("signal must be 1D or 2D")
 
 
 def are_arrays_same_length(*arrays: np.ndarray) -> bool:
-    """Check if all arrays are the same shape in the first axis."""
-    lengths = [arr.shape[0] for arr in arrays]
+    """Check if all arrays are the same shape in the last axis."""
+    lengths = [arr.shape[-1] for arr in arrays]
     return bool(np.all(np.array(lengths) == lengths[0]))
 
 
@@ -132,8 +161,9 @@ def downsample(*signals: np.ndarray, window: int = 10, factor: int = 10) -> tupl
     Returns:
         downsampled signal(s)
     """
-    # assert are_arrays_same_length(*signals)
-    return tuple(np.convolve(sig, np.ones(window) / window, mode="valid")[::factor] for sig in signals)
+    return tuple(
+        np.apply_along_axis(np.convolve, axis=-1, arr=sig, v=np.ones(window) / window, mode="valid")[..., ::factor] for sig in signals
+    )
 
 
 def trim(*signals: np.ndarray, begin: Optional[int] = None, end: Optional[int] = None) -> tuple[np.ndarray, ...]:
@@ -152,24 +182,88 @@ def trim(*signals: np.ndarray, begin: Optional[int] = None, end: Optional[int] =
         begin = 0
 
     if end is None:
-        end = int(signals[0].shape[0])
+        end = int(signals[0].shape[-1])
     else:
-        end = int(signals[0].shape[0] - end)
+        end = int(signals[0].shape[-1] - end)
 
     assert begin < end
 
-    return tuple(sig[begin:end] for sig in signals)
+    return tuple(sig[..., begin:end] for sig in signals)
 
 
-def zscore_signals(*signals: np.ndarray) -> tuple[np.ndarray, ...]:
-    """Z-score one or more signals.
+def zscore(data: np.ndarray, mu: Optional[Union[float, np.ndarray]] = None, sigma: Optional[Union[float, np.ndarray]] = None) -> np.ndarray:
+    """Z-score some data.
 
-    see: scipy.stats.zscore()
+    Z-scores are calculated as (x - mean) / std.
 
     Args:
-        signals: one or more signals to be z-scores
+        data: data to transform into z-scores
+        mu: mean to use for z-scoring. If None, the mean of the data is used.
+        sigma: standard deviation to use for z-scoring. If None, the standard deviation of the data is used.
 
     Returns:
-        tuple of z-scored signals
+        z-scored data
     """
-    return tuple(scipy.stats.zscore(sig) for sig in signals)
+    if mu is None:
+        mu = data.mean(axis=-1, keepdims=True)
+
+    if sigma is None:
+        sigma = data.std(axis=-1, keepdims=True)
+
+    return (data - mu) / sigma
+
+
+def mad(data: np.ndarray) -> np.ndarray:
+    """Calculate the Median Absolute Deviation (MAD) of a dataset.
+
+    Args:
+        data: A list or NumPy array of numerical data.
+
+    Returns:
+        The MAD of the data.
+    """
+    return np.median(np.absolute(data - np.median(data, axis=-1, keepdims=True)), axis=-1, keepdims=True)
+
+
+def madscore(
+    data: np.ndarray, mu: Optional[Union[float, np.ndarray]] = None, sigma: Optional[Union[float, np.ndarray]] = None
+) -> np.ndarray:
+    """Calculate the MAD score of a dataset.
+
+    Args:
+        data: data to transform into MAD-scores.
+        mu: central value to use for MAD scoring. If None, the median of the data is used.
+        sigma: scale value to use for MAD scoring. If None, the MAD of the data is used.
+
+    Returns:
+        The MAD score of the data.
+    """
+    if mu is None:
+        mu = np.median(data, axis=-1, keepdims=True)
+
+    if sigma is None:
+        sigma = mad(data)
+
+    return (data - mu) / sigma
+
+
+def modified_zscore(
+    data: np.ndarray, mu: Optional[Union[float, np.ndarray]] = None, sigma: Optional[Union[float, np.ndarray]] = None
+) -> np.ndarray:
+    """Calculate the modified z-score of a dataset.
+
+    Args:
+        data: data to transform into modified z-scores
+        mu: central value to use for z-scoring. If None, the median of the data is used.
+        sigma: scale value to use for z-scoring. If None, the MAD of the data is used.
+
+    Returns:
+        The modified z-score of the data.
+    """
+    if mu is None:
+        mu = np.median(data, axis=-1, keepdims=True)
+
+    if sigma is None:
+        sigma = mad(data)
+
+    return 0.6745 * (data - mu) / sigma
