@@ -2,174 +2,174 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/basics/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/changelog/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/loading/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/mkdocs/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/session/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/SUMMARY/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/io/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/io/common/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/io/data_loader/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/io/med_associates/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/io/session/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/io/signal/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/io/tdt/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/io/test/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/measure/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/measure/peaks/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/measure/signal_collector/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/measure/snr/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/common/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/lib/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/pipelines/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/pipelines/dxp_motion_dff/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/pipelines/lowpass_dff/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/pipelines/tdt_default/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/dbl_exp_fit/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/dff/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/downsample/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/lowpass/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/motion_correct/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/remove/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/rename/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/trim_signals/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/preprocess/steps/zscore/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/viz/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/viz/common/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/viz/signal/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/viz/behavior/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/viz/behavior/cumulative/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
     <url>
          <loc>https://tischfieldlab.github.io/fptools/dev/reference/fptools/viz/behavior/raster/</loc>
-         <lastmod>2025-07-11</lastmod>
+         <lastmod>2025-07-14</lastmod>
     </url>
 </urlset>
