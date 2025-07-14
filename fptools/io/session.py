@@ -16,6 +16,13 @@ from .signal import Signal
 
 FieldList = Union[Literal["all"], list[str]]
 
+def empty_array() -> np.ndarray:
+    """Create an empty numpy array.
+
+    Returns:
+        empty numpy array
+    """
+    return np.ndarray([])
 
 class Session(object):
     """Holds data and metadata for a single session."""
@@ -26,8 +33,8 @@ class Session(object):
         self.name: str = ""
         self.metadata: dict[str, Any] = {}
         self.signals: dict[str, Signal] = {}
-        self.epocs: dict[str, np.ndarray] = defaultdict(lambda: np.ndarray([]))  # epocs are numpy arrays, default to empty array
-        self.scalars: dict[str, np.ndarray] = defaultdict(lambda: np.ndarray([]))  # scalars are numpy arrays, default to empty array
+        self.epocs: dict[str, np.ndarray] = defaultdict(empty_array)  # epocs are numpy arrays, default to empty array
+        self.scalars: dict[str, np.ndarray] = defaultdict(empty_array)  # scalars are numpy arrays, default to empty array
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
         """Describe this session.
