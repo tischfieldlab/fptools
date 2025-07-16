@@ -11,7 +11,7 @@ import seaborn as sns
 from typing import Any, Literal, Optional, Union
 
 from fptools.io import Signal, SessionCollection
-from .common import Palette, get_colormap
+from fptools.viz.common import Palette, get_colormap
 
 
 def plot_signal(
