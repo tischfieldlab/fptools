@@ -95,3 +95,9 @@ follow_imports = "normal"
 ignore_missing_imports = "True"
 ignore_missing_imports_per_module = "True"
 warn_unused_configs = "True"
+
+[tool.pytest.ini_options]
+addopts = "--durations=0"
+testpaths = [
+    "tests",
+]

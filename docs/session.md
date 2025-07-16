@@ -1,6 +1,6 @@
 # Sessions and SessionCollections
 A `Session` serves as the basic container for data. It typically would correspond to data from a single animal and a single bout of recording.
-One or more `Session`s can be added to a `SessionCollection`. A `SessionCollection` offers several convenience methods for working with many sessions.
+One or more `Session`s can be added to a `SessionCollection`, which generally behaves like a python `list`. A `SessionCollection` offers several convenience methods for working with many sessions.
 Many functions in this package accept a `Session` or `SessionCollection`.
 
 `Session`s typically will contain the following types of data on the attributes:

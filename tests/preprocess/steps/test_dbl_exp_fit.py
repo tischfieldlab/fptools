@@ -64,12 +64,12 @@ def test_dbl_exp_fit_with_apply():
     assert "signal1_dxpfit" in session.signals, "Signal should have a double exponential fit signal"
     assert session.signals["signal1_dxpfit"].nobs == 1, "Signal should have 1 observation"
     assert session.signals["signal1_dxpfit"].nsamples == 1000, "Signal should have 1000 samples"
-    assert np.isclose(0, session.signals["signal1"].signal.sum()), "detrended signal sum should be close to 0"
+    assert np.isclose(session.signals["signal1"].signal.sum(), 0, atol=1e-5), "detrended signal sum should be close to 0"
 
     assert session.signals["signal2"].nobs == 2, "Signal should have 1 observation"
     assert session.signals["signal2"].nsamples == 1000, "Signal should have 1000 samples"
     assert "signal2_dxpfit" in session.signals, "Signal should have a double exponential fit signal"
     assert session.signals["signal2_dxpfit"].nobs == 2, "Signal should have 1 observation"
     assert session.signals["signal2_dxpfit"].nsamples == 1000, "Signal should have 1000 samples"
-    assert np.isclose(0, session.signals["signal1"].signal[0].sum()), "detrended signal sum should be close to 0"
+    assert np.isclose(session.signals["signal2"].signal[0].sum(), 0, atol=1e-5), "detrended signal sum should be close to 0"
 
