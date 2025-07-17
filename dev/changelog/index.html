@@ -293,6 +293,19 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Changelog
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="./" class="md-nav__link md-nav__link--active">
         
   
@@ -304,6 +317,34 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v030" class="md-nav__link">
+    <span class="md-ellipsis">
+      v0.3.0
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1581,6 +1622,23 @@
     
   
   
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#v030" class="md-nav__link">
+    <span class="md-ellipsis">
+      v0.3.0
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
 </nav>
                   </div>
                 </div>
@@ -1596,6 +1654,33 @@
 
 
 <h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
+<h2 id="v030"><a href="https://github.com/tischfieldlab/fptools/releases/tag/v0.3.0">v0.3.0</a><a class="headerlink" href="#v030" title="Permanent link">&para;</a></h2>
+<h2>What's Changed</h2>
+<ul>
+<li>Abstract data loading to allow for more robust and flexible loading of different types of data
+<ul>
+<li>Built in support for TDT and med-associates data.</li>
+<li>Customize your data loading through DataLocator and Loader protocol implementations</li>
+</ul>
+</li>
+<li>Better and more reusable data processing via Pipeline and Processor
+<ul>
+<li>Processors can easily be used by SessionCollection.apply() or can be used to build up entire Pipelines (which are also Processors)</li>
+</ul>
+</li>
+<li>Add a naive peak detection algorithm, fptools.measure.peaks.detect_naive_peaks()</li>
+<li>Many bug fixes and quality of life improvements</li>
+<li>increment version by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/quantumdot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/quantumdot">@quantumdot</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2810501787" data-permission-text="Title is private" data-url="https://github.com/tischfieldlab/fptools/issues/3" data-hovercard-type="pull_request" data-hovercard-url="/tischfieldlab/fptools/pull/3/hovercard" href="https://github.com/tischfieldlab/fptools/pull/3">#3</a></li>
+<li>Med associates integration by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/quantumdot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/quantumdot">@quantumdot</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2838591017" data-permission-text="Title is private" data-url="https://github.com/tischfieldlab/fptools/issues/4" data-hovercard-type="pull_request" data-hovercard-url="/tischfieldlab/fptools/pull/4/hovercard" href="https://github.com/tischfieldlab/fptools/pull/4">#4</a></li>
+<li>fix data loading instability on Mac systems by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/quantumdot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/quantumdot">@quantumdot</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2908281946" data-permission-text="Title is private" data-url="https://github.com/tischfieldlab/fptools/issues/6" data-hovercard-type="pull_request" data-hovercard-url="/tischfieldlab/fptools/pull/6/hovercard" href="https://github.com/tischfieldlab/fptools/pull/6">#6</a></li>
+<li>Reduce memory consumption during data loading by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/quantumdot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/quantumdot">@quantumdot</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2915348949" data-permission-text="Title is private" data-url="https://github.com/tischfieldlab/fptools/issues/7" data-hovercard-type="pull_request" data-hovercard-url="/tischfieldlab/fptools/pull/7/hovercard" href="https://github.com/tischfieldlab/fptools/pull/7">#7</a></li>
+<li>Preprocessing by <a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/quantumdot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/quantumdot">@quantumdot</a> in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="3223964687" data-permission-text="Title is private" data-url="https://github.com/tischfieldlab/fptools/issues/9" data-hovercard-type="pull_request" data-hovercard-url="/tischfieldlab/fptools/pull/9/hovercard" href="https://github.com/tischfieldlab/fptools/pull/9">#9</a></li>
+</ul>
+<h2>New Contributors</h2>
+<ul>
+<li><a class="user-mention notranslate" data-hovercard-type="user" data-hovercard-url="/users/quantumdot/hovercard" data-octo-click="hovercard-link-click" data-octo-dimensions="link_type:self" href="https://github.com/quantumdot">@quantumdot</a> made their first contribution in <a class="issue-link js-issue-link" data-error-text="Failed to load title" data-id="2810501787" data-permission-text="Title is private" data-url="https://github.com/tischfieldlab/fptools/issues/3" data-hovercard-type="pull_request" data-hovercard-url="/tischfieldlab/fptools/pull/3/hovercard" href="https://github.com/tischfieldlab/fptools/pull/3">#3</a></li>
+</ul>
+<p><strong>Full Changelog</strong>: <a href="https://github.com/tischfieldlab/fptools/commits/v0.3.0">https://github.com/tischfieldlab/fptools/commits/v0.3.0</a></p>
 
 
 
