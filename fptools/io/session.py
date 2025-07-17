@@ -396,8 +396,9 @@ class Session(object):
             session.name = h5["/name"][()].decode("utf-8")
 
             # read signatures
-            for sig_name in h5["/signatures"].keys():
-                session._signatures[sig_name] = h5[f"/signatures/{sig_name}"][()].decode("utf-8")
+            if "/signatures" in h5:
+                for sig_name in h5["/signatures"].keys():
+                    session._signatures[sig_name] = h5[f"/signatures/{sig_name}"][()].decode("utf-8")
 
             # read signals
             for signame in h5["/signals"].keys():
