@@ -23,7 +23,7 @@ def empty_array() -> np.ndarray:
     Returns:
         empty numpy array
     """
-    return np.ndarray([])
+    return np.ndarray([], dtype=np.float64)
 
 
 class Session(object):
@@ -335,7 +335,7 @@ class Session(object):
             # save epocs
             h5.create_group("/epocs")
             for k, epoc in self.epocs.items():
-                h5.create_dataset(f"/epocs/{k}", data=epoc, compression="gzip")
+                h5.create_dataset(f"/epocs/{k}", data=np.atleast_1d(epoc), compression="gzip")
 
             # save scalars
             h5.create_group("/scalars")
