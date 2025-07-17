@@ -321,6 +321,7 @@ class Session(object):
                 sig_group.create_dataset(k, data=v)
 
             # save signals
+            h5.create_group("/signals")
             for k, sig in self.signals.items():
                 group = h5.create_group(f"/signals/{k}")
                 group.create_dataset("signal", data=sig.signal, compression="gzip")
@@ -332,10 +333,12 @@ class Session(object):
                     mark_group.create_dataset(mk, data=mv)
 
             # save epocs
+            h5.create_group("/epocs")
             for k, epoc in self.epocs.items():
                 h5.create_dataset(f"/epocs/{k}", data=epoc, compression="gzip")
 
             # save scalars
+            h5.create_group("/scalars")
             for k, scalar in self.scalars.items():
                 h5.create_dataset(f"/scalars/{k}", data=scalar, compression="gzip")
 
@@ -401,44 +404,48 @@ class Session(object):
                     session._signatures[sig_name] = h5[f"/signatures/{sig_name}"][()].decode("utf-8")
 
             # read signals
-            for signame in h5["/signals"].keys():
-                sig_group = h5[f"/signals/{signame}"]
-                sig = Signal(
-                    signame, sig_group["signal"][()], time=sig_group["time"][()], fs=sig_group.attrs["fs"], units=sig_group.attrs["units"]
-                )
-                for mark_name in sig_group["marks"].keys():
-                    sig.marks[mark_name] = sig_group[f"marks/{mark_name}"][()]
-                session.add_signal(sig)
+            if "/signals" in h5:
+                for signame in h5["/signals"].keys():
+                    sig_group = h5[f"/signals/{signame}"]
+                    sig = Signal(
+                        signame, sig_group["signal"][()], time=sig_group["time"][()], fs=sig_group.attrs["fs"], units=sig_group.attrs["units"]
+                    )
+                    for mark_name in sig_group["marks"].keys():
+                        sig.marks[mark_name] = sig_group[f"marks/{mark_name}"][()]
+                    session.add_signal(sig)
 
             # read epocs
-            for epoc_name in h5["/epocs"].keys():
-                session.epocs[epoc_name] = h5[f"/epocs/{epoc_name}"][()]
+            if "/epocs" in h5:
+                for epoc_name in h5["/epocs"].keys():
+                    session.epocs[epoc_name] = h5[f"/epocs/{epoc_name}"][()]
 
             # read scalars
-            for scalar_name in h5["/scalars"].keys():
-                session.scalars[scalar_name] = h5[f"/scalars/{scalar_name}"][()]
+            if "/scalars" in h5:
+                for scalar_name in h5["/scalars"].keys():
+                    session.scalars[scalar_name] = h5[f"/scalars/{scalar_name}"][()]
 
             # read metadata
-            for meta_name in h5[f"/metadata"].keys():
-                meta = h5[f"/metadata/{meta_name}"]
-                if "type" in meta.attrs:
-                    mtype = meta.attrs["type"]
-                    if mtype == "str":
-                        session.metadata[meta_name] = meta[()].decode("utf-8")
-                    elif mtype == "bool":
-                        session.metadata[meta_name] = bool(meta[()])
-                    elif mtype == "int":
-                        session.metadata[meta_name] = int(meta[()])
-                    elif mtype == "float":
-                        session.metadata[meta_name] = float(meta[()])
-                    elif mtype == "datetime":
-                        session.metadata[meta_name] = datetime.datetime.fromisoformat(meta[()].decode("utf-8"))
-                    elif mtype == "timedelta":
-                        session.metadata[meta_name] = datetime.timedelta(seconds=meta[()])
+            if "/metadata" in h5:
+                for meta_name in h5[f"/metadata"].keys():
+                    meta = h5[f"/metadata/{meta_name}"]
+                    if "type" in meta.attrs:
+                        mtype = meta.attrs["type"]
+                        if mtype == "str":
+                            session.metadata[meta_name] = meta[()].decode("utf-8")
+                        elif mtype == "bool":
+                            session.metadata[meta_name] = bool(meta[()])
+                        elif mtype == "int":
+                            session.metadata[meta_name] = int(meta[()])
+                        elif mtype == "float":
+                            session.metadata[meta_name] = float(meta[()])
+                        elif mtype == "datetime":
+                            session.metadata[meta_name] = datetime.datetime.fromisoformat(meta[()].decode("utf-8"))
+                        elif mtype == "timedelta":
+                            session.metadata[meta_name] = datetime.timedelta(seconds=meta[()])
+                        else:
+                            raise ValueError(f'Did not understand type {mtype} for metadata key "{meta_name}"')
                     else:
-                        raise ValueError(f'Did not understand type {mtype} for metadata key "{meta_name}"')
-                else:
-                    session.metadata[meta_name] = meta[()]
+                        session.metadata[meta_name] = meta[()]
 
         return session
 
