@@ -11,6 +11,7 @@ from fptools.preprocess.common import Processor
 from .common import DataLocator, DataTypeAdaptor
 from .med_associates import find_ma_blocks
 from .tdt import find_tdt_blocks
+from .tdt_with_dlc import FindTDTDLCBlocks
 from .session import Session, SessionCollection
 from tqdm.auto import tqdm
 
@@ -57,7 +58,7 @@ def load_data(
     manifest_path: Optional[str] = None,
     manifest_index: str = "blockname",
     max_workers: Optional[int] = None,
-    locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "auto",
+    locator: Union[Literal["auto", "tdt", "tdt_dlc", "ma"], DataLocator] = "auto",
     preprocess: Optional[Processor] = None,
     cache: bool = True,
     cache_dir: str = "cache",
@@ -214,7 +215,7 @@ def _load(
     return session
 
 
-def _get_locator(locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "auto") -> DataLocator:
+def _get_locator(locator: Union[Literal["auto", "tdt", "tdt_dlc", "ma"], DataLocator] = "auto") -> DataLocator:
     """Translate a flexible locator argument to a concrete DataLoader implementation.
 
     Args:
@@ -227,6 +228,8 @@ def _get_locator(locator: Union[Literal["auto", "tdt", "ma"], DataLocator] = "au
         return _find_any_data
     elif locator == "tdt":
         return find_tdt_blocks
+    elif locator == "tdt_dlc":
+        return FindTDTDLCBlocks()
     elif locator == "ma":
         return find_ma_blocks
     else:
