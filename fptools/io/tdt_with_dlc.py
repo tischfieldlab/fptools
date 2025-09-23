@@ -12,8 +12,15 @@ from .session import Session, Signal
 from .tdt import TDT_EXCLUDE_STREAMS, TDTLoader
 
 
-def has_neighboring_dlc_h5(tbk):
+def has_neighboring_dlc_h5(tbk) -> bool:
+    """Checks if the TBK file has a neighboring H5 file that looks like a DLC data output.
 
+    Args:
+        tbk (str): TBK file path to check
+
+    Returns:
+        True if the TBK file has DLC neighbors, otherwise false
+    """
     dlc_id_substrs = ["DLC", "shuffle", "snapshot"]
     neighbor_files = glob.glob(os.path.join(os.path.dirname(tbk), "*"))
     neighbor_files = [file for file in neighbor_files if file.endswith(".h5")]
@@ -29,6 +36,12 @@ def has_neighboring_dlc_h5(tbk):
 class FindTDTDLCBlocks:
 
     def __init__(self, model_name: Optional[list[str]] = None, filtered_only: bool = True):
+        """Initialize this TDT-DLC Data Locator.
+        
+        Args:
+            model_name: If provided, only look for DLC files with that model name(s), If None, load all files that look like DLC data
+            filtered_only: If true, only load filtered DLC data, otherwise, load any DLC data
+        """
         self.model_name = model_name
         self.filtered_only = filtered_only
 
@@ -43,7 +56,6 @@ class FindTDTDLCBlocks:
         Returns:
             list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded
         """
-
         tbk_files = glob.glob(os.path.join(path, "**/*.[tT][bB][kK]"), recursive=True)
         # tbk_files = [file for file in tbk_files if has_neighboring_dlc_h5(file)]
 
@@ -102,7 +114,6 @@ class DLCLoader:
         Returns:
             Session object with data added
         """
-
         # find the dlc .h5 file
         if self.model_name is None:
             pattern = os.path.join(path, f"*DLC*.h5")

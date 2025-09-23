@@ -4,7 +4,7 @@ import numpy as np
 
 
 def get_frame_image(video: str, frame_idx: int) -> np.ndarray:
-    """Get a frame from a video using openCV
+    """Get a frame from a video using openCV.
 
     Args:
         video: string path to the video file

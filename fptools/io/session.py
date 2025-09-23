@@ -27,7 +27,7 @@ def empty_array() -> np.ndarray:
 
 
 def empty_df() -> pd.DataFrame:
-    """Create an empty Pandas dataframe
+    """Create an empty Pandas dataframe.
 
     Returns:
         empty pd.DataFrame
@@ -272,7 +272,7 @@ class Session(object):
         return pd.DataFrame(scalars)
 
     def dlc_dataframe(self, id: Union[str, int] = 0) -> pd.DataFrame:
-        """
+        """Fetch DLC data as a pandas dataframe.
 
         Args:
             id: identifier to select which dlc data to use in the dataframe. If str is provided, will access that named dlc data. If int is provided, will use the data from that index position among the dlc data.
@@ -282,7 +282,6 @@ class Session(object):
         Returns:
             DataFrame with data from this session
         """
-
         if isinstance(id, str):
             return pd.DataFrame(self.dlc[id])
 
