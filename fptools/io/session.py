@@ -25,6 +25,15 @@ def empty_array() -> np.ndarray:
     """
     return np.ndarray([], dtype=np.float64)
 
+def empty_df() -> pd.DataFrame:
+    """Create an empty Pandas dataframe
+
+    Returns:
+        empty pd.DataFrame
+    
+    """
+    return pd.DataFrame()
+
 
 class Session(object):
     """Holds data and metadata for a single session."""
@@ -37,6 +46,7 @@ class Session(object):
         self.signals: dict[str, Signal] = {}
         self.epocs: dict[str, np.ndarray] = defaultdict(empty_array)  # epocs are numpy arrays, default to empty array
         self.scalars: dict[str, np.ndarray] = defaultdict(empty_array)  # scalars are numpy arrays, default to empty array
+        self.dlc: dict[str, np.ndarray] = defaultdict(empty_array) # dlc data are structured numpy arrays, default to empty array
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
         """Describe this session.
@@ -90,6 +100,16 @@ class Session(object):
                 buffer += v.describe(as_str=True, prefix="    ")
         else:
             buffer += "    < No Signals Available >\n"
+        buffer += "\n"
+
+        buffer += "DLC Data:\n"
+        if len(self.dlc) > 0:
+            buffer += f"{len(self.dlc)} DLC arrays found: \n"
+            for k, v in self.dlc.items():
+                buffer += f"    {k}: \n"
+                buffer += f"        array_shape = {v.shape} \n"
+        else:
+            buffer += "    < No DLC arrays Available >\n"
         buffer += "\n"
 
         if as_str:
@@ -168,6 +188,21 @@ class Session(object):
 
         self.epocs[new_name] = self.epocs[old_name]
         self.epocs.pop(old_name)
+    
+    def rename_dlc(self, old_name: str, new_name: str) -> None:
+        """Rename a dlc array, from `old_name` to `new_name`.
+
+        Raises an error if the new dlc array name already exists.
+
+        Args:
+            old_name: the current name for the dlc array
+            new_name: the new name for the dlc array
+        """
+        if new_name in self.dlc:
+            raise KeyError(f"Key `{new_name}` already exists in data!")
+        
+        self.dlc[new_name] = self.dlc[old_name]
+        self.dlc.pop(old_name)
 
     def epoc_dataframe(self, include_epocs: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
         """Produce a dataframe with epoc data and metadata.
@@ -234,6 +269,30 @@ class Session(object):
             scalars.append({**meta, "scalar_name": sn, "scalar_value": self.scalars[sn]})
 
         return pd.DataFrame(scalars)
+    
+    def dlc_dataframe(self, id: Union[str, int] = 0) -> pd.DataFrame:
+        """
+        
+        Args:
+            id: identifier to select which dlc data to use in the dataframe. If str is provided, will access that named dlc data. If int is provided, will use the data from that index position among the dlc data.
+
+            By default index 0 will be accessed.
+
+        Returns:
+            DataFrame with data from this session
+        """
+
+        if isinstance(id, str):
+            return pd.DataFrame(self.dlc[id])
+         
+        elif isinstance(id, int):
+            data_list = list(self.dlc.values())
+            return pd.DataFrame(data_list[id])
+        
+        else:
+            raise TypeError(
+                'Invalid `id` argument data type. Supported data identifier types are str and int.'
+                            )
 
     def __eq__(self, value: object) -> bool:
         """Test this Session for equality to another Session.
@@ -299,6 +358,7 @@ class Session(object):
             **{f"signal.{sig.name}": sig._estimate_memory_use() for sig in self.signals.values()},
             **{f"epocs.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.epocs.items()},
             **{f"scalars.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.scalars.items()},
+             **{f"dlc.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.dlc.items()},
         }
 
     def _estimate_memory_use(self) -> int:
@@ -341,6 +401,11 @@ class Session(object):
             h5.create_group("/scalars")
             for k, scalar in self.scalars.items():
                 h5.create_dataset(f"/scalars/{k}", data=scalar, compression="gzip")
+            
+            # save dlc data
+            h5.create_group("/dlc")
+            for k, dlc in self.dlc.items():
+                h5.create_dataset(f"/dlc/{k}", data=dlc)
 
             # save metadata
             meta_group = h5.create_group("/metadata")
@@ -423,6 +488,11 @@ class Session(object):
             if "/scalars" in h5:
                 for scalar_name in h5["/scalars"].keys():
                     session.scalars[scalar_name] = h5[f"/scalars/{scalar_name}"][()]
+
+            # read dlc
+            if "/dlc" in h5:
+                for dlc_name in h5["/dlc"].keys():
+                    session.dlc[dlc_name] = h5[f"/dlc/{dlc_name}"][()]
 
             # read metadata
             if "/metadata" in h5:
@@ -762,6 +832,12 @@ class SessionCollection(list[Session]):
         scalars = Counter([item for session in self for item in session.scalars.keys()])
         buffer += "Scalars present in data with counts:\n"
         for k, v in scalars.items():
+            buffer += f'({v}) "{k}"\n'
+        buffer += "\n"
+
+        dlcs = Counter([item for session in self for item in session.dlc.keys()])
+        buffer += "DLC Structured Numpy Arrays present in data:\n"
+        for k, v in dlcs.items():
             buffer += f'({v}) "{k}"\n'
         buffer += "\n"
 
