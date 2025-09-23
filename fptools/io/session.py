@@ -25,12 +25,13 @@ def empty_array() -> np.ndarray:
     """
     return np.ndarray([], dtype=np.float64)
 
+
 def empty_df() -> pd.DataFrame:
     """Create an empty Pandas dataframe
 
     Returns:
         empty pd.DataFrame
-    
+
     """
     return pd.DataFrame()
 
@@ -46,7 +47,7 @@ class Session(object):
         self.signals: dict[str, Signal] = {}
         self.epocs: dict[str, np.ndarray] = defaultdict(empty_array)  # epocs are numpy arrays, default to empty array
         self.scalars: dict[str, np.ndarray] = defaultdict(empty_array)  # scalars are numpy arrays, default to empty array
-        self.dlc: dict[str, np.ndarray] = defaultdict(empty_array) # dlc data are structured numpy arrays, default to empty array
+        self.dlc: dict[str, np.ndarray] = defaultdict(empty_array)  # dlc data are structured numpy arrays, default to empty array
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
         """Describe this session.
@@ -188,7 +189,7 @@ class Session(object):
 
         self.epocs[new_name] = self.epocs[old_name]
         self.epocs.pop(old_name)
-    
+
     def rename_dlc(self, old_name: str, new_name: str) -> None:
         """Rename a dlc array, from `old_name` to `new_name`.
 
@@ -200,7 +201,7 @@ class Session(object):
         """
         if new_name in self.dlc:
             raise KeyError(f"Key `{new_name}` already exists in data!")
-        
+
         self.dlc[new_name] = self.dlc[old_name]
         self.dlc.pop(old_name)
 
@@ -269,10 +270,10 @@ class Session(object):
             scalars.append({**meta, "scalar_name": sn, "scalar_value": self.scalars[sn]})
 
         return pd.DataFrame(scalars)
-    
+
     def dlc_dataframe(self, id: Union[str, int] = 0) -> pd.DataFrame:
         """
-        
+
         Args:
             id: identifier to select which dlc data to use in the dataframe. If str is provided, will access that named dlc data. If int is provided, will use the data from that index position among the dlc data.
 
@@ -284,15 +285,13 @@ class Session(object):
 
         if isinstance(id, str):
             return pd.DataFrame(self.dlc[id])
-         
+
         elif isinstance(id, int):
             data_list = list(self.dlc.values())
             return pd.DataFrame(data_list[id])
-        
+
         else:
-            raise TypeError(
-                'Invalid `id` argument data type. Supported data identifier types are str and int.'
-                            )
+            raise TypeError("Invalid `id` argument data type. Supported data identifier types are str and int.")
 
     def __eq__(self, value: object) -> bool:
         """Test this Session for equality to another Session.
@@ -358,7 +357,7 @@ class Session(object):
             **{f"signal.{sig.name}": sig._estimate_memory_use() for sig in self.signals.values()},
             **{f"epocs.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.epocs.items()},
             **{f"scalars.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.scalars.items()},
-             **{f"dlc.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.dlc.items()},
+            **{f"dlc.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.dlc.items()},
         }
 
     def _estimate_memory_use(self) -> int:
@@ -401,7 +400,7 @@ class Session(object):
             h5.create_group("/scalars")
             for k, scalar in self.scalars.items():
                 h5.create_dataset(f"/scalars/{k}", data=scalar, compression="gzip")
-            
+
             # save dlc data
             h5.create_group("/dlc")
             for k, dlc in self.dlc.items():
@@ -473,7 +472,11 @@ class Session(object):
                 for signame in h5["/signals"].keys():
                     sig_group = h5[f"/signals/{signame}"]
                     sig = Signal(
-                        signame, sig_group["signal"][()], time=sig_group["time"][()], fs=sig_group.attrs["fs"], units=sig_group.attrs["units"]
+                        signame,
+                        sig_group["signal"][()],
+                        time=sig_group["time"][()],
+                        fs=sig_group.attrs["fs"],
+                        units=sig_group.attrs["units"],
                     )
                     for mark_name in sig_group["marks"].keys():
                         sig.marks[mark_name] = sig_group[f"marks/{mark_name}"][()]

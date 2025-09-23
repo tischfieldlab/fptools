@@ -14,9 +14,9 @@ from .tdt import TDT_EXCLUDE_STREAMS, TDTLoader
 
 def has_neighboring_dlc_h5(tbk):
 
-    dlc_id_substrs = ['DLC', 'shuffle', 'snapshot']
-    neighbor_files = glob.glob(os.path.join(os.path.dirname(tbk), '*'))
-    neighbor_files = [file for file in neighbor_files if file.endswith('.h5')]
+    dlc_id_substrs = ["DLC", "shuffle", "snapshot"]
+    neighbor_files = glob.glob(os.path.join(os.path.dirname(tbk), "*"))
+    neighbor_files = [file for file in neighbor_files if file.endswith(".h5")]
 
     dlc_files = [file for file in neighbor_files if all(sub in file for sub in dlc_id_substrs)]
 
@@ -32,7 +32,6 @@ class FindTDTDLCBlocks:
         self.model_name = model_name
         self.filtered_only = filtered_only
 
-
     def __call__(self, path: str):
         """Data Locator for TDT blocks with DLC data.
 
@@ -44,7 +43,7 @@ class FindTDTDLCBlocks:
         Returns:
             list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded
         """
-        
+
         tbk_files = glob.glob(os.path.join(path, "**/*.[tT][bB][kK]"), recursive=True)
         # tbk_files = [file for file in tbk_files if has_neighboring_dlc_h5(file)]
 
@@ -56,8 +55,9 @@ class FindTDTDLCBlocks:
             adapt.loaders.append(TDTLoader(exclude_streams=TDT_EXCLUDE_STREAMS))
             adapt.loaders.append(DLCLoader(model_name=self.model_name, filtered_only=self.filtered_only))
             items_out.append(adapt)
-        
+
         return items_out
+
 
 # def find_tdt_w_dlc_blocks(path: str) -> list[DataTypeAdaptor]:
 #     """Data Locator for TDT blocks with DLC data.
@@ -70,7 +70,7 @@ class FindTDTDLCBlocks:
 #     Returns:
 #         list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded
 #     """
-    
+
 #     tbk_files = glob.glob(os.path.join(path, "**/*.[tT][bB][kK]"), recursive=True)
 #     tbk_files = [file for file in tbk_files if has_neighboring_dlc_h5(file)]
 
@@ -82,16 +82,12 @@ class FindTDTDLCBlocks:
 #         adapt.loaders.append(TDTLoader(exclude_streams=TDT_EXCLUDE_STREAMS))
 #         adapt.loaders.append(DLCLoader())
 #         items_out.append(adapt)
-    
+
 #     return items_out
 
 
 class DLCLoader:
-    def __init__(
-        self,
-        model_name: Optional[list[str]] = None,
-        filtered_only: bool = True
-    ) -> None:
+    def __init__(self, model_name: Optional[list[str]] = None, filtered_only: bool = True) -> None:
         """Initialize this DLCLoader."""
         self.model_name = model_name
         self.filtered_only = filtered_only
@@ -109,25 +105,25 @@ class DLCLoader:
 
         # find the dlc .h5 file
         if self.model_name is None:
-            pattern = os.path.join(path, f'*DLC*.h5')
+            pattern = os.path.join(path, f"*DLC*.h5")
             files = glob.glob(pattern)
             if len(files) <= 0:
-                    raise FileNotFoundError(f"Could not find any DLC files in block {session.name}!")
+                raise FileNotFoundError(f"Could not find any DLC files in block {session.name}!")
 
             for file in files:
                 df = pd.read_hdf(file)
                 nparray = df.to_records(index=False)
-                key = Path(file).stem   # TODO: instead look into the df for the model name
+                key = Path(file).stem  # TODO: instead look into the df for the model name
                 session.dlc[key] = nparray
         else:
             for mn in self.model_name:
                 if self.filtered_only:
-                    pattern = os.path.join(path, f'*{mn}*_filtered.h5')
+                    pattern = os.path.join(path, f"*{mn}*_filtered.h5")
                 else:
-                    pattern = os.path.join(path, f'*{mn}*.h5')
+                    pattern = os.path.join(path, f"*{mn}*.h5")
                 files = glob.glob(pattern)
                 if len(files) <= 0:
-                    raise FileNotFoundError(f"Could not find any DLC files for model \"{mn}\" in block {session.name}!")
+                    raise FileNotFoundError(f'Could not find any DLC files for model "{mn}" in block {session.name}!')
 
                 for file in files:
                     df = pd.read_hdf(file)
