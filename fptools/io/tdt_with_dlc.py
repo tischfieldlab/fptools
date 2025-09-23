@@ -37,7 +37,7 @@ class FindTDTDLCBlocks:
 
     def __init__(self, model_name: Optional[list[str]] = None, filtered_only: bool = True):
         """Initialize this TDT-DLC Data Locator.
-        
+
         Args:
             model_name: If provided, only look for DLC files with that model name(s), If None, load all files that look like DLC data
             filtered_only: If true, only load filtered DLC data, otherwise, load any DLC data
