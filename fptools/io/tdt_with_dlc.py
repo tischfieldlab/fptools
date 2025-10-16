@@ -118,14 +118,23 @@ class DLCLoader:
         if self.model_name is None:
             pattern = os.path.join(path, f"*DLC*.h5")
             files = glob.glob(pattern)
+
             if len(files) <= 0:
                 raise FileNotFoundError(f"Could not find any DLC files in block {session.name}!")
 
             for file in files:
                 df = pd.read_hdf(file)
+                key = f"{df.columns[0][0]}"
+                df.columns = df.columns.droplevel(level=0).to_flat_index()
                 nparray = df.to_records(index=False)
-                key = Path(file).stem  # TODO: instead look into the df for the model name
-                session.dlc[key] = nparray
+
+                if "_filtered" in file:
+                    key += "_filtered"
+                    session.dlc[key] = nparray
+                else:
+                    if not self.filtered_only:
+                        key += "_unfiltered"
+                        session.dlc[key] = nparray
         else:
             for mn in self.model_name:
                 if self.filtered_only:
@@ -138,6 +147,7 @@ class DLCLoader:
 
                 for file in files:
                     df = pd.read_hdf(file)
+                    df.columns = df.columns.droplevel(level=0).to_flat_index()
                     nparray = df.to_records(index=False)
                     key = f"{mn}"
                     if "_filtered" in file:
