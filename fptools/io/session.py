@@ -48,6 +48,8 @@ class Session(object):
         self.epocs: dict[str, np.ndarray] = defaultdict(empty_array)  # epocs are numpy arrays, default to empty array
         self.scalars: dict[str, np.ndarray] = defaultdict(empty_array)  # scalars are numpy arrays, default to empty array
         self.dlc: dict[str, np.ndarray] = defaultdict(empty_array)  # dlc data are structured numpy arrays, default to empty array
+        self.analysis: dict[str, np.ndarray] = defaultdict(empty_array) #analysis data are strictly 1d numpy arrays, default to empty array
+        self.misc: dict[str, Any] = {}  # WARNING: careful what datatypes stored in misc, some datatypes will not play well with saving into an hdf5
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
         """Describe this session.
@@ -112,6 +114,23 @@ class Session(object):
         else:
             buffer += "    < No DLC arrays Available >\n"
         buffer += "\n"
+
+        buffer += "Analysis Data:\n"
+        if len(self.analysis) > 0:
+            buffer += f"{len(self.analysis)} Analysis data arrays found: \n"
+            for k, v in self.analysis.items():
+                buffer += f"    {k}: \n"
+                buffer += f"        array_shape = {v.shape} \n"
+        else:
+            buffer += "    < No analysis data arrays available >\n"
+        buffer += "\n"
+
+        buffer += "Misc:\n"
+        if len(self.misc) > 0:
+            buffer += f"{len(self.analysis)} Misc items found: \n"
+            for k, v in self.misc.items():
+                buffer += f"    {k}: \n"
+                buffer += f"        data type = {type(v)} \n"
 
         if as_str:
             return buffer
@@ -190,6 +209,29 @@ class Session(object):
         self.epocs[new_name] = self.epocs[old_name]
         self.epocs.pop(old_name)
 
+    def add_dlc(self, dlc: Union[pd.DataFrame, np.ndarray], name: str, overwrite: bool = False) -> None:
+        """Add a DLC data to this Session.
+
+        Raises an error if the new DLC data name already exists and `overwrite` is not True.
+
+        Args:
+            dlc: pd.DataFrame or structured numpy arrays, the DLC data to add to this Session
+            overwrite: if True, allow overwriting a pre-existing signal with the same name, if False, will raise instead.
+        """
+        if name in self.dlc and not overwrite:
+            raise KeyError(f"Key `{name}` already exists in data!")
+        
+        if isinstance(dlc, pd.DataFrame):
+            dlc.columns = dlc.columns.to_flat_index()
+            nparray = dlc.to_records(index=False)
+            self.dlc[name] = nparray
+        
+        elif isinstance(dlc, np.ndarray):
+            self.dlc[name] = dlc
+        
+        else:
+            raise TypeError("Invalid `dlc` argument data type. Supported data types are pd.DataFrame and numpy arrays.") 
+
     def rename_dlc(self, old_name: str, new_name: str) -> None:
         """Rename a dlc array, from `old_name` to `new_name`.
 
@@ -204,6 +246,72 @@ class Session(object):
 
         self.dlc[new_name] = self.dlc[old_name]
         self.dlc.pop(old_name)
+
+    def add_analysis(self, arr: np.ndarray, name: str, overwrite: bool = False) -> None:
+        """Add analysis data to this Session.
+        
+        Raises an error if the new analysis data name already exists and `overwrite` is not True.
+        
+        Args:
+            analysis: 1D numpy array of analysis data
+            overwrite: if True, allow overwriting a pre-existing analysis with the same name, if False, will raise error instead
+        """
+        if name in self.analysis and not overwrite:
+            raise KeyError(f"Key `{name}` already exists in analysis data!")
+        
+        if isinstance(arr, np.ndarray):
+            if arr.ndim != 1:
+                raise ValueError(f"Analysis array must be 1-dimensional, but has {arr.ndim} dimensions.")
+            
+            self.analysis[name] = arr
+        
+        else:
+            raise TypeError("Invalid `dlc` argument data type. Supported data types are numpy arrays.")
+    
+    def rename_analysis(self, old_name: str, new_name: str) -> None:
+        """Rename an analysis array, from `old_name` to `new_name`.
+
+        Raises an error if the new analysis array name already exists.
+
+        Args:
+            old_name: the current name for the analysis array
+            new_name: the new name for the analysis array
+        """
+        if new_name in self.analysis:
+            raise KeyError(f"Key `{new_name}` already exists in analysis data!")
+
+        self.analysis[new_name] = self.analysis[old_name]
+        self.analysis.pop(old_name)
+
+    def add_misc(self, data: Any, name: str, overwrite: bool = False) -> None:
+        """Add Misc item to this Session
+        
+        Raises an error if the new misc ite, already exists and `overwrite` is not True.
+        
+        Args:
+            data: misc item
+            overwrite: if True, allow overwriting a pre-existing misc item with the same name, if False, will raise error instead
+        """
+        if name in self.misc and not overwrite:
+            raise KeyError(f"Key `{name}` already exists in misc items!")
+        
+        else:
+            self.misc[name] = data
+    
+    def rename_misc(self, old_name: str, new_name: str) -> None:
+        """Rename a misc item, from `old_name` to `new_name`.
+        
+        Raises an error if the new analysis array name already exists.
+        
+        Args:
+            old_name: the current name for the misc item
+            new_name: the new name for the misc item
+        """
+        if new_name in self.misc:
+            raise KeyError(f"Key `{new_name} already exists in misc items!")
+        
+        self.misc[new_name] = self.misc[old_name]
+        self.misc.pop(old_name)
 
     def epoc_dataframe(self, include_epocs: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
         """Produce a dataframe with epoc data and metadata.
@@ -291,6 +399,46 @@ class Session(object):
 
         else:
             raise TypeError("Invalid `id` argument data type. Supported data identifier types are str and int.")
+        
+    def analysis_dataframe(self, include_analysis: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
+        """Produce a dataframe with analysis data and metadata.
+
+        Args:
+            include_analysis: list of analysis array names to include in the dataframe. Special str "all" is also accepted.
+            include_meta: list of metadata fields to include in the dataframe. Special str "all" is also accepted.
+
+        Returns:
+            DataFrame with data from this session
+        """
+        # determine metadata fields to include
+        if include_meta == "all":
+            meta = self.metadata
+        else:
+            meta = {k: v for k, v in self.metadata.items() if k in include_meta}
+
+        # determine arrays to include
+        if include_analysis == "all":
+            analysis_names = list(self.analysis.keys())
+        else:
+            analysis_names = [k for k in self.analysis.keys() if k in include_analysis]
+
+        # TODO: iterate arrays and include any the user requested
+        # also add in any requested metadata
+        data = []
+        for k, v in self.analysis.items():
+            if k in analysis_names:
+                if len(v) == 1:
+                    for value in v:
+                        data.append({**meta, "metric": k, "obs": np.nan, "value": value})
+                else:
+                    obsn = 1
+                    for value in v:
+                        data.append({**meta, "metric": k, "obs": obsn,"value": value})
+                        obsn += 1
+
+        df = pd.DataFrame(data)
+
+        return df
 
     def __eq__(self, value: object) -> bool:
         """Test this Session for equality to another Session.
@@ -357,6 +505,8 @@ class Session(object):
             **{f"epocs.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.epocs.items()},
             **{f"scalars.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.scalars.items()},
             **{f"dlc.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.dlc.items()},
+            **{f"analysis.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.analysis.items()},
+            **{f"misc.{k}": sys.getsizeof(k) + v.nbytes for k, v in self.misc.items()},
         }
 
     def _estimate_memory_use(self) -> int:
@@ -404,6 +554,16 @@ class Session(object):
             h5.create_group("/dlc")
             for k, dlc in self.dlc.items():
                 h5.create_dataset(f"/dlc/{k}", data=dlc)
+
+            # save analysis data
+            h5.create_group("/analysis")
+            for k, analysis in self.analysis.items():
+                h5.create_dataset(f"/analysis/{k}", data=analysis)
+           
+            # save misc data
+            h5.create_group("/misc")
+            for k, misc in self.misc.items():
+                h5.create_dataset(f"/misc/{k}", data=misc)
 
             # save metadata
             meta_group = h5.create_group("/metadata")
@@ -495,6 +655,16 @@ class Session(object):
             if "/dlc" in h5:
                 for dlc_name in h5["/dlc"].keys():
                     session.dlc[dlc_name] = h5[f"/dlc/{dlc_name}"][()]
+
+            # read analysis
+            if "/analysis" in h5:
+                for analysis_name in h5["/analysis"].keys():
+                    session.analysis[analysis_name] = h5[f"/analysis/{analysis_name}"][()]
+
+            # read misc
+            if "/misc" in h5:
+                for misc_name in h5["/misc"].keys():
+                    session.misc[misc_name] = h5[f"/misc/{misc_name}"][()]
 
             # read metadata
             if "/metadata" in h5:
@@ -609,6 +779,26 @@ class SessionCollection(list[Session]):
         """
         for item in self:
             item.rename_scalar(old_name, new_name)
+
+    def rename_analysis(self, old_name: str, new_name: str) -> None:
+        """Rename an analysis on each session in this collection.
+
+        Args:
+            old_name: current name of the analysis
+            new_name: the new name for the analysis
+        """
+        for item in self:
+            item.rename_analysis(old_name, new_name)
+
+    def rename_misc(self, old_name: str, new_name: str) -> None:
+        """Rename a misc item on each session in this collection.
+
+        Args:
+            old_name: current name of the misc item
+            new_name: the new name for the misc item
+        """
+        for item in self:
+            item.rename_misc(old_name, new_name)
 
     def filter(self, predicate: Callable[[Session], bool]) -> "SessionCollection":
         """Filter the items in this collection, returning a new `SessionCollection` containing sessions which pass `predicate`.
@@ -781,6 +971,42 @@ class SessionCollection(list[Session]):
             dfs.append(df)
 
         return pd.concat(dfs, ignore_index=True)
+    
+    def analysis_dataframe(self, include_analysis: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
+        """Produce a dataframe with analysis data and metadata across all sessions in this collection.
+        
+        Args:
+            include_analysis: list of analysis names to include in the dataframe. Special str "all" is also accepted
+            include_meta: list of metadata fields to include in the dataframe. Special str "all" is also accepted
+            
+        Returns:
+            DataFrame with analysis data from across this collection
+        """
+        dfs = [session.analysis_dataframe(include_analysis=include_analysis, include_meta=include_meta) for session in self]
+        return pd.concat(dfs).reset_index(drop=True)
+    
+    def add_analysis(self, name: str, analysis: Callable[[Session], np.ndarray]) -> None:
+        """Apply an analysis function to each session in this collection, adding the results to each session's analysis attribute.
+        
+        Args:
+            name: Name of the new analysis data key
+            analysis: callable accepting a single session and returning a 1d numpy array
+        """
+        for session in self:
+            session.add_analysis(analysis(session), name)
+
+    def map(self, action: Callable[[Session], Session]) -> "SessionCollection":
+        """Apply a function to each session in this collection, returning a new collection with the results.
+
+        Args:
+            action: callable accepting a single session and returning a new session
+
+        Returns:
+            a new `SessionCollection` containing the results of `action`
+        """
+        sc = type(self)(action(item) for item in self)
+        sc.__meta_meta.update(**copy.deepcopy(self.__meta_meta))
+        return sc
 
     def aggregate_signals(self, name: str, method: Union[None, str, np.ufunc, Callable[[np.ndarray], np.ndarray]] = "median") -> Signal:
         """Aggregate signals across sessions in this collection for the signal name `name`.
@@ -791,7 +1017,7 @@ class SessionCollection(list[Session]):
 
         Returns:
             Aggregated `Signal`
-        """
+        """    
         signals = [s for s in self.get_signal(name) if s.nobs > 0]
         if len(signals) <= 0:
             raise ValueError("No signals were passed!")
@@ -840,6 +1066,18 @@ class SessionCollection(list[Session]):
         dlcs = Counter([item for session in self for item in session.dlc.keys()])
         buffer += "DLC Structured Numpy Arrays present in data:\n"
         for k, v in dlcs.items():
+            buffer += f'({v}) "{k}"\n'
+        buffer += "\n"
+
+        analysis = Counter([item for session in self for item in session.analysis.keys()])
+        buffer += "Analysis arrays present in data:\n"
+        for k, v in analysis.items():
+            buffer += f'({v}) "{k}"\n'
+        buffer += "\n"
+
+        misc = Counter([item for session in self for item in session.misc.keys()])
+        buffer += "Misc items present in data:\n"
+        for k, v in misc.items():
             buffer += f'({v}) "{k}"\n'
         buffer += "\n"
 
