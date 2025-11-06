@@ -127,7 +127,7 @@ class Session(object):
 
         buffer += "Misc:\n"
         if len(self.misc) > 0:
-            buffer += f"{len(self.analysis)} Misc items found: \n"
+            buffer += f"{len(self.misc)} Misc items found: \n"
             for k, v in self.misc.items():
                 buffer += f"    {k}: \n"
                 buffer += f"        data type = {type(v)} \n"
@@ -221,16 +221,21 @@ class Session(object):
         if name in self.dlc and not overwrite:
             raise KeyError(f"Key `{name}` already exists in data!")
         
-        if isinstance(dlc, pd.DataFrame):
-            dlc.columns = dlc.columns.to_flat_index()
-            nparray = dlc.to_records(index=False)
-            self.dlc[name] = nparray
+        # if isinstance(dlc, pd.DataFrame):
+        #     dlc.columns = dlc.columns.to_flat_index()
+
+        #     string_cols = dlc.select_dtypes(include=['str']).columns
+        #     for col in string_cols:
+        #         dlc[col] = dlc[col].astype(np.bytes_).astype('S50')
+
+        #     nparray = dlc.to_records(index=False)
+        #     self.dlc[name] = nparray
         
-        elif isinstance(dlc, np.ndarray):
-            self.dlc[name] = dlc
+        # elif isinstance(dlc, np.ndarray):
+        self.dlc[name] = dlc
         
-        else:
-            raise TypeError("Invalid `dlc` argument data type. Supported data types are pd.DataFrame and numpy arrays.") 
+        # else:
+        #     raise TypeError("Invalid `dlc` argument data type. Supported data types are pd.DataFrame and numpy arrays.") 
 
     def rename_dlc(self, old_name: str, new_name: str) -> None:
         """Rename a dlc array, from `old_name` to `new_name`.
@@ -266,7 +271,7 @@ class Session(object):
             self.analysis[name] = arr
         
         else:
-            raise TypeError("Invalid `dlc` argument data type. Supported data types are numpy arrays.")
+            raise TypeError("Invalid `arr` argument data type. Supported data types are numpy arrays.")
     
     def rename_analysis(self, old_name: str, new_name: str) -> None:
         """Rename an analysis array, from `old_name` to `new_name`.
@@ -381,7 +386,6 @@ class Session(object):
 
     def dlc_dataframe(self, id: Union[str, int] = 0) -> pd.DataFrame:
         """Fetch DLC data as a pandas dataframe.
-
         Args:
             id: identifier to select which dlc data to use in the dataframe. If str is provided, will access that named dlc data. If int is provided, will use the data from that index position among the dlc data.
 
@@ -519,6 +523,7 @@ class Session(object):
         Args:
             path: path where the data should be saved
         """
+
         with h5py.File(path, mode="w") as h5:
             # save name
             h5.create_dataset("/name", data=self.name)
@@ -553,7 +558,21 @@ class Session(object):
             # save dlc data
             h5.create_group("/dlc")
             for k, dlc in self.dlc.items():
-                h5.create_dataset(f"/dlc/{k}", data=dlc)
+                if isinstance(dlc, pd.DataFrame):
+                    dlc.columns = dlc.columns.to_flat_index()
+
+                    for col in dlc.select_dtypes(include='object').columns:
+                        dlc[col] = dlc[col].apply(lambda x: ','.join(map(str, x)) if isinstance(x, (list, tuple)) else x)
+
+                    for col in dlc.select_dtypes(include='object').columns:
+                        dlc[col] = dlc[col].astype(np.bytes_).astype('S50')
+                    # string_cols = [col for col in dlc.columns if isinstance(dlc[col].iloc[2], str)]
+                    # for col in string_cols:
+                    #     dlc[col] = dlc[col].astype(np.bytes_).astype('S50')
+                    nparray = dlc.to_records(index=False)
+                    h5.create_dataset(f"/dlc/{k}", data=nparray)    
+                elif isinstance(dlc, np.ndarray):
+                    h5.create_dataset(f"/dlc/{k}", data=dlc)
 
             # save analysis data
             h5.create_group("/analysis")
@@ -563,7 +582,21 @@ class Session(object):
             # save misc data
             h5.create_group("/misc")
             for k, misc in self.misc.items():
-                h5.create_dataset(f"/misc/{k}", data=misc)
+                if isinstance(misc, pd.DataFrame):
+                    misc.columns = misc.columns.to_flat_index()
+
+                    for col in dlc.select_dtypes(include='object').columns:
+                        dlc[col] = dlc[col].apply(lambda x: ','.join(map(str, x)) if isinstance(x, (list, tuple)) else x)
+
+                    for col in dlc.select_dtypes(include='object').columns:
+                        dlc[col] = dlc[col].astype(np.bytes_).astype('S50')                  
+                    # string_cols = [col for col in dlc.columns if isinstance(dlc[col].iloc[2], str)]
+                    # for col in string_cols:
+                    #     misc[col] = misc[col].astype(np.bytes_).astype('S50')
+                    nparray = misc.to_records(index=False)
+                    h5.create_dataset(f"/misc/{k}", data=nparray)   
+                else:
+                    h5.create_dataset(f"/misc/{k}", data=misc)
 
             # save metadata
             meta_group = h5.create_group("/metadata")
