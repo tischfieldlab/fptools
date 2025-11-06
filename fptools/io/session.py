@@ -137,6 +137,27 @@ class Session(object):
         else:
             print(buffer)
             return None
+        
+    def add_epoc(self, arr: np.ndarray, name: str, overwrite: bool = False) -> None:
+        """Add epoc data to this Session.
+        
+        Raises an error if the new epoc name already exists and `overwrite` is not True.
+        
+        Args:
+            epoc: 1D numpy array of epoc timestamps
+            overwrite: if True, allow overwriting a pre-existing epoc with the same name, if False, will raise error instead
+        """
+        if name in self.epocs and not overwrite:
+            raise KeyError(f"Key `{name}` already exists in analysis data!")
+        
+        if isinstance(arr, np.ndarray):
+            if arr.ndim != 1:
+                raise ValueError(f"Epoc data must be 1-dimensional, but has {arr.ndim} dimensions.")
+            
+            self.epocs[name] = arr
+        
+        else:
+            raise TypeError("Invalid `arr` argument data type. Supported data types are numpy arrays.")
 
     def add_signal(self, signal: Signal, overwrite: bool = False) -> None:
         """Add a signal to this Session.
@@ -942,6 +963,16 @@ class SessionCollection(list[Session]):
             List of Signals, each corresponding to a single session
         """
         return [item.signals[name] for item in self if name in item.signals]
+    
+    def add_analysis(self, name: str, epoc_func: Callable[[Session], np.ndarray]) -> None:
+        """Apply an epoc function to each session in this collection, adding the results to each session's epocs attribute.
+        
+        Args:
+            name: Name of the new analysis data key
+            epoc_func: callable accepting a single session and returning a 1d numpy array
+        """
+        for session in self:
+            session.add_epoc(epoc_func(session), name)
 
     def epoc_dataframe(self, include_epocs: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
         """Produce a dataframe with epoc data and metadata across all the sessions in this collection.
