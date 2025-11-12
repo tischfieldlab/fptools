@@ -6,6 +6,7 @@ import math
 import os
 import sys
 from typing import Any, Callable, Literal, Optional, Union
+import ast
 
 import h5py
 import numpy as np
@@ -34,6 +35,14 @@ def empty_df() -> pd.DataFrame:
 
     """
     return pd.DataFrame()
+
+def decode_byteseq(x):
+    """Decode an object encoded by utf-8.
+    """
+    try:
+        return ast.literal_eval(x.decode("utf-8"))
+    except ValueError:
+        return x.decode("utf-8")
 
 
 class Session(object):
@@ -416,15 +425,17 @@ class Session(object):
             DataFrame with data from this session
         """
         if isinstance(id, str):
-            return pd.DataFrame(self.dlc[id])
-
+            df = pd.DataFrame(self.dlc[id])
         elif isinstance(id, int):
             data_list = list(self.dlc.values())
-            return pd.DataFrame(data_list[id])
-
+            df =  pd.DataFrame(data_list[id])
         else:
             raise TypeError("Invalid `id` argument data type. Supported data identifier types are str and int.")
         
+        df[df.select_dtypes(include='object').columns] = df.select_dtypes(include='object').map(decode_byteseq)
+
+        return df
+
     def analysis_dataframe(self, include_analysis: FieldList = "all", include_meta: FieldList = "all") -> pd.DataFrame:
         """Produce a dataframe with analysis data and metadata.
 
@@ -447,8 +458,6 @@ class Session(object):
         else:
             analysis_names = [k for k in self.analysis.keys() if k in include_analysis]
 
-        # TODO: iterate arrays and include any the user requested
-        # also add in any requested metadata
         data = []
         for k, v in self.analysis.items():
             if k in analysis_names:
@@ -462,6 +471,24 @@ class Session(object):
                         obsn += 1
 
         df = pd.DataFrame(data)
+
+        return df
+    
+    def misc_dataframe(self, id: str) -> pd.DataFrame:
+        """Fetch misc data as a pandas dataframe.
+        Args:
+            id: name of the misc item to load
+
+        Returns:
+            DataFrame with data from this session
+        """
+        if isinstance(self.misc[id], np.array):
+            df = pd.DataFrame(self.misc[id])
+
+        else:
+            raise TypeError("Only numpy arrays can be loaded as a pandas DataFrame.")
+        
+        df[df.select_dtypes(include='object').columns] = df.select_dtypes(include='object').map(decode_byteseq)
 
         return df
 
