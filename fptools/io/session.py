@@ -7,6 +7,11 @@ import os
 import sys
 from typing import Any, Callable, Literal, Optional, Union
 import ast
+import re
+import multiprocessing
+import traceback
+from concurrent.futures import ProcessPoolExecutor, as_completed, Future
+from tqdm.auto import tqdm
 
 import h5py
 import numpy as np
@@ -39,10 +44,26 @@ def empty_df() -> pd.DataFrame:
 def decode_byteseq(x):
     """Decode an object encoded by utf-8.
     """
-    try:
-        return ast.literal_eval(x.decode("utf-8"))
-    except ValueError:
-        return x.decode("utf-8")
+    if isinstance(x, bytes):
+        try:
+            return ast.literal_eval(x.decode("utf-8"))
+        except ValueError:
+            if isinstance(x, bytes):
+                return x.decode("utf-8")
+    else:
+        return x
+    
+def remove_non_letters(text: str) -> str:
+    """Remove all non-letter characters from a string
+    
+    Args:
+        text: str to process
+        
+    Returns:
+        str containing only non-letter characters"""
+    # [^a-zA-Z] matches any character not in the range a-z or A-Z
+    # It replaces the matched characters with an empty string ''
+    return re.sub(r'[^a-zA-Z]', '', text)
 
 
 class Session(object):
@@ -467,7 +488,7 @@ class Session(object):
                 else:
                     obsn = 1
                     for value in v:
-                        data.append({**meta, "metric": k, "obs": obsn,"value": value})
+                        data.append({**meta, "metric": k, "obs": int(obsn),"value": value})
                         obsn += 1
 
         df = pd.DataFrame(data)
@@ -482,7 +503,7 @@ class Session(object):
         Returns:
             DataFrame with data from this session
         """
-        if isinstance(self.misc[id], np.array):
+        if isinstance(self.misc[id], np.ndarray):
             df = pd.DataFrame(self.misc[id])
 
         else:
@@ -625,13 +646,15 @@ class Session(object):
             # save analysis data
             h5.create_group("/analysis")
             for k, analysis in self.analysis.items():
-                h5.create_dataset(f"/analysis/{k}", data=analysis)
-           
+                h5.create_dataset(f"/analysis/{k}", data=np.atleast_1d(analysis).astype(float), compression="gzip")
+                # h5.create_dataset(f"/analysis/{k}", data=np.atleast_1d(analysis), dtype="f8", compression="gzip")
+
             # save misc data
             h5.create_group("/misc")
             for k, misc in self.misc.items():
                 if isinstance(misc, pd.DataFrame):
                     misc.columns = misc.columns.to_flat_index()
+                    misc.rename(mapper=remove_non_letters, axis=1)
 
                     for col in dlc.select_dtypes(include='object').columns:
                         dlc[col] = dlc[col].apply(lambda x: ','.join(map(str, x)) if isinstance(x, (list, tuple)) else x)
@@ -642,9 +665,12 @@ class Session(object):
                     # for col in string_cols:
                     #     misc[col] = misc[col].astype(np.bytes_).astype('S50')
                     nparray = misc.to_records(index=False)
-                    h5.create_dataset(f"/misc/{k}", data=nparray)   
-                else:
+                    h5.create_dataset(f"/misc/{k}", data=nparray)
+                elif misc.dtype.names is not None:
                     h5.create_dataset(f"/misc/{k}", data=misc)
+                else:
+                    h5.create_dataset(f"/misc/{k}", data=np.atleast_1d(misc).astype(float), compression="gzip")
+                    # h5.create_dataset(f"/misc/{k}", data=np.atleast_1d(misc), dtype="f8", compression="gzip")
 
             # save metadata
             meta_group = h5.create_group("/metadata")
@@ -991,7 +1017,7 @@ class SessionCollection(list[Session]):
         """
         return [item.signals[name] for item in self if name in item.signals]
     
-    def add_analysis(self, name: str, epoc_func: Callable[[Session], np.ndarray]) -> None:
+    def add_epoc(self, name: str, epoc_func: Callable[[Session], np.ndarray]) -> None:
         """Apply an epoc function to each session in this collection, adding the results to each session's epocs attribute.
         
         Args:
@@ -1085,6 +1111,89 @@ class SessionCollection(list[Session]):
         """
         for session in self:
             session.add_analysis(analysis(session), name)
+
+    def run_analysis(self, analysis: Callable[[Session], Session], max_workers: Optional[int] = None) -> "SessionCollection":
+        """Run an analysis function on each session in this collection and return a new SessionCollection.
+
+        Args:
+            analysis: callable accepting a single session with optional additional keyword arguments and returning a new session
+            max_workers: number of workers in the process pool for running analysis. If None, defaults to the number of CPUs on the machine.
+        
+        Returns:
+            a new `SessionCollection` containing results of `analysis`
+        
+        """
+        futures: dict[Future[Session], str] = {}
+        context = multiprocessing.get_context("spawn")
+        max_tasks_per_child = 1
+
+        sc = SessionCollection()
+
+        with ProcessPoolExecutor(max_workers=max_workers, mp_context=context, max_tasks_per_child=max_tasks_per_child) as executor:
+
+            # iterate over all Sessions in the SessionCollection
+
+            for s in self:
+
+                # submit the task to the pool
+                f = executor.submit(analysis, s)
+                futures[f] = s.metadata["blockname"]
+            
+            # compile the new SessionCollection
+            for f in tqdm(as_completed(futures), total=len(futures)):
+                try:
+                    sc.append(f.result())
+                except Exception as e:
+                    tqdm.write(
+                        f'Problem running analysis at "{futures[f]}":\n{traceback.format_exc()}\nThe session will be missing from the resultant SessionCollection!\n'
+                    )
+                    pass
+        
+        return sc
+    
+    def run_analysis_kw_test(self, analysis: Callable[[Session], Session], max_workers: Optional[int] = None, analysis_kwargs: Optional[dict] = None) -> "SessionCollection":
+        """Run an analysis function on each session in this collection and return a new SessionCollection.
+
+        Args:
+            analysis: callable accepting a single session with optional additional keyword arguments and returning a new session
+            max_workers: number of workers in the process pool for running analysis. If None, defaults to the number of CPUs on the machine.
+            ana_kwargs: kwargs to pass to analysis callable
+        
+        Returns:
+            a new `SessionCollection` containing results of `analysis`
+        
+        """
+        futures: dict[Future[Session], str] = {}
+        context = multiprocessing.get_context("spawn")
+        max_tasks_per_child = 1
+
+        _analysis_kwargs = {}
+        if analysis_kwargs is not None:
+            _analysis_kwargs.update(analysis_kwargs)
+
+        sc = SessionCollection()
+
+        with ProcessPoolExecutor(max_workers=max_workers, mp_context=context, max_tasks_per_child=max_tasks_per_child) as executor:
+
+            # iterate over all Sessions in the SessionCollection
+
+            for s in self:
+
+                # submit the task to the pool
+                f = executor.submit(analysis, s, **_analysis_kwargs)
+                futures[f] = s.metadata["blockname"]
+            
+            # compile the new SessionCollection
+            for f in tqdm(as_completed(futures), total=len(futures)):
+                try:
+                    sc.append(f.result())
+                except Exception as e:
+                    tqdm.write(
+                        f'Problem running analysis at "{futures[f]}":\n{traceback.format_exc()}\nThe session will be missing from the resultant SessionCollection!\n'
+                    )
+                    pass
+        
+        return sc
 
     def map(self, action: Callable[[Session], Session]) -> "SessionCollection":
         """Apply a function to each session in this collection, returning a new collection with the results.
