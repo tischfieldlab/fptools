@@ -78,7 +78,7 @@ class Session(object):
         self.epocs: dict[str, np.ndarray] = defaultdict(empty_array)  # epocs are numpy arrays, default to empty array
         self.scalars: dict[str, np.ndarray] = defaultdict(empty_array)  # scalars are numpy arrays, default to empty array
         self.dlc: dict[str, np.ndarray] = defaultdict(empty_array)  # dlc data are structured numpy arrays, default to empty array
-        self.analysis: dict[str, np.ndarray] = defaultdict(empty_array) #analysis data are strictly 1d numpy arrays, default to empty array
+        self.analysis: dict[str, np.ndarray] = defaultdict(empty_array) # analysis data are strictly 1d numpy arrays, default to empty array
         self.misc: dict[str, Any] = {}  # WARNING: careful what datatypes stored in misc, some datatypes will not play well with saving into an hdf5
 
     def describe(self, as_str: bool = False) -> Union[str, None]:
@@ -1112,46 +1112,46 @@ class SessionCollection(list[Session]):
         for session in self:
             session.add_analysis(analysis(session), name)
 
-    def run_analysis(self, analysis: Callable[[Session], Session], max_workers: Optional[int] = None) -> "SessionCollection":
-        """Run an analysis function on each session in this collection and return a new SessionCollection.
+    # def run_analysis(self, analysis: Callable[[Session], Session], max_workers: Optional[int] = None) -> "SessionCollection":
+    #     """Run an analysis function on each session in this collection and return a new SessionCollection.
 
-        Args:
-            analysis: callable accepting a single session with optional additional keyword arguments and returning a new session
-            max_workers: number of workers in the process pool for running analysis. If None, defaults to the number of CPUs on the machine.
+    #     Args:
+    #         analysis: callable accepting a single session with optional additional keyword arguments and returning a new session
+    #         max_workers: number of workers in the process pool for running analysis. If None, defaults to the number of CPUs on the machine.
         
-        Returns:
-            a new `SessionCollection` containing results of `analysis`
+    #     Returns:
+    #         a new `SessionCollection` containing results of `analysis`
         
-        """
-        futures: dict[Future[Session], str] = {}
-        context = multiprocessing.get_context("spawn")
-        max_tasks_per_child = 1
+    #     """
+    #     futures: dict[Future[Session], str] = {}
+    #     context = multiprocessing.get_context("spawn")
+    #     max_tasks_per_child = 1
 
-        sc = SessionCollection()
+    #     sc = SessionCollection()
 
-        with ProcessPoolExecutor(max_workers=max_workers, mp_context=context, max_tasks_per_child=max_tasks_per_child) as executor:
+    #     with ProcessPoolExecutor(max_workers=max_workers, mp_context=context, max_tasks_per_child=max_tasks_per_child) as executor:
 
-            # iterate over all Sessions in the SessionCollection
+    #         # iterate over all Sessions in the SessionCollection
 
-            for s in self:
+    #         for s in self:
 
-                # submit the task to the pool
-                f = executor.submit(analysis, s)
-                futures[f] = s.metadata["blockname"]
+    #             # submit the task to the pool
+    #             f = executor.submit(analysis, s)
+    #             futures[f] = s.metadata["blockname"]
             
-            # compile the new SessionCollection
-            for f in tqdm(as_completed(futures), total=len(futures)):
-                try:
-                    sc.append(f.result())
-                except Exception as e:
-                    tqdm.write(
-                        f'Problem running analysis at "{futures[f]}":\n{traceback.format_exc()}\nThe session will be missing from the resultant SessionCollection!\n'
-                    )
-                    pass
+    #         # compile the new SessionCollection
+    #         for f in tqdm(as_completed(futures), total=len(futures)):
+    #             try:
+    #                 sc.append(f.result())
+    #             except Exception as e:
+    #                 tqdm.write(
+    #                     f'Problem running analysis at "{futures[f]}":\n{traceback.format_exc()}\nThe session will be missing from the resultant SessionCollection!\n'
+    #                 )
+    #                 pass
         
-        return sc
+    #     return sc
     
-    def run_analysis_kw_test(self, analysis: Callable[[Session], Session], max_workers: Optional[int] = None, analysis_kwargs: Optional[dict] = None) -> "SessionCollection":
+    def run_analysis(self, analysis: Callable[[Session], Session], max_workers: Optional[int] = None, analysis_kwargs: Optional[dict] = None) -> "SessionCollection":
         """Run an analysis function on each session in this collection and return a new SessionCollection.
 
         Args:
