@@ -690,6 +690,12 @@ class Session(object):
                 elif isinstance(v, datetime.datetime):
                     meta_group[k] = v.isoformat()
                     meta_group[k].attrs["type"] = "datetime"
+                elif isinstance(v, datetime.date):
+                    meta_group[k] = v.isoformat()
+                    meta_group[k].attrs["type"] = "str"                
+                elif isinstance(v, datetime.time):
+                    meta_group[k] = v.isoformat()
+                    meta_group[k].attrs["type"] = "str"
                 elif isinstance(v, datetime.timedelta):
                     meta_group[k] = v.total_seconds()
                     meta_group[k].attrs["type"] = "timedelta"
