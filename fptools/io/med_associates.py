@@ -5,8 +5,9 @@ import re
 
 import numpy as np
 
-from .common import DataTypeAdaptor
+from .common import DataTypeAdaptor, DataLocator
 from .session import Session
+from .ma_with_dlc import MALoader
 
 
 def find_ma_blocks(path: str, pattern: str = "*.txt") -> list[DataTypeAdaptor]:
@@ -30,6 +31,30 @@ def find_ma_blocks(path: str, pattern: str = "*.txt") -> list[DataTypeAdaptor]:
         adapt.loaders.append(parse_ma_session)
         items_out.append(adapt)
     return items_out
+
+class FindMABlocks(DataLocator):
+
+    def __call__(self, path: str) -> list[DataTypeAdaptor]:
+        """Data Locator for MA blocks.
+
+        Args:
+            path: path to search for MA blocks.
+
+        Returns:
+            list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded
+        """
+        found_files = list(glob.glob(os.path.join(path, "**", "*.txt"), recursive=True))
+        filtered = list(filter(is_file_ma, found_files))
+
+        items_out = []
+        for file in filtered:
+            adapt = DataTypeAdaptor()
+            adapt.path = os.path.dirname(file)  # the directory for the block
+            adapt.name = os.path.basename(adapt.path)  # the name of the block folder
+            adapt.loaders.append(MALoader())
+            items_out.append(adapt)
+
+        return items_out
 
 
 def is_file_ma(path: str) -> bool:
