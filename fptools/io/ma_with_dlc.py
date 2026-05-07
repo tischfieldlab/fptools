@@ -1,14 +1,16 @@
-import datetime
 import glob
 import os
+from typing import Optional
+from pathlib import Path
+import datetime
 import re
 
+import pandas as pd
 import numpy as np
 
-from .common import DataTypeAdaptor, DataLocator
-from .session import Session
-from .ma_with_dlc import MALoader
-
+from .common import DataTypeAdaptor, Loader, DataLocator
+from .session import Session, Signal
+from .tdt_with_dlc import DLCLoader
 
 def find_ma_blocks(path: str, pattern: str = "*.txt") -> list[DataTypeAdaptor]:
     """Data Locator for med-associates files.
@@ -32,13 +34,25 @@ def find_ma_blocks(path: str, pattern: str = "*.txt") -> list[DataTypeAdaptor]:
         items_out.append(adapt)
     return items_out
 
-class FindMABlocks(DataLocator):
+class FindMADLCBlocks(DataLocator):
 
-    def __call__(self, path: str) -> list[DataTypeAdaptor]:
-        """Data Locator for MA blocks.
+    def __init__(self, model_name: Optional[list[str]] = None, filtered_only: bool = True):
+        """Initialize this MA-DLC Data Locator.
 
         Args:
-            path: path to search for MA blocks.
+            model_name: If provided, only look for DLC files with that model name(s), If None, load all files that look like DLC data
+            filtered_only: If true, only load filtered DLC data, otherwise, load any DLC data
+        """
+        self.model_name = model_name
+        self.filtered_only = filtered_only
+
+    def __call__(self, path: str) -> list[DataTypeAdaptor]:
+        """Data Locator for MA blocks with DLC data.
+
+        Given a path to a directory, will search that path recursively for MA blocks that contain DLC output files in .h5 format.
+
+        Args:
+            path: path to search for MA blocks with DLC data
 
         Returns:
             list of DataTypeAdaptor, each adaptor corresponding to one session, of data to be loaded
@@ -52,10 +66,10 @@ class FindMABlocks(DataLocator):
             adapt.path = os.path.dirname(file)  # the directory for the block
             adapt.name = os.path.basename(adapt.path)  # the name of the block folder
             adapt.loaders.append(MALoader())
+            adapt.loaders.append(DLCLoader(model_name=self.model_name, filtered_only=self.filtered_only))
             items_out.append(adapt)
 
         return items_out
-
 
 def is_file_ma(path: str) -> bool:
     """Test if a file looks like a med-associates data file.
@@ -72,22 +86,6 @@ def is_file_ma(path: str) -> bool:
             return True
     return False
 
-
-# def parse_ma_directory(path: str, pattern: str = "*.txt", quiet: bool = False) -> SessionCollection:
-#     """Parse a directory containing session data files from MedAssociates
-
-#     Parameters:
-#     path: path to directory containing data files
-#     pattern: glob pattern for selecting files in the directory
-#     quiet: if false, show TQDM progress bar, if True, do not show any progress bar
-
-#     Returns:
-#     SessionCollection with parsed files
-#     """
-#     sessions = SessionCollection()
-#     for filepath in tqdm(glob.glob(os.path.join(path, pattern)), disable=quiet, leave=True):
-#         sessions.append(parse_ma_session(filepath))
-#     return sessions
 
 _rx_dict: dict[str, re.Pattern] = {
     "StartDate": re.compile(r"^Start Date: (?P<StartDate>.*)\r\n"),
@@ -125,6 +123,124 @@ def _parse_line(line: str):
     # if there are no matches
     return None, None
 
+class MALoader:
+    
+    # def __init__(
+    #     self,
+    #     exclude_epocs: Optional[list[str]] = None,
+    #     exclude_scalars: Optional[list[str]] = None,
+    # ) -> None:
+    #     """Initialize this MALoader."""
+    #     self.exclude_epocs = exclude_epocs or []
+    #     self.exclude_scalars = exclude_scalars or []
+    
+    def __call__(self, session: Session, path: str) -> Session:
+        """Data Loader for MA blocks.
+
+        Args:
+            session: the session for data to be loaded into
+            path: path to a MA block folder
+
+        Returns:
+            Session object with data added
+        """
+        MPCDateStringRe = re.compile(r"\s*(?P<hour>[0-9]+):(?P<minute>[0-9]{2}):(?P<second>[0-9]{2})")
+        
+        # find the med associates .txt file
+        found_files = list(glob.glob(os.path.join(path, "**", "*.txt"), recursive=True))
+        filtered = list(filter(is_file_ma, found_files))
+
+        # open the file and read through it line by line
+        with open(filtered[0], "r", newline="\n") as file_object:
+
+            session.metadata["blockname"] = os.path.basename(path)
+
+            line = file_object.readline()
+            while line:
+                # at each line check for a match with a regex
+                key, match = _parse_line(line)
+
+                # start of data is '\r\r\n'
+                if key == "STARTOFDATA":
+                    pass
+
+                # extract start date
+                if key == "StartDate":
+                    session.metadata["StartDate"] = datetime.datetime.strptime(match.group(key), "%m/%d/%y").date()
+
+                # extract end date
+                if key == "EndDate":
+                    session.metadata["EndDate"] = datetime.datetime.strptime(match.group(key), "%m/%d/%y").date()
+
+                # extract start time
+                if key == "StartTime":
+                    date_match = MPCDateStringRe.search(match.group(key))
+                    if date_match is not None:
+                        (hour, min, sec) = [int(date_match.group(g)) for g in ["hour", "minute", "second"]]
+                        session.metadata["StartTime"] = datetime.time(hour, min, sec)
+                        # date should be already read
+                        session.metadata["StartDateTime"] = datetime.datetime.combine(
+                            session.metadata["StartDate"], session.metadata["StartTime"]
+                        )
+
+                # extract end time
+                if key == "EndTime":
+                    date_match = MPCDateStringRe.search(match.group(key))
+                    if date_match is not None:
+                        (hour, min, sec) = [int(date_match.group(g)) for g in ["hour", "minute", "second"]]
+                        session.metadata["EndTime"] = datetime.time(hour, min, sec)
+                        # date should be already read
+                        session.metadata["EndDateTime"] = datetime.datetime.combine(session.metadata["EndDate"], session.metadata["EndTime"])
+
+                # extract Subject
+                if key == "Subject":
+                    session.metadata["Subject"] = match.group(key)
+
+                # extract Experiment
+                if key == "Experiment":
+                    session.metadata["Experiment"] = match.group(key)
+
+                # extract Group
+                if key == "Group":
+                    session.metadata["Group"] = match.group(key)
+
+                # extract Box
+                if key == "Box":
+                    session.metadata["Box"] = int(match.group(key))
+
+                # extract MSN
+                if key == "MSN":
+                    session.metadata["MSN"] = match.group(key)
+
+                # extract scalars
+                if key == "SCALAR":
+                    session.scalars[match.group("name")] = np.array([float(match.group("value"))])
+
+                # identify an array
+                if key == "ARRAY":
+                    # print(f'This is the beginning of an Array:: "{line}"')
+                    # have now have to step through the array
+                    file_tell = file_object.tell()
+                    subline = file_object.readline()
+                    # print(f'This is the first line of the array:: "{subline}"')
+                    items = []
+                    while subline:
+                        m = _rx_dict["ARRAYidx"].search(subline)
+                        if m is not None:
+                            items.extend([float(l) for l in m.group("list").split()])
+
+                        else:
+                            # have to rewind
+                            # print(f'This is one line beyond the last line of the array:: "{subline}"')
+                            file_object.seek(file_tell)
+                            break
+                        file_tell = file_object.tell()
+                        subline = file_object.readline()
+                    # print(f'Setting "{match.group("name")}"={items}')
+                    session.epocs[match.group("name")] = np.array(items)
+                line = file_object.readline()
+                
+        return session
 
 def parse_ma_session(session: Session, path: str) -> Session:
     """Parse a session data file from MedAssociates.
